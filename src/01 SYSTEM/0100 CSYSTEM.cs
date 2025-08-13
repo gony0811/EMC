@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+#pragma warning disable CS8625 // null 가능 참조에 대한 역참조입니다.
 
 namespace EGGPLANT
 {

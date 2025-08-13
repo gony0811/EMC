@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
     <RootNamespace>EGGPLANT</RootNamespace>
+    <BaseOutputPath>..\run</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
