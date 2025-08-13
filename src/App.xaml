@@ -10,6 +10,11 @@
                 <!-- Theme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button.MetroWindow.Dark}">
+                <Setter Property="MinHeight" Value="{StaticResource App.Button.MinHeight}"/>
+                <Setter Property="MinWidth"  Value="{StaticResource App.Button.MinWidth}"/>
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource MahApps.Styles.TextBlock.AutoCollapsing}"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
