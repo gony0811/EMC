@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.Models
 {
-    public class DeviceItem
+    public partial class DeviceItem : ObservableObject
     {
-        public string Name { get; set; }
+        [ObservableProperty]
+        private int index;
+
+        [ObservableProperty]
+        private string name;
+
+        [ObservableProperty] 
+        private bool isInUse;
     }
 }

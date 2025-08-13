@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EGGPLANT._11_MAIN_UI_1920x1080_KOR_.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,8 +29,9 @@ namespace EGGPLANT
 
         private void Init()
         {
-            this.tbCurrentDevice.Text = "TEST DEVICE";
-            this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
+            DataContext = new USubViewModel02();
+            //this.tbCurrentDevice.Text = "TEST DEVICE";
+            //this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
         }
     }
 }

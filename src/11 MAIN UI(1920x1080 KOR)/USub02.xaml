@@ -7,52 +7,165 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EGGPLANT"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="USub02">
 
     <Grid>
-        <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <!-- 좌측 디바이스창 -->
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
+            <!-- 현재 디바이스 Row 0 -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-
-                <TextBlock Text="현재 디바이스" 
-                       Style="{DynamicResource MahApps.Styles.TextBlock}" 
-                       FontSize="24"
-                       Grid.Column="0" 
-                       MinWidth="200"
-                       VerticalAlignment="Center" 
-                       TextAlignment="Center"
-                       Margin="10,0,0,0"/>
-
-                <TextBlock x:Name="tbCurrentDevice"
-                       Text="{Binding CurrentDevice}" 
-                       Style="{DynamicResource MahApps.Styles.TextBlock}" 
-                       FontSize="24"
-                       Grid.Column="1"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center" 
-                       TextAlignment="Center"    
-                       Margin="10,0,0,0"/>
+                <Border Grid.Column="0">
+                    <TextBlock Text="현재 디바이스" Foreground="White" VerticalAlignment="Center"></TextBlock>
+                </Border>
+                <TextBox Grid.Column="1" Text="{Binding CurrentDevice}"
+                     IsReadOnly="True"
+                     Focusable="False"
+                     Cursor="Arrow"
+                     ContextMenu="{x:Null}"           
+                     AllowDrop="False"     
+                     IsTabStop="False" 
+                     VerticalAlignment="Center"
+                />
             </Grid>
+            <!-- 파라미터 타입 선택창 && P/V 전환 버튼 Row 1 -->
+            <StackPanel Grid.Row="1" Margin="5" Orientation="Horizontal" >
+                <Button Content="공용 파라미터" Margin="0, 0, 10, 0"></Button>
+                <Button Content="기본 파라미터" Margin="0, 0, 10, 0"></Button>
+                <Button Padding="10,6">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔁" FontFamily="Segoe UI Emoji" FontSize="18" Margin="0,0,6,0"/>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="P &lt;-&gt; V"/>
+                            <TextBlock Text="   전환"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <!-- 디바이스 목록 및 상호작용 버튼  Row 2 -->
+            <DockPanel Grid.Row="2" LastChildFill="True" Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Content="복사" Margin="0,0,6,0"/>
+                    <Button Content="삭제"/>
+                </StackPanel>
 
-            <Grid Grid.Row="1">
-                <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden"/>
-            </Grid>
+                <TextBlock Text="디바이스 목록"
+                     VerticalAlignment="Center" Foreground="White"
+                     HorizontalAlignment="Left" TextAlignment="Right"/>     
+            </DockPanel>
+            <!-- 디바이스 목록 -->
+            <DataGrid Grid.Row="3"
+                      ItemsSource="{Binding Devices}"
+                      SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      FontSize="16"
+                      Margin="0,8,0,0"
+                      ColumnWidth="*"               
+                      HorizontalAlignment="Stretch">
 
+                <!-- 더블클릭 → VM.Command(SelectedDevice) -->
+                <DataGrid.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                              Command="{Binding InteractCommand}"
+                              CommandParameter="{Binding SelectedDevice}"/>
+                </DataGrid.InputBindings>
+                
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding Index}" IsReadOnly="True" Width="90" MinWidth="80" />
 
-            <Border Grid.Row="1" 
-                Margin="10" 
-                Background="{DynamicResource MahApps.Brushes.Badged.Background}" 
-                BorderBrush="{DynamicResource MahApps.Brushes.Badged.Border}" 
-                BorderThickness="1"/>
+                    <!-- 이름 + 우측 "사용중" 뱃지 -->
+                    <DataGridTemplateColumn Header="이름" Width="*" MinWidth="250">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DockPanel LastChildFill="True">
+                                    <Border DockPanel.Dock="Right"
+                                            CornerRadius="10"
+                                            Padding="6,2"
+                                            Margin="8,0,0,0"
+                                            Background="#22008000"
+                                            BorderBrush="#008000"
+                                            BorderThickness="1"
+                                            Visibility="{Binding IsInUse, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock Text="사용중" FontSize="16" Foreground="#008000"/>
+                                    </Border>
+
+                                    <TextBlock Text="{Binding Name}"
+                                                FontSize="16"
+                                                VerticalAlignment="Center"
+                                                TextTrimming="CharacterEllipsis"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
+        
+        <!-- Parameter 화면 -->
+        <DataGrid Grid.Column="1"
+                  ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  FontSize="15"
+                  HeadersVisibility="Column"
+                  RowHeaderWidth="0"
+                  Margin="0,8,0,0">
+            <DataGrid.Columns>
+                <!-- 이름 -->
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="2*"/>
+
+                <!-- 값(우측 정렬) -->
+                <DataGridTextColumn Header="Value"
+                                    Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Right"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
+                <!-- 단위: 보기엔 텍스트, 편집 시 콤보박스 -->
+                <DataGridTemplateColumn Header="Unit" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Unit}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.Units,
+                                                            RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                      SelectedItem="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      IsEditable="True" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Page>
