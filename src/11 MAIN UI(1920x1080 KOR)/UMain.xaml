@@ -9,6 +9,11 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="UMain" Height="Auto" Width="Auto" ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow">
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -63,60 +68,87 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Main" MinHeight="80" MinWidth="120">
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" 
+                              x:Name="Main" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsMainChecked}" Tag="MAIN">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Monitor" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="메인" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Parameter" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
+                        x:Name="Parameter" MinHeight="80" MinWidth="120"
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsParamChecked}" Tag="PARAM">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Table" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="파라미터" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="User" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"   
+                        x:Name="User" MinHeight="80" MinWidth="120"
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsUserChecked}" Tag="USER">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Human" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="사용자" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Log" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"   
+                        x:Name="Log" MinHeight="80" MinWidth="120"  
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsLogChecked}" Tag="LOG">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="ChartHistogram" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="로그" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Error" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"   
+                        x:Name="Error" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsErrorChecked}" Tag="ERROR">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Alert" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="에러" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Manual" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
+                        x:Name="Manual" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsManualChecked}" Tag="MANUAL">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Controller" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="수동조작" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Motion" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
+                        x:Name="Motion" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsMotionChecked}" Tag="MOTION">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Motion" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="모터제어" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Sensor" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
+                        x:Name="Sensor" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsDirectIOChecked}" Tag="SENSOR">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Wifi" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="센서" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="SignalTower" MinHeight="80" MinWidth="120">
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
+                        x:Name="SignalTower" MinHeight="80" MinWidth="120" 
+                              Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsChecked="{Binding IsTowerLampChecked}" Tag="TOWERLAMP">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Lightbulb" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
                         <TextBlock Text="경광등" TextAlignment="Center"/>
                     </StackPanel>
-                </Button>
+                </ToggleButton>
             </StackPanel>
             <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                 <Button Style="{DynamicResource MahApps.Styles.Button.MetroWindow.Dark}" x:Name="Exit" MinHeight="80" MinWidth="120">

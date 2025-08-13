@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace EGGPLANT
 {
     /// <summary>
-    /// USub01.xaml에 대한 상호 작용 논리
+    /// USub02.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class USub01 : Page
+    public partial class USub02 : Page
     {
-        public USub01()
+        public USub02()
         {
             InitializeComponent();
             Init();
@@ -28,7 +28,8 @@ namespace EGGPLANT
 
         private void Init()
         {
-            this.tbCurrentDevice.Content = "TEST DEVICE";
+            this.tbCurrentDevice.Text = "TEST DEVICE";
+            this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace EGGPLANT
 {
@@ -32,6 +33,26 @@ namespace EGGPLANT
         [ObservableProperty]
         private string? serialNumberText;
 
+        [ObservableProperty]
+        private bool? isMainChecked;
+        [ObservableProperty]
+        private bool? isParamChecked;
+        [ObservableProperty]
+        private bool? isUserChecked;
+        [ObservableProperty]
+        private bool? isLogChecked;
+        [ObservableProperty]
+        private bool? isErrorChecked;
+        [ObservableProperty]
+        private bool? isManualChecked;
+        [ObservableProperty]
+        private bool? isMotionChecked;
+        [ObservableProperty]
+        private bool? isDirectIOChecked;
+        [ObservableProperty]
+        private bool? isTowerLampChecked;
+
+
         public UMainViewModel()
         {
             // Initialize properties with default values
@@ -42,6 +63,138 @@ namespace EGGPLANT
             BuildText = "Build 0000.00.00";
             DeveloperText = "Developed by EGGPLANT";
             SerialNumberText = "SN : EGGPLANT Copyright(c) EGGPLANT Corp. All rights reserved.";
+
+            Init();
+        }
+
+        private void Init()
+        {
+            // Initialize any additional properties or perform setup tasks here
+            IsMainChecked = true;
+            IsParamChecked = false;
+            IsUserChecked = false;
+            IsLogChecked = false;
+            IsErrorChecked = false;
+            IsManualChecked = false;
+            IsMotionChecked = false;
+            IsDirectIOChecked = false;
+            IsTowerLampChecked = false;
+            // Navigate to the initial page
+            CSYS.GoToSub01();
+        }
+
+
+
+        [RelayCommand]
+        private void NavigateClick(string tag)
+        {
+            switch(tag)
+            {
+                case "MAIN":
+                    CSYS.GoToSub01();
+                    IsMainChecked = true;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "PARAM":
+                    CSYS.GoToSub02();
+                    IsMainChecked = false;
+                    IsParamChecked = true;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "USER":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = true;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "LOG":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = true;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "ERROR":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = true;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "MANUAL":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = true;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "MOTION":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = true;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = false;
+                    break;
+                case "SENSOR":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = true;
+                    IsTowerLampChecked = false;
+                    break;
+                case "TOWERLAMP":
+                    IsMainChecked = false;
+                    IsParamChecked = false;
+                    IsUserChecked = false;
+                    IsLogChecked = false;
+                    IsErrorChecked = false;
+                    IsManualChecked = false;
+                    IsMotionChecked = false;
+                    IsDirectIOChecked = false;
+                    IsTowerLampChecked = true;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid tag for navigation");
+            }
+            // Navigate to the main page or perform any action needed
         }
     }
 }
