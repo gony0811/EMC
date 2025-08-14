@@ -1,8 +1,6 @@
 ﻿using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
-using System.Configuration;
-using System.Data;
+
 using System.Windows;
-using System.Windows.Controls;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 

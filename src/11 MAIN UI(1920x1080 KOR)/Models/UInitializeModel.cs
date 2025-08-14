@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.Models
+namespace EGGPLANT.Models
 {
     /****************************************************************************/
     /* 프로그램 초기화 시 실행 및 종료 될 때 사용 될 객체들                     */

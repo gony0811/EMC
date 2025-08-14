@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.Models
+namespace EGGPLANT.Models
 {
     public partial class DeviceItem : ObservableObject
     {

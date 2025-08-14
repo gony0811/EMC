@@ -1,9 +1,9 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using EGGPLANT._11_MAIN_UI_1920x1080_KOR_.Models;
+using EGGPLANT.Models;
 using System.Collections.ObjectModel;
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.ViewModels
+namespace EGGPLANT.ViewModels
 {
     public partial class USubViewModel02 : ObservableObject
     {
@@ -38,6 +38,28 @@ namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.ViewModels
             Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
             Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
             Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
+
 
             foreach (var d in Devices) HookItem(d);
             Devices.CollectionChanged += (_, e) =>

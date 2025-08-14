@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_.ViewModels
+namespace EGGPLANT.ViewModels
 {
     public partial class UInitializeViewModel: ObservableObject
     {

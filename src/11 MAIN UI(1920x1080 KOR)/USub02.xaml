@@ -99,10 +99,10 @@
                                             Padding="6,2"
                                             Margin="8,0,0,0"
                                             Background="#22008000"
-                                            BorderBrush="#008000"
+                                            BorderBrush="#19E225"
                                             BorderThickness="1"
                                             Visibility="{Binding IsInUse, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <TextBlock Text="사용중" FontSize="16" Foreground="#008000"/>
+                                        <TextBlock Text="사용중" FontSize="16" Foreground="#19E225"/>
                                     </Border>
 
                                     <TextBlock Text="{Binding Name}"
@@ -123,7 +123,7 @@
                   SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
-                  FontSize="15"
+                  FontSize="20"
                   HeadersVisibility="Column"
                   RowHeaderWidth="0"
                   Margin="0,8,0,0">
@@ -131,6 +131,7 @@
                 <!-- 이름 -->
                 <DataGridTextColumn Header="Name"
                                     Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                    IsReadOnly="True"
                                     Width="2*"/>
 
                 <!-- 값(우측 정렬) -->
@@ -150,7 +151,7 @@
                 </DataGridTextColumn>
 
                 <!-- 단위: 보기엔 텍스트, 편집 시 콤보박스 -->
-                <DataGridTemplateColumn Header="Unit" Width="*">
+                <DataGridTemplateColumn Header="Unit" Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Unit}" />
