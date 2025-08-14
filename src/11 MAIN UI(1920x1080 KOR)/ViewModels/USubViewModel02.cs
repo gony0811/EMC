@@ -35,7 +35,7 @@ namespace EGGPLANT.ViewModels
             Devices.Add(new DeviceItem { Index = 2, Name = "Camera #2", IsInUse = false});
 
             // 샘플데이터 파라미터 아이템
-            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });
+            Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms", MaximumValue="10000", MinimumValue="100"});
             Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
             Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
             Items.Add(new ParameterModel { Name = "STAGE MOVE 안정화 시간", Value = "152.4", Unit = "ms" });

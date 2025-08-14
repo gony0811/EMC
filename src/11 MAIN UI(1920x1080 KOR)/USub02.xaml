@@ -118,26 +118,25 @@
         </Grid>
         
         <!-- Parameter 화면 -->
-        <DataGrid Grid.Column="1"
-                  ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  FontSize="20"
-                  HeadersVisibility="Column"
-                  RowHeaderWidth="0"
-                  Margin="0,8,0,0">
+        <DataGrid x:Name="ParamGrid"
+          Grid.Column="1"
+          ItemsSource="{Binding Items}"
+          SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          HeadersVisibility="Column"
+          RowHeaderWidth="0"
+          Margin="0,8,0,0"
+          BeginningEdit="ParamGrid_BeginningEdit">
             <DataGrid.Columns>
-                <!-- 이름 -->
                 <DataGridTextColumn Header="Name"
-                                    Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                                    IsReadOnly="True"
-                                    Width="2*"/>
-
-                <!-- 값(우측 정렬) -->
+                            Binding="{Binding Name}"
+                            IsReadOnly="True"
+                            Width="2*"/>
+                <!-- ↓ Value 컬럼(편집 가능) -->
                 <DataGridTextColumn Header="Value"
-                                    Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="*">
+                            Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                            Width="*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="TextAlignment" Value="Right"/>
@@ -150,21 +149,12 @@
                     </DataGridTextColumn.EditingElementStyle>
                 </DataGridTextColumn>
 
-                <!-- 단위: 보기엔 텍스트, 편집 시 콤보박스 -->
                 <DataGridTemplateColumn Header="Unit" Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Unit}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <ComboBox ItemsSource="{Binding DataContext.Units,
-                                                            RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                      SelectedItem="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      IsEditable="True" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
