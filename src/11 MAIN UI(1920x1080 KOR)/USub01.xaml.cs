@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace EGGPLANT
 {
@@ -16,6 +18,40 @@ namespace EGGPLANT
         private void Init()
         {
             this.tbCurrentDevice.Content = "TEST DEVICE";
+
+            // 시작 시 TAB1을 기본 선택하고 컨텐츠 로드
+            Loaded += (_, __) =>
+            {
+                var first = TabPanel.Children.OfType<ToggleButton>()
+                                             .FirstOrDefault(tb => (tb.Tag as string) == "Tab1");
+                if (first != null) first.IsChecked = true;
+            };
+        }
+
+        private void Tab_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is not ToggleButton tb) return;
+
+            // 1) 다른 토글 버튼은 해제 (라디오버튼처럼 동작)
+            foreach (var other in TabPanel.Children.OfType<ToggleButton>())
+                if (!ReferenceEquals(other, tb)) other.IsChecked = false;
+
+            // 2) 태그에 따라 해당 UserControl 로드
+            switch (tb.Tag as string)
+            {
+                case "Tab1":
+                    ContentFrame.Content = new EGGPLANT.Usub01n01();
+                    break;
+                case "Tab2":
+                    //ContentFrame.Content = new EGGPLANT.Views.Tab2View();
+                    break;
+                case "Tab3":
+                    //ContentFrame.Content = new EGGPLANT.Views.Tab3View();
+                    break;
+                case "Tab4":
+                    //ContentFrame.Content = new EGGPLANT.Views.Tab4View();
+                    break;
+            }
         }
     }
 }

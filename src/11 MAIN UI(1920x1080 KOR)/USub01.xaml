@@ -43,7 +43,8 @@
                        VerticalAlignment="Center" 
                        Margin="1"/>
         </Grid>
-
+        
+        <!-- Tab Panel-->
         <Grid Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -51,29 +52,48 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Frame x:Name="ContentFrame" Grid.Column="0" NavigationUIVisibility="Hidden"/>
+                <!-- 콘텐츠 영역 -->
+                <Frame x:Name="ContentFrame"
+           Grid.Column="0"
+           NavigationUIVisibility="Hidden"/>
 
-                <StackPanel Grid.Column="1" Orientation="Vertical">
-                    <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" Width="150" Height="150" Margin="0 1 0 1">
+                <!-- 탭 패널 -->
+                <StackPanel x:Name="TabPanel" Grid.Column="1" Orientation="Vertical">
+                    <ToggleButton Tag="Tab1"
+                    Checked="Tab_Checked"
+                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                    Width="150" Height="150" Margin="0 1 0 1">
                         <StackPanel>
                             <TextBlock Text="TAB1" FontSize="24" TextAlignment="Center"/>
                             <TextBlock Text="(MAIN)" FontSize="24" TextAlignment="Center"/>
                         </StackPanel>
                     </ToggleButton>
-                    <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" Width="150" Height="150" Margin="0 1 0 1">
+
+                    <ToggleButton Tag="Tab2"
+                    Checked="Tab_Checked"
+                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                    Width="150" Height="150" Margin="0 1 0 1">
                         <StackPanel>
                             <TextBlock Text="TAB2" FontSize="24" TextAlignment="Center"/>
                             <TextBlock Text="(LDS)" FontSize="24" TextAlignment="Center"/>
                         </StackPanel>
                     </ToggleButton>
-                    <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" Width="150" Height="150" Margin="0 1 0 1">
+
+                    <ToggleButton Tag="Tab3"
+                    Checked="Tab_Checked"
+                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                    Width="150" Height="150" Margin="0 1 0 1">
                         <StackPanel>
                             <TextBlock Text="TAB3" FontSize="24" TextAlignment="Center"/>
                             <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
                             <TextBlock Text="2X" FontSize="24" TextAlignment="Center"/>
                         </StackPanel>
                     </ToggleButton>
-                    <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" Width="150" Height="150" Margin="0 1 0 1">
+
+                    <ToggleButton Tag="Tab4"
+                    Checked="Tab_Checked"
+                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                    Width="150" Height="150" Margin="0 1 0 1">
                         <StackPanel>
                             <TextBlock Text="TAB4" FontSize="24" TextAlignment="Center"/>
                             <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
@@ -83,6 +103,7 @@
                 </StackPanel>
             </Grid>
         </Grid>
+
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
