@@ -12,6 +12,7 @@ namespace EGGPLANT
         public USub01()
         {
             InitializeComponent();
+            DataContext = CSYS.FSub01ViewModel; // ViewModel 연결
             Init();
         }
 

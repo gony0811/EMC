@@ -1,4 +1,4 @@
-﻿using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
+﻿using EGGPLANT;
 
 using System.Windows;
 using Application = System.Windows.Application;

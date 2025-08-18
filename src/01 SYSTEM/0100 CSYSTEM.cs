@@ -1,9 +1,9 @@
-﻿using System;
+﻿using EGGPLANT.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 #pragma warning disable CS8625 // null 가능 참조에 대한 역참조입니다.
 
 namespace EGGPLANT
@@ -50,8 +50,13 @@ namespace EGGPLANT
         static public UDevHistory FDevHistory = new UDevHistory();
         static public UMain FMain = null;
         static public USub01 FSub01 = new USub01();
+        static public USub01ViewModel FSub01ViewModel = new USub01ViewModel();
         static public USub02 USub02 = new USub02();
         static public Usub05 Usub05 = new Usub05();
+
+
+        static public CTrace DeviceLogTrace = null;
+        static public CTrace Trace = null;
 
         static public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
         static public void GoToSub02() => FMain.MainFrame.Navigate(USub02);

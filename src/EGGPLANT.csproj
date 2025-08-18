@@ -9,6 +9,7 @@
     <UseWindowsForms>True</UseWindowsForms>
     <RootNamespace>EGGPLANT</RootNamespace>
     <BaseOutputPath>..\run</BaseOutputPath>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

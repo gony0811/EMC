@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Xml;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Interop;
+using System.Xml;
 using Control = System.Windows.Controls.Control;
 
 #pragma warning disable CS8601 // null 가능 참조에 대한 역참조입니다.
@@ -490,21 +491,11 @@ namespace EGGPLANT
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static public extern bool SetForegroundWindow(IntPtr hWnd);
 
-        static public void PostMessage(Form AForm, uint Msg, int wParam, int lParam)
+        static public void PostMessage(Window AWindow, uint Msg, int wParam, int lParam)
         {
-            if (AForm == null) return;
-
-            if (AForm.InvokeRequired)
-            {
-                AForm.BeginInvoke((MethodInvoker)delegate
-                {
-                    CMESSAGE.PostMessage(AForm.Handle, Msg, wParam, lParam);
-                });
-            }
-            else
-            {
-                CMESSAGE.PostMessage(AForm.Handle, Msg, wParam, lParam);
-            }
+            if (AWindow == null) return;
+            IntPtr hwnd = new WindowInteropHelper(AWindow).Handle;
+            CMESSAGE.PostMessage(hwnd, Msg, wParam, lParam);
         }
 
         public const int WM_USER = 0x400;
@@ -606,13 +597,13 @@ namespace EGGPLANT
 
         public static bool IsAdministrator()
         {
-            System.Security.Principal.WindowsIdentity identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            //System.Security.Principal.WindowsIdentity identity = System.Security.Principal.WindowsIdentity.GetCurrent();
 
-            if (identity != null)
-            {
-                System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(identity);
-                return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-            }
+            //if (identity != null)
+            //{
+            //    System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(identity);
+            //    return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+            //}
             return false;
         }
 
@@ -624,7 +615,7 @@ namespace EGGPLANT
                 {
                     ProcessStartInfo procInfo = new ProcessStartInfo();
                     procInfo.UseShellExecute = true;
-                    procInfo.FileName = Application.ExecutablePath;
+                    procInfo.FileName = AppDomain.CurrentDomain.BaseDirectory;
                     procInfo.WorkingDirectory = Environment.CurrentDirectory;
                     procInfo.Verb = "runas";
                     Process.Start(procInfo);
@@ -647,7 +638,7 @@ namespace EGGPLANT
     #region 프로그램 오류로 인한 로그 저장(디버깅 용)
     static public class MIDebug
     {
-        static public string Directory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\";
+        static public string Directory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"\\");
         static public System.Diagnostics.TextWriterTraceListener TextWriter = null;
 
         static public void Write(string AMessage)

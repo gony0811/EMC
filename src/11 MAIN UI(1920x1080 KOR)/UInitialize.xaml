@@ -1,4 +1,4 @@
-﻿<Window x:Class="EGGPLANT._11_MAIN_UI_1920x1080_KOR_.UInitialize"
+﻿<Window x:Class="EGGPLANT.UInitialize"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterScreen"

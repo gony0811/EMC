@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_
+namespace EGGPLANT
 {
     
     public partial class UInitialize : Window
@@ -62,9 +62,23 @@ namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_
                 // STEP 4 - 데이터 구조체 클래스를 생성
                 new Step("데이터 구조체 클래스를 생성 중입니다.", async ct =>
                 {
-                    await Task.Delay(150, ct);
+                    await Task.Delay(150, ct );
                     await Task.CompletedTask;
                 }),
+
+                new Step("TRACE 클래스를 생성 중입니다.", async ct =>
+                {
+                    await Task.Run(() =>{
+                        EGGPLANT.CSYS.Trace = new CTrace("TRACE", "TRACE\\", 30, 5);
+                        CSYS.Trace.SetTextBox(CSYS.FSub01ViewModel.TraceLog, 100);
+                        CSYS.Trace.Trace("TRACE 클래스가 생성되었습니다.");
+                    });
+
+                    //
+                    await Task.Delay(100, ct );
+                    await Task.CompletedTask;
+                }),
+
                 // STEP 5  - HoPe TRACE 클래스를 생성
                 new Step("MOTION 클래스를 생성 중입니다.", async ct =>
                 {
