@@ -1,7 +1,6 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
+
 using System.Windows;
-using System.Windows.Controls;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -16,8 +15,8 @@ namespace EGGPLANT
         // This is used for mutex to ensure only one instance of the application runs
         static public string Project = "EGGPLANT";
         protected override void OnStartup(StartupEventArgs e)
-        
         {
+            this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             base.OnStartup(e);
             // Initialize the main window
             var Mutex = new System.Threading.Mutex(false, Project);
@@ -29,11 +28,21 @@ namespace EGGPLANT
                 Application.Current.Shutdown();
                 return;
             }
+            var initWindow = new UInitialize();
+            bool? result = initWindow.ShowDialog();
 
-            UMain mainWindow = new UMain();
-            mainWindow.Show();
+            if (result == true)
+            {
+                UMain mainWindow = new UMain();
+                mainWindow.Show();
+                this.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                Mutex.ReleaseMutex();
+            }
+            else
+            {
+                Shutdown();
+            }
 
-            Mutex.ReleaseMutex();
         }
     }
 
