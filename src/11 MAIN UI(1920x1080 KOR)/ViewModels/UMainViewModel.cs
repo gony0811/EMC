@@ -137,6 +137,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "ERROR":
+                    CSYS.GoToSub05();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;

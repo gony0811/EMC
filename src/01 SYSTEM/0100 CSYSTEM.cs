@@ -50,8 +50,10 @@ namespace EGGPLANT
         static public UMain FMain = null;
         static public USub01 FSub01 = new USub01();
         static public USub02 USub02 = new USub02();
+        static public Usub05 Usub05 = new Usub05();
 
         static public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
         static public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
+        static public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
     }
 }
