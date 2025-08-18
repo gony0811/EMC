@@ -1,4 +1,5 @@
-﻿using EGGPLANT;
+﻿using Autofac;
+using EGGPLANT;
 
 using System.Windows;
 using Application = System.Windows.Application;
@@ -14,6 +15,9 @@ namespace EGGPLANT
         // Define a project name constant
         // This is used for mutex to ensure only one instance of the application runs
         static public string Project = "EGGPLANT";
+        private static IContainer container = CStartUp.Build();
+
+        static public IContainer Container { get => container; private set => container = value; }
         protected override void OnStartup(StartupEventArgs e)
         {
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -28,12 +32,15 @@ namespace EGGPLANT
                 Application.Current.Shutdown();
                 return;
             }
-            var initWindow = new UInitialize();
+            
+
+            var initWindow = Container.Resolve<UInitialize>();
             bool? result = initWindow.ShowDialog();
 
             if (result == true)
             {
-                UMain mainWindow = new UMain();
+                UMain mainWindow = Container.Resolve<UMain>();
+                mainWindow.DataContext = Container.Resolve<UMainViewModel>();
                 mainWindow.Show();
                 this.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 Mutex.ReleaseMutex();

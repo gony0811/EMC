@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Autofac;
 using MahApps.Metro.Controls;
 
 namespace EGGPLANT
@@ -20,14 +21,11 @@ namespace EGGPLANT
         public UMain()
         {
             InitializeComponent();     
-            CSYS.Initialize(AppDomain.CurrentDomain.BaseDirectory, this);
             Init();
         }
 
         private void Init()
         {
-            DataContext = new UMainViewModel();
-
             this.tbThread.Text = "1ms";
             this.tbTime.Text = "오전 00:00:00";
             this.tbUser.Text = "SERVICE ENGINEER";

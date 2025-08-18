@@ -132,7 +132,7 @@
                              Height="150" Margin="1">
                     <FlowDocument>
                         <Paragraph>
-                            <Run Text="로그 내용이 여기에 표시됩니다."/>
+                            <Run Text="{Binding LogMessages}"/>
                         </Paragraph>
                     </FlowDocument>
                 </RichTextBox>

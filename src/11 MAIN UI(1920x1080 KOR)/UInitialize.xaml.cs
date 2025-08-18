@@ -1,4 +1,5 @@
-﻿using EGGPLANT.Models;
+﻿using Autofac;
+using EGGPLANT.Models;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -63,19 +64,6 @@ namespace EGGPLANT
                 new Step("데이터 구조체 클래스를 생성 중입니다.", async ct =>
                 {
                     await Task.Delay(150, ct );
-                    await Task.CompletedTask;
-                }),
-
-                new Step("TRACE 클래스를 생성 중입니다.", async ct =>
-                {
-                    await Task.Run(() =>{
-                        EGGPLANT.CSYS.Trace = new CTrace("TRACE", "TRACE\\", 30, 5);
-                        CSYS.Trace.SetTextBox(CSYS.FSub01ViewModel.TraceLog, 100);
-                        CSYS.Trace.Trace("TRACE 클래스가 생성되었습니다.");
-                    });
-
-                    //
-                    await Task.Delay(100, ct );
                     await Task.CompletedTask;
                 }),
 

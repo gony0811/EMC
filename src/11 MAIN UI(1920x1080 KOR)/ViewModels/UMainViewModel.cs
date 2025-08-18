@@ -1,8 +1,10 @@
 ﻿
+using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +53,14 @@ namespace EGGPLANT
         private bool? isDirectIOChecked;
         [ObservableProperty]
         private bool? isTowerLampChecked;
+        [ObservableProperty]
+        private ObservableCollection<string> logMessages = new ObservableCollection<string>();
+
+
+        // public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>();
+
+        // 수정 코드
+        public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>() ?? throw new InvalidOperationException("CSYS 인스턴스를 생성할 수 없습니다. App.Container가 null이거나 등록되지 않았습니다.");
 
 
         public UMainViewModel()
@@ -81,6 +91,9 @@ namespace EGGPLANT
             IsTowerLampChecked = false;
             // Navigate to the initial page
             CSYS.GoToSub01();
+            CSYS.Trace.SetTextBox(LogMessages, 100);
+            CSYS.Trace.Trace("UMainViewModel", "UMainViewModel initialized successfully.");
+
         }
 
 

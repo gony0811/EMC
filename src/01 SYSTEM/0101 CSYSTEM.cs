@@ -16,7 +16,7 @@ using Control = System.Windows.Controls.Control;
 #pragma warning disable CS8625 // null 가능 참조에 대한 역참조입니다.
 namespace EGGPLANT
 {
-    static partial class CSYS
+    public partial class CSYS
     {
     }
     /****************************************************************************/

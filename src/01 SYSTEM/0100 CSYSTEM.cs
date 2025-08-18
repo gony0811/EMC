@@ -1,4 +1,6 @@
-﻿using EGGPLANT.ViewModels;
+﻿using Autofac;
+using Autofac.Core;
+using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EGGPLANT
 {
-    static partial class CSYS
+    public partial class CSYS
     {
         #region Assembly Version
         /// <summary>
@@ -16,7 +18,7 @@ namespace EGGPLANT
         ///   단, AssemblyInfo.cs 파일에서 AssemblyVersion는 다음 형식으로 되어있어야만한다.
         ///   [assembly: AssemblyVersion("1.0.*")]
         /// </summary>        /// <returns        
-        static public string GetBuildVersion()
+        public static string GetBuildVersion()
         {
             var executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
             var version = executingAssembly?.GetName().Version;
@@ -32,34 +34,36 @@ namespace EGGPLANT
         }
         #endregion
 
-        static private string FDirectory = "";
+        private string FDirectory = "";
 
-        static public string Directory { get { return FDirectory; } }
+        public string Directory { get { return FDirectory; } }
 
-        static public void Initialize(string appPath, UMain AMain)
+        public void Initialize(string appPath)
         {
             FDirectory = appPath;
-            FMain = AMain;
         }
 
-        static public void Show()
+        public void Show()
         {
 
         }
 
-        static public UDevHistory FDevHistory = new UDevHistory();
-        static public UMain FMain = null;
-        static public USub01 FSub01 = new USub01();
-        static public USub01ViewModel FSub01ViewModel = new USub01ViewModel();
-        static public USub02 USub02 = new USub02();
-        static public Usub05 Usub05 = new Usub05();
+        public UDevHistory FDevHistory = App.Container.Resolve<UDevHistory>();
+        public UMain FMain = App.Container.Resolve<UMain>();
+        public USub01 FSub01 = App.Container.Resolve<USub01>();
+        public USub01ViewModel FSub01ViewModel = App.Container.Resolve<USub01ViewModel>();
+        public USub02 USub02 = App.Container.Resolve<USub02>();
+        public Usub05 Usub05 = App.Container.Resolve<Usub05>();
 
 
-        static public CTrace DeviceLogTrace = null;
-        static public CTrace Trace = null;
+        public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
+        public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
 
-        static public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
-        static public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
-        static public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
+        public void GoToSub01()
+        {
+            FMain.Dispatcher.Invoke(() => FMain.MainFrame.Navigate(FSub01));
+        }
+        public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
+        public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
     }
 }
