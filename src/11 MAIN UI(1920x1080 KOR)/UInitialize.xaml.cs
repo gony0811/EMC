@@ -1,19 +1,6 @@
 ﻿using EGGPLANT.Models;
 using EGGPLANT.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
 namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_
 {
     
@@ -39,7 +26,6 @@ namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_
                 // STEP 1 - LOG IN / LANGUAGE 초기화
                 new Step("LOG IN / LANGUAGE 초기화", async ct =>
                 {
-
                     await Task.CompletedTask;
                 }),
 

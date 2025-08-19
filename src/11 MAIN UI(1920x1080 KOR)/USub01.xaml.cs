@@ -43,13 +43,13 @@ namespace EGGPLANT
                     ContentFrame.Content = new EGGPLANT.Usub01n01();
                     break;
                 case "Tab2":
-                    //ContentFrame.Content = new EGGPLANT.Views.Tab2View();
+                    ContentFrame.Content = new EGGPLANT.Usub01n02();
                     break;
                 case "Tab3":
-                    //ContentFrame.Content = new EGGPLANT.Views.Tab3View();
+                    ContentFrame.Content = new EGGPLANT.Usub01n03();
                     break;
                 case "Tab4":
-                    //ContentFrame.Content = new EGGPLANT.Views.Tab4View();
+                    ContentFrame.Content = new EGGPLANT.Usub01n04();
                     break;
             }
         }
