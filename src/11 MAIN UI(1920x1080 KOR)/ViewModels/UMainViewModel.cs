@@ -73,7 +73,8 @@ namespace EGGPLANT
             BuildText = "Build 0000.00.00";
             DeveloperText = "Developed by EGGPLANT";
             SerialNumberText = "SN : EGGPLANT Copyright(c) EGGPLANT Corp. All rights reserved.";
-
+            
+            CSYS.Initialize(AppDomain.CurrentDomain.BaseDirectory);
             Init();
         }
 
@@ -91,8 +92,7 @@ namespace EGGPLANT
             IsTowerLampChecked = false;
             // Navigate to the initial page
             CSYS.GoToSub01();
-            CSYS.Trace.SetTextBox(LogMessages, 100);
-            CSYS.Trace.Trace("UMainViewModel", "UMainViewModel initialized successfully.");
+            CSYS.Trace.Trace("UMainViewModeL", "UMainViewModel initialized successfully.");
 
         }
 

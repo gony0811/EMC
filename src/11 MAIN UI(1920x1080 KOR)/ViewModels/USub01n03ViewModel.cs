@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel01n04 :ObservableObject
+    public partial class USub01n03ViewModel :ObservableObject
     {
         [ObservableProperty]
         private ObservableCollection<MotorAxisViewModel> motorState = new ObservableCollection<MotorAxisViewModel>();
-        public USubViewModel01n04()
+        public USub01n03ViewModel()
         {
             MotorState.Add(new MotorAxisViewModel("X"));
             MotorState.Add(new MotorAxisViewModel("Y"));

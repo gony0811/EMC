@@ -41,6 +41,12 @@ namespace EGGPLANT
         public void Initialize(string appPath)
         {
             FDirectory = appPath;
+            FSub01.DataContext = FSub01ViewModel;
+            FSub01n01.DataContext = FSub01n01ViewModel;
+            FSub01n02.DataContext = FSub01n02ViewModel;
+            FSub01n03.DataContext = FSub01n03ViewModel;
+            FSub01n04.DataContext = FSub01n04ViewModel;
+            FSub02.DataContext = FSub02ViewModel;
         }
 
         public void Show()
@@ -52,18 +58,24 @@ namespace EGGPLANT
         public UMain FMain = App.Container.Resolve<UMain>();
         public USub01 FSub01 = App.Container.Resolve<USub01>();
         public USub01ViewModel FSub01ViewModel = App.Container.Resolve<USub01ViewModel>();
-        public USub02 USub02 = App.Container.Resolve<USub02>();
-        public Usub05 Usub05 = App.Container.Resolve<Usub05>();
+        public USub01n01 FSub01n01 = App.Container.Resolve<USub01n01>();
+        public USub01n01ViewModel FSub01n01ViewModel = App.Container.Resolve<USub01n01ViewModel>();
+        public USub01n02 FSub01n02 = App.Container.Resolve<USub01n02>();
+        public USub01n02ViewModel FSub01n02ViewModel = App.Container.Resolve<USub01n02ViewModel>();
+        public USub01n03 FSub01n03 = App.Container.Resolve<USub01n03>();
+        public USub01n03ViewModel FSub01n03ViewModel = App.Container.Resolve<USub01n03ViewModel>();
+        public USub01n04 FSub01n04 = App.Container.Resolve<USub01n04>();
+        public USub01n04ViewModel FSub01n04ViewModel = App.Container.Resolve<USub01n04ViewModel>();
+        public USub02ViewModel FSub02ViewModel = App.Container.Resolve<USub02ViewModel>();
+        public USub02 FSub02 = App.Container.Resolve<USub02>();
+        public USub05 FSub05 = App.Container.Resolve<USub05>();
 
 
         public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
         public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
 
-        public void GoToSub01()
-        {
-            FMain.Dispatcher.Invoke(() => FMain.MainFrame.Navigate(FSub01));
-        }
-        public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
-        public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
+        public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
+        public void GoToSub02() => FMain.MainFrame.Navigate(FSub02);
+        public void GoToSub05() => FMain.MainFrame.Navigate(FSub05);
     }
 }

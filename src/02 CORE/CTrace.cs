@@ -16,15 +16,15 @@ namespace EGGPLANT
     {
         private int FMemoLines = 100;
         private DispatcherTimer FTimer;
-        private List<string> FTextBoxStrings = null;
+        private List<string> FTextBoxStrings = new List<string>();
         private ObservableCollection<string> FTextBox;
         protected string FClassName;
         protected string FTraceWriteDirectory;
         protected bool FDisposed = false;
         private bool FIsWriting = false;
-        private List<string> FStrList = null;
+        private List<string> FStrList;
         private UInt32 FMaxTraceBufferCount = 0;
-        private CTraceBuffer[] FTraceBuffer = null;
+        private CTraceBuffer[] FTraceBuffer;
 
         public UInt32 MaxTraceBufferCount { get { return FMaxTraceBufferCount; } }
         public string ClassName { get { return FClassName; } }
@@ -129,11 +129,18 @@ namespace EGGPLANT
                 }
             }
         }
+
+
+        /// <summary>
+        /// GetDisplayString
+        /// AString의 길이가 24자 이상일 경우, 10번째, 24번째, 36번째에 공백을 삽입하여 가독성을 높임(?)
+        /// </summary>
+        /// <param name="AString"></param>
+        /// <returns></returns>
         private string GetDisplayString(string AString)
         {
             if (AString.Length < 24) return AString;
-            if (AString[10] != '\t') return AString;
-            if (AString[23] != '\t') return AString;
+
 
             string fstring = AString.Remove(10, 1).Insert(10, "  ");
             string sstring = fstring.Remove(24, 1).Insert(24, "  ");
@@ -153,25 +160,10 @@ namespace EGGPLANT
             {
                 int cnt, idx;
                 string[] lines;
-                if (FTextBox != null)
-                {
-                    lines = File.ReadAllLines(file, System.Text.Encoding.Default);
-
-                    cnt = lines.Length;
-                    idx = lines.Length - FMemoLines;
-
-                    if (idx < 0) idx = 0;
-                    FTextBox.Clear();
-                    for (int i = idx; i < cnt; i++)
-                    {
-                        FTextBox.Insert(0, GetDisplayString(lines[i]));
-                    }
-                }
 
                 if (FTextBox != null)
                 {
                     lines = File.ReadAllLines(file, System.Text.Encoding.Default);
-                    if (FTextBoxStrings == null) FTextBoxStrings = new List<string>();
                     FTextBoxStrings.Clear();
 
                     cnt = lines.Length;
@@ -182,7 +174,7 @@ namespace EGGPLANT
 
                     foreach (string str in FTextBoxStrings)
                     {
-                        FTextBox.Add(GetDisplayString(str) + "\r\n");
+                        FTextBox.Add(str + "\r\n");
                     }
                 }
             }
@@ -216,7 +208,7 @@ namespace EGGPLANT
                 {
                     if (FTraceBuffer[i].IsBuffering) continue;
 
-                    string message;
+                    string? message;
                     while (FTraceBuffer[i].StrList.TryDequeue(out message))   // Concurrent Queue에서 데이터를 데이터를 빼온다.
                     {
                         FStrList.Add(message);                                 // 리스트에 데이터를 추가한다.
@@ -229,28 +221,13 @@ namespace EGGPLANT
                     foreach (string str in FStrList) sb.Append((str + "\r\n"));
 
                     SaveHistory(sb);
-                    if (FTextBox != null)
-                    {
-                        foreach (string str in FStrList)
-                        {
-                            FTextBox.Insert(0, GetDisplayString(str));
-                            if (FMemoLines > 0)
-                            {
-                                if (FTextBox.Count > FMemoLines)
-                                {
-                                    int cnt = FTextBox.Count - 1000;
-                                    for (int i = 0; i < cnt; i++) FTextBox.RemoveAt(FTextBox.Count - 1);
-                                }
-                            }
-                        }
-                    }
 
                     if (FTextBox != null)
                     {
-                        if (FTextBoxStrings == null) FTextBoxStrings = new List<string>();
                         foreach (string str in FStrList)
                         {
                             FTextBoxStrings.Insert(0, str);
+                            FTextBox.Insert(0, str + "\r\n");
                             if (FMemoLines > 0)
                             {
                                 if (FTextBoxStrings.Count > FMemoLines)
@@ -261,10 +238,10 @@ namespace EGGPLANT
                             }
                         }
 
-                        string text = "";
+                        //string text = "";
 
-                        foreach (string str in FTextBoxStrings) text += GetDisplayString(str) + "\r\n";
-                        FTextBox.Add(text);
+                        //foreach (string str in FTextBoxStrings) text += (GetDisplayString(str) + "\r\n");
+                        //FTextBox.Add(text);
                     }
                     FStrList.Clear();
                 }
@@ -307,7 +284,7 @@ namespace EGGPLANT
         }
         public void Trace(string ATitle, string AString, UInt32 ABufferIndex = 0)
         {
-            Trace(string.Format("[{0,8}]\t", ATitle) + AString, ABufferIndex);
+            Trace(string.Format("[{0}]\t", ATitle) + AString, ABufferIndex);
         }
     }
 }

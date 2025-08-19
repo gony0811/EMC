@@ -12,19 +12,28 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;8618;8625;8600;8612</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;8618;8625;8600;8612</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="DevExpress.Mvvm.CodeGenerators" Version="22.1.1" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="11 MAIN UI(1920x1080 KOR)\Usub01n04.xaml.cs">
+    <Compile Update="11 MAIN UI(1920x1080 KOR)\USub01n04.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="11 MAIN UI(1920x1080 KOR)\Usub01n03.xaml.cs">
+    <Compile Update="11 MAIN UI(1920x1080 KOR)\USub01n03.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
