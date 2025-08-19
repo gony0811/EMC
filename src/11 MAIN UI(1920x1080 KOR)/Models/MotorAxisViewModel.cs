@@ -16,7 +16,17 @@ namespace EGGPLANT.Models
         public MotorAxisViewModel(string axis)
         {
             Axis = axis;
-            ToggleServoCommand = new RelayCommand<bool>(OnToggleServo);
+            ToggleServoCommand = new RelayCommand<bool>(param =>
+            {
+                var on = param == true;
+                if (on)
+                {
+                    ServoOn();
+                }else
+                {
+                    ServoOff();
+                }
+            });
             HomeCommand = new RelayCommand(() => {  });
         }
 

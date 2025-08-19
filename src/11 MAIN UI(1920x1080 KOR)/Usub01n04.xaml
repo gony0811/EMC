@@ -52,5 +52,10 @@
         <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
             <uc:MoterStateControl></uc:MoterStateControl>
         </Border>
+
+        <!-- 수동 조작 -->
+        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+            <uc:ManualOperation></uc:ManualOperation>
+        </Border>
     </Grid>
 </UserControl>
