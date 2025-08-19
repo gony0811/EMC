@@ -91,13 +91,13 @@
                     <Label Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">X</Label>
 
                     <Slider Grid.Row="1"
-                x:Name="sliderX"
-                Orientation="Vertical"
-                Minimum="1" Maximum="100"
-                TickPlacement="BottomRight" TickFrequency="1"
-                IsSnapToTickEnabled="True"
-                ValueChanged="ColorSlider_ValueChanged"
-                Margin="4"/>
+                        x:Name="sliderX"
+                        Orientation="Vertical"
+                        Minimum="1" Maximum="100"
+                        TickPlacement="BottomRight" TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        
+                        Margin="4"/>
 
                     <TextBox Grid.Row="2"
                  Width="50"
@@ -116,13 +116,12 @@
                     <Label Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">Y</Label>
 
                     <Slider Grid.Row="1"
-                x:Name="sliderY"
-                Orientation="Vertical"
-                Minimum="1" Maximum="100"
-                TickPlacement="BottomRight" TickFrequency="1"
-                IsSnapToTickEnabled="True"
-                ValueChanged="ColorSlider_ValueChanged"
-                Margin="4"/>
+                        x:Name="sliderY"
+                        Orientation="Vertical"
+                        Minimum="1" Maximum="100"
+                        TickPlacement="BottomRight" TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Margin="4"/>
 
                     <TextBox Grid.Row="2"
                  Width="50"
@@ -141,13 +140,12 @@
                     <Label Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">Z</Label>
 
                     <Slider Grid.Row="1"
-                x:Name="sliderZ"
-                Orientation="Vertical"
-                Minimum="1" Maximum="100"
-                TickPlacement="BottomRight" TickFrequency="1"
-                IsSnapToTickEnabled="True"
-                ValueChanged="ColorSlider_ValueChanged"
-                Margin="4"/>
+                        x:Name="sliderZ"
+                        Orientation="Vertical"
+                        Minimum="1" Maximum="100"
+                        TickPlacement="BottomRight" TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Margin="4"/>
 
                     <TextBox Grid.Row="2"
                  Width="50"

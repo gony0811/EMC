@@ -53,6 +53,7 @@ namespace EGGPLANT
         public USub01 FSub01 = App.Container.Resolve<USub01>();
         public USub01ViewModel FSub01ViewModel = App.Container.Resolve<USub01ViewModel>();
         public USub02 USub02 = App.Container.Resolve<USub02>();
+        public USub04 USub04 = App.Container.Resolve<USub04>();
         public Usub05 Usub05 = App.Container.Resolve<Usub05>();
 
 
@@ -64,6 +65,7 @@ namespace EGGPLANT
             FMain.Dispatcher.Invoke(() => FMain.MainFrame.Navigate(FSub01));
         }
         public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
+        public void GoToSub04() => FMain.MainFrame.Navigate(USub04);
         public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
     }
 }

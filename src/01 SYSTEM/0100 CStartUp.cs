@@ -1,11 +1,5 @@
 ﻿using Autofac;
 using EGGPLANT.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EGGPLANT
 {
@@ -23,6 +17,7 @@ namespace EGGPLANT
             builder.RegisterType<USub01>().SingleInstance();
             builder.RegisterType<USub01ViewModel>().InstancePerDependency();
             builder.RegisterType<USub02>().SingleInstance();
+            builder.RegisterType<USub04>().SingleInstance();
             builder.RegisterType<Usub05>().SingleInstance();
             builder.RegisterInstance<CTrace>(new CTrace("DeviceLogTrace")).Keyed<CTrace>("DeviceLogTrace");
             builder.RegisterInstance<CTrace>(new CTrace("Trace")).Keyed<CTrace>("Trace");
