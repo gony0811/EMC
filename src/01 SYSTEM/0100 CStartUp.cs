@@ -35,6 +35,9 @@ namespace EGGPLANT
             builder.RegisterType<USub01n03ViewModel>().InstancePerDependency();
             builder.RegisterType<USub01n04ViewModel>().InstancePerDependency();
 
+            builder.RegisterType<UError>().SingleInstance();
+            builder.RegisterType<UErrorViewModel>().InstancePerDependency();
+
             builder.RegisterInstance<CTrace>(new CTrace("DeviceLogTrace")).Keyed<CTrace>("DeviceLogTrace");
             builder.RegisterInstance<CTrace>(new CTrace("Trace")).Keyed<CTrace>("Trace");
             builder.RegisterType<CProcessMap>().AsSelf().SingleInstance();

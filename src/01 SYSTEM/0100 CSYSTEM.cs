@@ -70,6 +70,7 @@ namespace EGGPLANT
         public USub02 FSub02 = App.Container.Resolve<USub02>();
         public USub05 FSub05 = App.Container.Resolve<USub05>();
 
+        public UError FError = App.Container.Resolve<UError>();
 
         public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
         public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");

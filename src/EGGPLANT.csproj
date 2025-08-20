@@ -38,4 +38,14 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="12 SUB UI\UError.xaml">
+      <CustomToolNamespace>EGGPLANT</CustomToolNamespace>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="12 SUB UI\ViewModels\" />
+  </ItemGroup>
+
 </Project>

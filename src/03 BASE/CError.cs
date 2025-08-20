@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Xml;
 
 namespace EGGPLANT
@@ -90,11 +93,15 @@ namespace EGGPLANT
             get { return "ERROR - Sean(V25.08.19.001)"; }
         }
 
+        private CSYS SYS = null;
+
         public CError(string AClassName)
         {
             FClassName = AClassName;
             FConfigDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\CONFIG\\";
             FSystemDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\LOG\\ERROR LOG\\";
+
+            SYS = App.Container.Resolve<CSYS>();
 
             if (!System.IO.Directory.Exists(FConfigDirectory)) System.IO.Directory.CreateDirectory(FConfigDirectory);
             if (!System.IO.Directory.Exists(FSystemDirectory)) System.IO.Directory.CreateDirectory(FSystemDirectory);
@@ -111,14 +118,14 @@ namespace EGGPLANT
             FBuzzer[8] = new CBuzzer(__DO_BUZZER_09__);
             FBuzzer[9] = new CBuzzer(__DO_BUZZER_10__);
 
-            FTimer = new System.Windows.Forms.Timer();
+            FTimer = new DispatcherTimer();
+            FTimer.Interval = TimeSpan.FromMilliseconds(50);
             FTimer.Tick += OnTimer;
-            FTimer.Interval = 50;
-            FTimer.Enabled = true;
 
-            FThread = new System.Threading.Thread(new System.Threading.ThreadStart(OnExecute));
+            FThread = Task.Run(()=> { OnExecute(); });
             FThread.Start();
         }
+
         ~CError()
         {
             Dispose(false);
@@ -135,8 +142,7 @@ namespace EGGPLANT
             if (FDisposed) return;
             if (ADisposing) { /* IDisposable 인터페이스를 구현하는 멤버들을 여기서 정리합니다. */}
 
-            if (FThread != null) FThread.Join();
-            FTimer.Enabled = false;
+            if (FThread != null) FThread.Dispose();
             FDisposed = true;
         }
         #endregion
@@ -149,7 +155,7 @@ namespace EGGPLANT
                 switch (AStyle)
                 {
                     case TASK_STYPE.NORMAL:
-                        EGGPLANT.FError.Execute(AMode, AWParam, ALParam);
+                        SYS.FError.Execute(AMode, AWParam, ALParam);
                         break;
                     case TASK_STYPE.EMEGENCY:
                         EGGPLANT.FEmergency.Execute(AWParam, ALParam);
@@ -260,7 +266,7 @@ namespace EGGPLANT
         public UInt32 KeepDate = 365;
         public System.DateTime ToDay = System.DateTime.Now;
 
-        private System.Threading.Thread FThread = null;
+        private Task FThread = null;
         private void OnExecute()
         {
             while (FThread != null)
@@ -268,7 +274,7 @@ namespace EGGPLANT
                 if ((DateTime.Now - ToDay).Days > 0) { DirectoryLineUp(); ToDay = DateTime.Now; }
                 OnExecuteTransaction();
 
-                System.Threading.Thread.Sleep(50);
+                Thread.Sleep(50);
             }
         }
 
@@ -432,8 +438,8 @@ namespace EGGPLANT
 
         #region Buzzer
         private int FBuzzerInterval = 0;
-        private System.Windows.Forms.Timer FTimer = null;
-        private void OnTimer(object sender, EventArgs e)
+        private DispatcherTimer FTimer = null;
+        private void OnTimer(object? sender, EventArgs e)
         {
             if (++FBuzzerInterval > 100)
             {
