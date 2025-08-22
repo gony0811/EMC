@@ -1,0 +1,13 @@
+﻿<Page x:Class="EGGPLANT.USub06"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EGGPLANT._11_MAIN_UI_1920x1080_KOR_"
+      mc:Ignorable="d"
+      Title="USub06">
+    <!-- 수동 조작 화면 -->
+    <Grid>
+        
+    </Grid>
+</Page>

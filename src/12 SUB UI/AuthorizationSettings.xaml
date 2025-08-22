@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="EGGPLANT._12_SUB_UI.AuthorizationSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:EGGPLANT._12_SUB_UI"
+             mc:Ignorable="d"
+             x:Name="root">
+    <UserControl.Resources>
+        <Style TargetType="UserControl">
+            <Setter Property="Margin" Value="1"/>
+        </Style>
+
+        <!-- Default label template: just show item's ToString() -->
+        <DataTemplate x:Key="AS_DefaultLabelTemplate">
+            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+        </DataTemplate>
+
+        <!-- Default button template: simple button without command (you can override) -->
+        <DataTemplate x:Key="AS_DefaultButtonTemplate">
+            <Button Content="설정" Padding="10,4"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border BorderBrush="Gray" BorderThickness="1">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title (top) -->
+            <TextBlock Grid.Row="0"
+                 Text="{Binding Title, ElementName=root}"
+                 FontSize="18"
+                 FontWeight="SemiBold"
+                 Margin="0,0,0,8"/>
+
+            <!-- Rows: left label + right button -->
+            <ItemsControl Grid.Row="1"
+                    x:Name="PART_List"
+                    ItemsSource="{Binding ItemsSource, ElementName=root}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.6*"/>
+                                <ColumnDefinition Width="0.4*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left: label -->
+                            <ContentPresenter Grid.Column="0"
+                                Content="{Binding}"
+                                ContentTemplate="{Binding LabelTemplate, RelativeSource={RelativeSource AncestorType=local:AuthorizationSettings}}"/>
+
+                            <!-- Right: button (align right) -->
+                            <ContentPresenter Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Content="{Binding}"
+                                ContentTemplate="{Binding ButtonTemplate, RelativeSource={RelativeSource AncestorType=local:AuthorizationSettings}}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </Border>
+</UserControl>

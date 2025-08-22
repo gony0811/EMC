@@ -128,6 +128,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "USER":
+                    CSYS.GoToSub03();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = true;
@@ -163,6 +164,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "MANUAL":
+                    
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;
@@ -174,6 +176,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "MOTION":
+                    CSYS.GoToSub07();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;
@@ -185,6 +188,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "SENSOR":
+                    CSYS.GoToSub08();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;

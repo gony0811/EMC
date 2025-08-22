@@ -91,18 +91,18 @@
                     <Label Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">X</Label>
 
                     <Slider Grid.Row="1"
-                        x:Name="sliderX"
-                        Orientation="Vertical"
-                        Minimum="1" Maximum="100"
-                        TickPlacement="BottomRight" TickFrequency="1"
-                        IsSnapToTickEnabled="True"
+                            x:Name="sliderX"
+                            Orientation="Vertical"
+                            Minimum="1" Maximum="100"
+                            TickPlacement="BottomRight" TickFrequency="1"
+                            IsSnapToTickEnabled="True"
                         
-                        Margin="4"/>
+                            Margin="4"/>
 
                     <TextBox Grid.Row="2"
-                 Width="50"
-                 TextAlignment="Right"
-                 Text="{Binding ElementName=sliderX, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                             Width="50"
+                             TextAlignment="Right"
+                             Text="{Binding ElementName=sliderX, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
 
                 <!-- Y -->

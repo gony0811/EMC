@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
+using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -53,8 +54,11 @@ namespace EGGPLANT
         public USub01 FSub01 = App.Container.Resolve<USub01>();
         public USub01ViewModel FSub01ViewModel = App.Container.Resolve<USub01ViewModel>();
         public USub02 USub02 = App.Container.Resolve<USub02>();
+        public USub03 USub03 = App.Container.Resolve<USub03>();
         public USub04 USub04 = App.Container.Resolve<USub04>();
         public Usub05 Usub05 = App.Container.Resolve<Usub05>();
+        public USub07 Usub07 = App.Container.Resolve<USub07>();
+        public USub08 Usub08 = App.Container.Resolve<USub08>();
 
 
         public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
@@ -65,7 +69,12 @@ namespace EGGPLANT
             FMain.Dispatcher.Invoke(() => FMain.MainFrame.Navigate(FSub01));
         }
         public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
+        public void GoToSub03() => FMain.MainFrame.Navigate(USub03);
         public void GoToSub04() => FMain.MainFrame.Navigate(USub04);
         public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
+        public void GoToSub07() => FMain.MainFrame.Navigate(Usub07);
+        public void GoToSub08() => FMain.MainFrame.Navigate(Usub08);
+
+
     }
 }
