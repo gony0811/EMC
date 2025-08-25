@@ -20,9 +20,11 @@ namespace EGGPLANT
             builder.RegisterType<USub02>().SingleInstance();
             builder.RegisterType<USub03>().SingleInstance();
             builder.RegisterType<USub04>().SingleInstance();
+            builder.RegisterType<USub06>().SingleInstance();
             builder.RegisterType<Usub05>().SingleInstance();
             builder.RegisterType<USub07>().SingleInstance();
             builder.RegisterType<USub08>().SingleInstance();
+            builder.RegisterType<USub09>().SingleInstance();
             builder.RegisterInstance<CTrace>(new CTrace("DeviceLogTrace")).Keyed<CTrace>("DeviceLogTrace");
             builder.RegisterInstance<CTrace>(new CTrace("Trace")).Keyed<CTrace>("Trace");
             builder.RegisterType<CProcessMap>().AsSelf().SingleInstance();

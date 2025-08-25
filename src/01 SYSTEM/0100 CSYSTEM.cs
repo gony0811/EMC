@@ -57,8 +57,10 @@ namespace EGGPLANT
         public USub03 USub03 = App.Container.Resolve<USub03>();
         public USub04 USub04 = App.Container.Resolve<USub04>();
         public Usub05 Usub05 = App.Container.Resolve<Usub05>();
+        public USub06 Usub06 = App.Container.Resolve<USub06>();
         public USub07 Usub07 = App.Container.Resolve<USub07>();
         public USub08 Usub08 = App.Container.Resolve<USub08>();
+        public USub09 Usub09 = App.Container.Resolve<USub09>();
 
 
         public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
@@ -72,8 +74,10 @@ namespace EGGPLANT
         public void GoToSub03() => FMain.MainFrame.Navigate(USub03);
         public void GoToSub04() => FMain.MainFrame.Navigate(USub04);
         public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
+        public void GoToSub06() => FMain.MainFrame.Navigate(Usub06);
         public void GoToSub07() => FMain.MainFrame.Navigate(Usub07);
         public void GoToSub08() => FMain.MainFrame.Navigate(Usub08);
+        public void GoToSub09() => FMain.MainFrame.Navigate(Usub09);
 
 
     }

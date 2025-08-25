@@ -164,7 +164,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "MANUAL":
-                    
+                    CSYS.GoToSub06();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;
@@ -200,6 +200,7 @@ namespace EGGPLANT
                     IsTowerLampChecked = false;
                     break;
                 case "TOWERLAMP":
+                    CSYS.GoToSub09();
                     IsMainChecked = false;
                     IsParamChecked = false;
                     IsUserChecked = false;

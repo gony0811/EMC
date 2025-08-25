@@ -36,12 +36,12 @@
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                       Margin="10" Width="250">
                 <StackPanel>
-                    <Button Content="1번 Y"  Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
-                    <Button Content="2번 X" Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
-                    <Button Content="3번 LOW X" Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
-                    <Button Content="3번 LOW X" Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
-                    <Button Content="4번 RESERVED" Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
-                    <Button Content="5번 Z" Height="40" FontWeight="DemiBold" Margin="4,0,4,10"></Button>
+                    <Button Content="1번 Y"  Height="40" Margin="4,0,4,10"></Button>
+                    <Button Content="2번 X" Height="40" Margin="4,0,4,10"></Button>
+                    <Button Content="3번 LOW X" Height="40" Margin="4,0,4,10"></Button>
+                    <Button Content="3번 LOW X" Height="40" Margin="4,0,4,10"></Button>
+                    <Button Content="4번 RESERVED" Height="40" Margin="4,0,4,10"></Button>
+                    <Button Content="5번 Z" Height="40" Margin="4,0,4,10"></Button>
                 </StackPanel>
             </GroupBox>
             <Border Grid.Column="1" Grid.Row="1">
