@@ -50,8 +50,17 @@
         
         <!-- 모터 상태 -->
         <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
-            <uc:MoterStateControl></uc:MoterStateControl>
-        </Border>
+            <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <uc:MoterStateControl x:Name="XMotorState" Grid.Column="0"></uc:MoterStateControl>
+                    <uc:MoterStateControl x:Name="YMotorState" Grid.Column="1"></uc:MoterStateControl>
+                    <uc:MoterStateControl x:Name="ZMotorState" Grid.Column="2"></uc:MoterStateControl>
+                </Grid>
+            </Border>
         
         <!-- 수동 조작 -->
         <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">

@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="EGGPLANT._12_SUB_UI.AxisWaypointSet"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="TextAlignment" Value="Center"></Setter>
+        </Style>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Content="APPLY" Command="{Binding ApplyCommand}"/>
+        <TextBlock Text="{Binding LocationName}" Grid.Column="1"/>
+        <TextBlock Text="{Binding Position}" Grid.Column="2"/>
+        <TextBlock Text="{Binding Speed}" Grid.Column="3"/>
+        <Button Content="MOVE" Command="{Binding MoveCommand}" Grid.Column="4"/>
+        
+    </Grid>
+</UserControl>

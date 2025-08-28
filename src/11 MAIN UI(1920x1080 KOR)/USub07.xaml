@@ -75,56 +75,7 @@
                         
                         <!-- 모터 상태 관리 -->
                         <GroupBox Style="{StaticResource TitledBox}" Header="모터 상태 관리" Grid.Row="0" Margin="10">
-                            <StackPanel>
-                                <Grid Grid.Row="0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition></RowDefinition>
-                                        <RowDefinition Height="10"></RowDefinition>
-                                        <RowDefinition></RowDefinition>
-                                        <RowDefinition Height="10"></RowDefinition>
-                                        <RowDefinition></RowDefinition>
-                                        <RowDefinition Height="10"></RowDefinition>
-                                        <RowDefinition></RowDefinition>
-                                    </Grid.RowDefinitions>
-                                    <uc:SensorStatusCell Grid.Column="0" Grid.Row="0" State="Unknown" StatusName="HOME" />
-                                    <uc:SensorStatusCell Grid.Column="1" Grid.Row="0" State="Unknown" StatusName="READY" />
-                                    <uc:SensorStatusCell Grid.Column="2" Grid.Row="0" State="Normal" StatusName="ALARM" />
-                                    <uc:SensorStatusCell Grid.Column="3" Grid.Row="0" State="Error" StatusName="INP" />
-                                    <uc:SensorStatusCell Grid.Column="0" Grid.Row="2" State="Offline" StatusName="N-LMT" />
-                                    <uc:SensorStatusCell Grid.Column="1" Grid.Row="2" State="Error" StatusName="ORG" />
-                                    <uc:SensorStatusCell Grid.Column="2" Grid.Row="2" State="Warning" StatusName="P-LMT" />
-                                    <uc:SensorStatusCell Grid.Column="3" Grid.Row="2" State="Offline" StatusName="SERVO" />
-
-                                    <Separator Grid.ColumnSpan="4" Grid.Row="3" Opacity=".2"/>
-                                    <Grid Grid.ColumnSpan="4" Grid.Row="4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="E-P" Grid.Column="0" FontWeight="DemiBold"></TextBlock>
-                                        <TextBlock Text="0.0 mm" Grid.Column="1"></TextBlock>
-                                        <TextBlock Text="C-P" Grid.Column="2" FontWeight="DemiBold"></TextBlock>
-                                        <TextBlock Text="0.0 mm" Grid.Column="3"></TextBlock>
-                                    </Grid>
-                                    <Separator Grid.ColumnSpan="4" Grid.Row="5" Opacity=".2"/>
-
-                                    <Button Content="원점 복귀"
-                                            Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2"
-                                            Margin="10" MinHeight="40"></Button>
-                                    <Button Content="서보 온" 
-                                            Grid.Column="2" Grid.Row="6"  Grid.ColumnSpan="2" 
-                                            Margin="10" MinHeight="40"></Button>
-
-                                </Grid>
-                            </StackPanel>
+                            <uc:MoterStateControl x:Name="MoterState"></uc:MoterStateControl>
 
                         </GroupBox>
                         

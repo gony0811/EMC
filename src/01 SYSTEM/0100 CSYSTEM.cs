@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
 using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
+using EGGPLANT._13_DataStore;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,7 @@ namespace EGGPLANT
 
         public string Directory { get { return FDirectory; } }
 
+
         public void Initialize(string appPath)
         {
             FDirectory = appPath;
@@ -61,7 +63,7 @@ namespace EGGPLANT
         public USub07 Usub07 = App.Container.Resolve<USub07>();
         public USub08 Usub08 = App.Container.Resolve<USub08>();
         public USub09 Usub09 = App.Container.Resolve<USub09>();
-
+        
 
         public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
         public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
+using EGGPLANT._13_DataStore;
 using EGGPLANT.ViewModels;
 
 namespace EGGPLANT
@@ -25,9 +26,18 @@ namespace EGGPLANT
             builder.RegisterType<USub07>().SingleInstance();
             builder.RegisterType<USub08>().SingleInstance();
             builder.RegisterType<USub09>().SingleInstance();
+
+            builder.RegisterType<Usub01n02>().AsSelf();
+            builder.RegisterType<USubViewModel01n02>().AsSelf().InstancePerDependency();
+
             builder.RegisterInstance<CTrace>(new CTrace("DeviceLogTrace")).Keyed<CTrace>("DeviceLogTrace");
             builder.RegisterInstance<CTrace>(new CTrace("Trace")).Keyed<CTrace>("Trace");
             builder.RegisterType<CProcessMap>().AsSelf().SingleInstance();
+
+            // 스토어 - 전역 공유 
+
+            builder.RegisterType<MotorStateStore>().AsSelf().SingleInstance();      // 모터 상태 정보 
+
             return builder.Build();
         }
 

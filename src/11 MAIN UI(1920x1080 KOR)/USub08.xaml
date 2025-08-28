@@ -54,7 +54,6 @@
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                         </Style>
                     </ListView.ItemContainerStyle>
-
                     <ListView.ItemTemplate>
                         <!-- 각 항목 = SensorIoItemViewModel -->
                         <DataTemplate DataType="{x:Type vm:SensorIoItemViewModel}">
@@ -68,7 +67,7 @@
                                 <TextBlock Text="{Binding Name}"
                                            VerticalAlignment="Center"
                                            Foreground="White"
-                                           FontSize="16"/>
+                                           FontSize="16"/>      
 
                                 <!-- 토글(오른쪽) : 컨트롤 클래스명을 프로젝트에 맞춰주세요 -->
                                 <uc:IoPillToggle Grid.Column="1"
@@ -83,6 +82,8 @@
                 </ListView>
 
             </Grid>
+            
+            
             <Grid Grid.Column="1" Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

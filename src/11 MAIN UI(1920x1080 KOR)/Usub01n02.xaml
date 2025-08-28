@@ -14,57 +14,72 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*"></RowDefinition>
-            <RowDefinition Height="0.2*"></RowDefinition>
-            <RowDefinition Height="0.2*"></RowDefinition>
-            <RowDefinition Height="0.2*"></RowDefinition>
-        </Grid.RowDefinitions>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
-        <!-- Stage X -->
-        <Border Grid.Column="0" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
-        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.3*"></RowDefinition>
+                <RowDefinition Height="0.2*"></RowDefinition>
+                <RowDefinition Height="0.2*"></RowDefinition>
+                <RowDefinition Height="0.2*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <!-- Stage Y -->
-        <Border Grid.Column="1" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
-        </Border>
+            <!-- Stage X -->
+            <Border Grid.Column="0" Grid.Row="0">
+                <uc:AxisWaypointList x:Name="XAxisList"></uc:AxisWaypointList>
+            </Border>
 
-        <!-- Stage Z -->
-        <Border Grid.Column="2" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
-        </Border>
-        
-        <!-- 변위 센서 1 -->
-        <Border Grid.Column="0" Grid.Row="1">
-            <uc:DisplacementControl></uc:DisplacementControl>
-        </Border>
+            <!-- Stage Y -->
+            <Border Grid.Column="1" Grid.Row="0">
+                <uc:AxisWaypointList x:Name="YAxisList"></uc:AxisWaypointList>
+            </Border>
 
-        <!-- 변위 센서 2 -->
-        <Border Grid.Column="0" Grid.Row="2">
-            <uc:DisplacementControl></uc:DisplacementControl>
-        </Border>
+            <!-- Stage Z -->
+            <Border Grid.Column="2" Grid.Row="0">
+                <uc:AxisWaypointList x:Name="ZAxisList"></uc:AxisWaypointList>
+            </Border>
 
-        <!-- 변위 센서 3 -->
-        <Border Grid.Column="0" Grid.Row="3">
-            <uc:DisplacementControl></uc:DisplacementControl>
-        </Border>
-        
-        <!-- 모터 상태 -->
-        <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
-            <uc:MoterStateControl></uc:MoterStateControl>
-        </Border>
-        
-        <!-- 수동 조작 -->
-        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
-            <uc:ManualOperation ></uc:ManualOperation>
-        </Border>
-    </Grid>
+            <!-- 변위 센서 1 -->
+            <Border Grid.Column="0" Grid.Row="1">
+                <uc:DisplacementControl></uc:DisplacementControl>
+            </Border>
+
+            <!-- 변위 센서 2 -->
+            <Border Grid.Column="0" Grid.Row="2">
+                <uc:DisplacementControl></uc:DisplacementControl>
+            </Border>
+
+            <!-- 변위 센서 3 -->
+            <Border Grid.Column="0" Grid.Row="3">
+                <uc:DisplacementControl></uc:DisplacementControl>
+            </Border>
+
+            <!-- 모터 상태 -->
+            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <uc:MoterStateControl x:Name="XMotorState" Grid.Column="0"></uc:MoterStateControl>
+                    <uc:MoterStateControl x:Name="YMotorState" Grid.Column="1"></uc:MoterStateControl>
+                    <uc:MoterStateControl x:Name="ZMotorState" Grid.Column="2"></uc:MoterStateControl>
+                </Grid>
+
+
+            </Border>
+
+            <!-- 수동 조작 -->
+            <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+                
+                <uc:ManualOperation ></uc:ManualOperation>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

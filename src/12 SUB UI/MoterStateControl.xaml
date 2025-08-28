@@ -4,309 +4,97 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:model="clr-namespace:EGGPLANT.Models"
+             xmlns:uc="clr-namespace:EGGPLANT._12_SUB_UI"
              mc:Ignorable="d">
-    <!-- ========= 스타일/브러시 ========= -->
     <UserControl.Resources>
-        <!-- 크롬 느낌 배경/테두리 -->
-        <LinearGradientBrush x:Key="ChromeBg" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#ECECEC" Offset="0"/>
-            <GradientStop Color="#D8D8D8" Offset="0.5"/>
-            <GradientStop Color="#C9C9C9" Offset="1"/>
-        </LinearGradientBrush>
-        <SolidColorBrush x:Key="ChromeBorder" Color="#6A6A6A"/>
-        <SolidColorBrush x:Key="SepBrush" Color="#55000000"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/DefaultResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <!-- 헤더 + 리스트 -->
+    <Border>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <!-- LED 점 -->
-        <Style x:Key="LedBar" TargetType="Border">
-            <Setter Property="Width" Value="6"/>
-            <Setter Property="Height" Value="16"/>
-            <Setter Property="CornerRadius" Value="1"/>
-            <Setter Property="Margin" Value="4,0,6,0"/>
-            <Setter Property="Background" Value="#303030"/>
-            <Setter Property="BorderBrush" Value="#606060"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
+            <Border Grid.Row="0">
+                <TextBlock Text="{Binding Title}" TextAlignment="Center"></TextBlock>    
+            </Border>
+            
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- 센서 -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 값 -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 버튼 -->
+                    <RowDefinition/>
+                    <!-- 여백 -->
+                </Grid.RowDefinitions>
 
-        <!-- 상태칩 (LED + 라벨) -->
-        <Style x:Key="Chip" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource ChromeBg}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ChromeBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="2"/>
-            <Setter Property="Padding" Value="6,3"/>
-            <Setter Property="Margin" Value="4,0"/>
-        </Style>
+                <!-- 1) 센서 리스트 -->
+                <ItemsControl Grid.Row="0"
+                                ItemsSource="{Binding MotorStates}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <!-- StateCellVM -> StateCell 컨트롤로 렌더링 -->
+                        <DataTemplate DataType="{x:Type uc:StateCell}">
+                            <uc:StateCell
+                                        Margin="2"
+                                        State="{Binding State}"
+                                        StatusName="{Binding StatusName}"
+                                        DotSize="14"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-        <!-- 버튼 박스 배경 -->
-        <Style x:Key="ButtonBox" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource ChromeBg}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ChromeBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="2"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Margin" Value="6,0,0,0"/>
-        </Style>
-
-        <!-- ON 색상들 -->
-        <SolidColorBrush x:Key="OnGreen"  Color="#00B050"/>
-        <SolidColorBrush x:Key="OnLime"   Color="#66CC00"/>
-        <SolidColorBrush x:Key="OnRed"    Color="#FF4B4B"/>
-        <SolidColorBrush x:Key="OnBlue"   Color="#40A6FF"/>
-        <SolidColorBrush x:Key="OnAmber"  Color="#FFB347"/>
-        <SolidColorBrush x:Key="OnYellow" Color="#FFD54F"/>
-        <SolidColorBrush x:Key="OnViolet" Color="#B388FF"/>
-
-        <!-- 하나의 축(행) 템플릿 -->
-        <DataTemplate x:Key="AxisRowTemplate" DataType="{x:Type model:MotorAxisViewModel}">
-            <Border BorderThickness="1" Margin="0,2">
-                <Grid>
+                <!-- 2) 값 영역 -->
+                <Grid Grid.Row="1" Margin="0,6,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40"/>
-                        <!-- X/Y/Z -->
-                        <ColumnDefinition Width="*"/>
-                        <!-- 상태칩 영역 -->
-                        <ColumnDefinition Width="4"/>
-                        <!-- 세로 구분 -->
-                        <ColumnDefinition Width="210"/>
-                        <!-- 버튼 박스 -->
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
 
-                    <!-- 축 라벨 -->
-                    <Border Grid.Column="0" BorderThickness="1" Background="#F6F6F6" CornerRadius="2" Margin="0,0,6,0">
-                        <TextBlock Text="{Binding Axis}" FontWeight="Bold" FontSize="18"
-                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Border Grid.Column="0" Margin="2">
+                        <StackPanel>
+                            <TextBlock Text="E-P" FontSize="12"/>
+                            <TextBlock Text="{Binding Ep}" FontSize="12" TextAlignment="Right"/>
+                        </StackPanel>
                     </Border>
 
-                    <!-- 상태칩 두 줄 -->
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- 1행: HOME RDY ALM INP  | 값 -->
-                        <DockPanel Grid.Row="0">
-                            <!-- 값 표시 -->
-                            <Border DockPanel.Dock="Right" Width="70" Height="24"
-                                    Background="#FAFAFA" BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1" CornerRadius="2" Margin="6,0,0,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border Background="Gray">
-                                        <TextBlock Text="E-P" VerticalAlignment="Center" Foreground="White"></TextBlock>
-                                    </Border>
-
-                                    <TextBlock Text="{Binding Ep, StringFormat=0.0}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="6,0,6,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <WrapPanel VerticalAlignment="Center">
-                                <!-- HOME -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Home}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnGreen}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="HOME" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- RDY -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Rdy}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnLime}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="RDY" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- ALM -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Alm}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnRed}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="ALM" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- INP -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Inp}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnBlue}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="INP" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                            </WrapPanel>
-                        </DockPanel>
-
-                        <!-- 2행: N-LMT ORG P-LMT C-P | 값 -->
-                        <DockPanel Grid.Row="1" >
-                            <!-- 값 표시 -->
-                            <Border DockPanel.Dock="Right" Width="70" Height="24"
-                                    Background="#FAFAFA" BorderThickness="1" CornerRadius="2" Margin="6,0,0,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border Background="Gray">
-                                        <TextBlock Text="C-P" VerticalAlignment="Center" Foreground="White"></TextBlock>
-                                    </Border>
-                                    
-                                    <TextBlock Text="{Binding Cp, StringFormat=0.0}"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="6,0,6,0"/>
-                                </StackPanel>
-                                
-                            </Border>
-
-                            <WrapPanel VerticalAlignment="Center">
-                                <!-- N-LMT -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding NLmt}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnAmber}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="N-LMT" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- ORG -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Org}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnYellow}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="ORG" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- P-LMT -->
-                                <Border Style="{StaticResource Chip}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border>
-                                            <Border.Style>
-                                                <Style TargetType="Border" BasedOn="{StaticResource LedBar}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding PLmt}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource OnAmber}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                        <TextBlock Text="P-LMT" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                            </WrapPanel>
-                        </DockPanel>
-                    </Grid>
-
-                    <!-- 가운데 세로 구분선 -->
-                    <Border Grid.Column="2" Background="{StaticResource SepBrush}" Width="1" HorizontalAlignment="Center"/>
-
-                    <!-- 우측 버튼 박스 -->
-                    <Border Grid.Column="3" Style="{StaticResource ButtonBox}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="4"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <ToggleButton Grid.Row="0"
-                                  IsChecked="{Binding IsServoOn, Mode=TwoWay}"
-                                  Command="{Binding ToggleServoCommand}"
-                                  CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"> 
-                                <ToggleButton.Style>
-                                    <Style TargetType="ToggleButton">
-                                        <Setter Property="Content" Value="SERVO OFF"/>
-                                        <Setter Property="Padding" Value="12,6"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="BorderBrush" Value="#444"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Content" Value="SERVO ON"/>
-                                                <Setter Property="Background" Value="LimeGreen"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                            <Border Grid.Row="1" Background="{StaticResource SepBrush}" Height="1" Margin="0,6"/>
-                            <Button Grid.Row="2" Content="HOME"  Command="{Binding HomeCommand}"/>
-                        </Grid>
+                    <Border Grid.Column="1" Margin="2">
+                        <StackPanel>
+                            <TextBlock Text="C-P" FontSize="12"/>
+                            <TextBlock Text="{Binding Cp}" FontSize="12" TextAlignment="Right"/>
+                        </StackPanel>
                     </Border>
                 </Grid>
-            </Border>
-        </DataTemplate>
-    </UserControl.Resources>
 
-    <!-- 헤더 + 리스트 -->
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+                <!-- 3) 버튼 영역 -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Background="{StaticResource ChromeBg}" BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1" Padding="6,3" Margin="0,0,0,4">
-            <TextBlock Text="모터 상태 표시" FontWeight="Bold"/>
-        </Border>
-
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding MotorState}">
-            <ItemsControl.ItemTemplate>
-                <StaticResource ResourceKey="AxisRowTemplate"/>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+                    <Button Grid.Column="0" Content="SERVO"
+                            Command="{Binding ServoCommand}"
+                            Margin="2" />
+                    <Button Grid.Column="1" Content="HOME"
+                            Command="{Binding HomeCommand}"
+                            Margin="2" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+        
 </UserControl>

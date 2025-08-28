@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EGGPLANT.Models;
-using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
@@ -9,8 +8,6 @@ namespace EGGPLANT.ViewModels
         [ObservableProperty]
         private double pitch;
 
-        [ObservableProperty]
-        private ObservableCollection<MotorAxisViewModel> motorState = new ObservableCollection<MotorAxisViewModel>();
 
         [ObservableProperty]
         private ManualOperationModel manualOperationModel = new ManualOperationModel();
@@ -18,10 +15,6 @@ namespace EGGPLANT.ViewModels
 
         public USubViewModel01n02()
         {
-            MotorState.Add(new MotorAxisViewModel("X"));
-            MotorState.Add(new MotorAxisViewModel("Y"));
-            MotorState.Add(new MotorAxisViewModel("Z"));
-
         }
     }
 }

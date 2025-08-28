@@ -1,5 +1,8 @@
 ﻿
+using Autofac;
+using EGGPLANT._13_DataStore;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace EGGPLANT
 {
@@ -11,6 +14,8 @@ namespace EGGPLANT
         public USub07()
         {
             InitializeComponent();
+            var store = App.Container.Resolve<MotorStateStore>();
+            MoterState.DataContext = store.X;
         }
     }
 }

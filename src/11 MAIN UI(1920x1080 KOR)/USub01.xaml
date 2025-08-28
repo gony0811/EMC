@@ -7,8 +7,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EGGPLANT"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="USub01">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/DefaultResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +23,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
+        
+        
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -45,64 +53,75 @@
         </Grid>
         
         <!-- Tab Panel-->
-        <Grid Grid.Row="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <Border Style="{StaticResource Panel.Radius5}" Grid.Row="1">
+            <Grid Grid.Row="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <!-- 콘텐츠 영역 -->
-                <Frame x:Name="ContentFrame"
-           Grid.Column="0"
-           NavigationUIVisibility="Hidden"/>
+                                <!-- 콘텐츠 영역 -->
+                    <Frame x:Name="ContentFrame" Grid.Column="0" NavigationUIVisibility="Hidden"/>
 
-                <!-- 탭 패널 -->
-                <StackPanel x:Name="TabPanel" Grid.Column="1" Orientation="Vertical">
-                    <ToggleButton Tag="Tab1"
-                    Checked="Tab_Checked"
-                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                    Width="150" Height="150" Margin="0 1 0 1">
-                        <StackPanel>
-                            <TextBlock Text="TAB1" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="(MAIN)" FontSize="24" TextAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
+                              <!-- 탭 패널 -->
+                    <Grid x:Name="TabPanel" Grid.Column="1" Width="150">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <ToggleButton Tag="Tab1"
+                                      Style="{StaticResource Toggle.Switch}"
+                                      Checked="Tab_Checked"
+                                      Grid.Row="0"
+                                      Margin="0 1 0 1">
+                            <StackPanel>
+                                <TextBlock Text="TAB1" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="(MAIN)" FontSize="24" TextAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
 
-                    <ToggleButton Tag="Tab2"
-                    Checked="Tab_Checked"
-                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                    Width="150" Height="150" Margin="0 1 0 1">
-                        <StackPanel>
-                            <TextBlock Text="TAB2" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="(LDS)" FontSize="24" TextAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
+                        <ToggleButton Tag="Tab2"
+                                      Style="{StaticResource Toggle.Switch}"
+                                      Checked="Tab_Checked"
+                                      Grid.Row="1"
+                                      Margin="0 1 0 1">
+                            <StackPanel>
+                                <TextBlock Text="TAB2" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="(LDS)" FontSize="24" TextAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
 
-                    <ToggleButton Tag="Tab3"
-                    Checked="Tab_Checked"
-                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                    Width="150" Height="150" Margin="0 1 0 1">
-                        <StackPanel>
-                            <TextBlock Text="TAB3" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="2X" FontSize="24" TextAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
+                        <ToggleButton Tag="Tab3"
+                                      Style="{StaticResource Toggle.Switch}"
+                                      Checked="Tab_Checked"
+                                      Grid.Row="2"
+                                      Margin="0 1 0 1">
+                            <StackPanel>
+                                <TextBlock Text="TAB3" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="2X" FontSize="24" TextAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
 
-                    <ToggleButton Tag="Tab4"
-                    Checked="Tab_Checked"
-                    Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
-                    Width="150" Height="150" Margin="0 1 0 1">
-                        <StackPanel>
-                            <TextBlock Text="TAB4" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
-                            <TextBlock Text="15X" FontSize="24" TextAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
-                </StackPanel>
+                        <ToggleButton Tag="Tab4"
+                                      Style="{StaticResource Toggle.Switch}"
+                                      Checked="Tab_Checked"
+                                      Grid.Row="3"
+                                      Margin="0 1 0 1">
+                            <StackPanel>
+                                <TextBlock Text="TAB4" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="VISION" FontSize="24" TextAlignment="Center"/>
+                                <TextBlock Text="15X" FontSize="24" TextAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
+                    </Grid>
+                </Grid>
             </Grid>
-        </Grid>
+        </Border>
+        
 
 
         <Grid Grid.Row="2">
