@@ -1,7 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EGGPLANT._12_SUB_UI;
+using EGGPLANT;
 using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels

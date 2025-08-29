@@ -1,7 +1,7 @@
-﻿<UserControl x:Class="EGGPLANT._12_SUB_UI.PowerLamp"
+﻿<UserControl x:Class="EGGPLANT.PowerLamp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:EGGPLANT._12_SUB_UI"
+             xmlns:local="clr-namespace:EGGPLANT"
              x:Name="root"
              Background="Transparent">
 

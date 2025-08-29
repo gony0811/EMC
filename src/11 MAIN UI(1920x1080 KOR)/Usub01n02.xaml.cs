@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using CommunityToolkit.Mvvm.Input;
-using EGGPLANT._12_SUB_UI;
-using EGGPLANT._12_SUB_UI.ViewModels;
+using EGGPLANT;
+using EGGPLANT.ViewModels;
 using EGGPLANT._13_DataStore;
 using EGGPLANT.ViewModels;
 using System.Collections.ObjectModel;

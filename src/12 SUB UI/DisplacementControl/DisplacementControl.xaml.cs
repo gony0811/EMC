@@ -2,8 +2,8 @@
 using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
 using Brush = System.Windows.Media.Brush;
-using EGGPLANT._12_SUB_UI.ViewModels;
-namespace EGGPLANT._12_SUB_UI
+using EGGPLANT.ViewModels;
+namespace EGGPLANT
 {
     public partial class DisplacementControl : UserControl
     {

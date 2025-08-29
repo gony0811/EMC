@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public partial class StateCellVM : ObservableObject
     {

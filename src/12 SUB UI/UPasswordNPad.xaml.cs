@@ -2,7 +2,7 @@
 using System.Windows;
 using Button = System.Windows.Controls.Button;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     /// <summary>
     /// UPasswordNPad.xaml에 대한 상호 작용 논리

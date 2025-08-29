@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace EGGPLANT._12_SUB_UI.ViewModels
+namespace EGGPLANT.ViewModels
 {
     public class ActionButtonVM 
     {

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using UserControl = System.Windows.Controls.UserControl;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     [ContentProperty(nameof(ActionContent))]
     public partial class HeaderAction : UserControl

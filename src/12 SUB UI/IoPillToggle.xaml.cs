@@ -7,7 +7,7 @@ using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
 using System.Windows.Input;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     /// <summary>
     /// Interaction logic for IoPillToggle.xaml

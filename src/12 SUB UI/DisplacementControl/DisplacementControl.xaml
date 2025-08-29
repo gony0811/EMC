@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EGGPLANT._12_SUB_UI.DisplacementControl"
+﻿<UserControl x:Class="EGGPLANT.DisplacementControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

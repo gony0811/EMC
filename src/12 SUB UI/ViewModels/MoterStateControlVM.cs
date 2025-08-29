@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public partial class MoterStateControlVM : ObservableObject
     {
