@@ -21,7 +21,7 @@ namespace EGGPLANT
 
         private void Init()
         {
-            DataContext = new USub02ViewModel();
+            DataContext = new USubViewModel02();
             //this.tbCurrentDevice.Text = "TEST DEVICE";
             //this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
         }

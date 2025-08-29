@@ -4,7 +4,7 @@ using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USub01n02ViewModel : ObservableObject
+    public partial class USubViewModel01n02 : ObservableObject
     {
         [ObservableProperty]
         private MotorStateStore motorState;
@@ -16,7 +16,7 @@ namespace EGGPLANT.ViewModels
         private ManualOperationModel manualOperationModel = new ManualOperationModel();
 
 
-        public USub01n02ViewModel()
+        public USubViewModel01n02()
         {
 
         }

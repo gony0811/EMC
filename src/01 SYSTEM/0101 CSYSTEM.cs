@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Xml;
-using static System.Net.WebRequestMethods;
 using Control = System.Windows.Controls.Control;
 
 #pragma warning disable CS8601 // null 가능 참조에 대한 역참조입니다.
@@ -572,82 +571,6 @@ namespace EGGPLANT
         public const int SWP_NOZORDER = 0x0004;
         public const int SWP_SHOWWINDOW = 0x0040;
         #endregion
-    }
-    #endregion
-
-    #region 기타 공통
-    static class CETC
-    {
-        static public int ToInt(object AValue, int ADefine = 0)
-        {
-            Control control = AValue as Control;
-            if (control == null || control.Tag == null) return ADefine;
-
-            int v = ADefine;
-            if (int.TryParse(control.Tag.ToString(), out v)) return v;
-
-            return ADefine;
-        }
-        static public bool ToBool(object AValue, bool ADefine = false)
-        {
-            Control control = AValue as Control;
-            if (control == null || control.Tag == null) return ADefine;
-
-            bool v = ADefine;
-            if (bool.TryParse(control.Tag.ToString(), out v)) return v;
-
-            return ADefine;
-        }
-        static public double ToDouble(object AValue, double ADefine = 0.0)
-        {
-            Control control = AValue as Control;
-            if (control == null || control.Tag == null) return ADefine;
-            if (double.TryParse(control.Tag.ToString(), out double v)) return v;
-
-            return ADefine;
-        }
-
-        static public int ToInt(string AValue, int ADefine = 0)
-        {
-            int v = ADefine;
-            if (int.TryParse(AValue, out v)) return v;
-
-            return ADefine;
-        }
-        static public bool ToBool(string AValue, bool ADefine = false)
-        {
-            bool v = ADefine;
-            if (bool.TryParse(AValue, out v)) return v;
-
-            return ADefine;
-        }
-        static public double ToDouble(string AValue, double ADefine = 0.0)
-        {
-            double v = ADefine;
-            if (double.TryParse(AValue, out v)) return v;
-
-            return ADefine;
-        }
-
-        static public bool GetBit(int AValue, int AIndex)
-        {
-            return ((AValue & (0x01 << AIndex)) != 0x00);
-        }
-        static public void SetBit(ref int AValue, int AIndex, bool ASet)
-        {
-            if (ASet) AValue = AValue | (0x01 << AIndex);
-            else AValue = AValue & ~(0x01 << AIndex);
-        }
-
-        static public uint StrIpAddrToDWord(string ipAddress)
-        {
-            UInt32 uIPAddress;
-            String[] strIP = new String[4];
-            strIP = ipAddress.Split('.');
-            uIPAddress = (Convert.ToUInt32(strIP[0]) << 24) | (Convert.ToUInt32(strIP[1]) << 16) | (Convert.ToUInt32(strIP[2]) << 8) | Convert.ToUInt32(strIP[3]);
-
-            return uIPAddress;
-        }
     }
     #endregion
 

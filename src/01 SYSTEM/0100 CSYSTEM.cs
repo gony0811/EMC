@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
-using EGGPLANT.Device.PowerPmac;
+using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
+using EGGPLANT._13_DataStore;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -39,15 +40,10 @@ namespace EGGPLANT
 
         public string Directory { get { return FDirectory; } }
 
+
         public void Initialize(string appPath)
         {
             FDirectory = appPath;
-            FSub01.DataContext = FSub01ViewModel;
-            FSub01n01.DataContext = FSub01n01ViewModel;
-            FSub01n02.DataContext = FSub01n02ViewModel;
-            FSub01n03.DataContext = FSub01n03ViewModel;
-            FSub01n04.DataContext = FSub01n04ViewModel;
-            FSub02.DataContext = FSub02ViewModel;
         }
 
         public void Show()
@@ -59,27 +55,32 @@ namespace EGGPLANT
         public UMain FMain = App.Container.Resolve<UMain>();
         public USub01 FSub01 = App.Container.Resolve<USub01>();
         public USub01ViewModel FSub01ViewModel = App.Container.Resolve<USub01ViewModel>();
-        public USub01n01 FSub01n01 = App.Container.Resolve<USub01n01>();
-        public USub01n01ViewModel FSub01n01ViewModel = App.Container.Resolve<USub01n01ViewModel>();
-        public USub01n02 FSub01n02 = App.Container.Resolve<USub01n02>();
-        public USub01n02ViewModel FSub01n02ViewModel = App.Container.Resolve<USub01n02ViewModel>();
-        public USub01n03 FSub01n03 = App.Container.Resolve<USub01n03>();
-        public USub01n03ViewModel FSub01n03ViewModel = App.Container.Resolve<USub01n03ViewModel>();
-        public USub01n04 FSub01n04 = App.Container.Resolve<USub01n04>();
-        public USub01n04ViewModel FSub01n04ViewModel = App.Container.Resolve<USub01n04ViewModel>();
-        public USub02ViewModel FSub02ViewModel = App.Container.Resolve<USub02ViewModel>();
-        public USub02 FSub02 = App.Container.Resolve<USub02>();
-        public USub05 FSub05 = App.Container.Resolve<USub05>();
-        public UError FError = App.Container.Resolve<UError>();
+        public USub02 USub02 = App.Container.Resolve<USub02>();
+        public USub03 USub03 = App.Container.Resolve<USub03>();
+        public USub04 USub04 = App.Container.Resolve<USub04>();
+        public Usub05 Usub05 = App.Container.Resolve<Usub05>();
+        public USub06 Usub06 = App.Container.Resolve<USub06>();
+        public USub07 Usub07 = App.Container.Resolve<USub07>();
+        public USub08 Usub08 = App.Container.Resolve<USub08>();
+        public USub09 Usub09 = App.Container.Resolve<USub09>();
         
-        //public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
-        //public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
-        //public CErrorList ErrorList = App.Container.Resolve<CErrorList>();
-        //public CError Error = App.Container.Resolve<CError>();
-        //public CPmacMotion PmacMotion = App.Container.Resolve<CPmacMotion>();
 
-        public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
-        public void GoToSub02() => FMain.MainFrame.Navigate(FSub02);
-        public void GoToSub05() => FMain.MainFrame.Navigate(FSub05);
+        public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
+        public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
+
+        public void GoToSub01()
+        {
+            FMain.Dispatcher.Invoke(() => FMain.MainFrame.Navigate(FSub01));
+        }
+        public void GoToSub02() => FMain.MainFrame.Navigate(USub02);
+        public void GoToSub03() => FMain.MainFrame.Navigate(USub03);
+        public void GoToSub04() => FMain.MainFrame.Navigate(USub04);
+        public void GoToSub05() => FMain.MainFrame.Navigate(Usub05);
+        public void GoToSub06() => FMain.MainFrame.Navigate(Usub06);
+        public void GoToSub07() => FMain.MainFrame.Navigate(Usub07);
+        public void GoToSub08() => FMain.MainFrame.Navigate(Usub08);
+        public void GoToSub09() => FMain.MainFrame.Navigate(Usub09);
+
+
     }
 }

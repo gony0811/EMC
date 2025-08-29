@@ -21,7 +21,7 @@ namespace EGGPLANT
     public partial class UInitialize : Window
     {
         public UInitializeViewModel VM { get; } = new UInitializeViewModel();
-        private CancellationTokenSource? _cts;
+        private CancellationTokenSource _cts;
 
         public UInitialize()
         {
