@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EGGPLANT;
 using EGGPLANT.Models;
+using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel01n02 : ObservableObject
+    public partial class USub01n02ViewModel : ObservableObject
     {
         [ObservableProperty]
         private MotorStateStore motorState;
@@ -15,8 +15,7 @@ namespace EGGPLANT.ViewModels
         [ObservableProperty]
         private ManualOperationModel manualOperationModel = new ManualOperationModel();
 
-
-        public USubViewModel01n02()
+        public USub01n02ViewModel()
         {
 
         }

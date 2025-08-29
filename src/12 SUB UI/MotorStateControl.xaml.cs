@@ -6,24 +6,24 @@ using Binding = System.Windows.Data.Binding;
 
 namespace EGGPLANT
 {
-    public partial class MoterStateControl : UserControl
+    public partial class MotorStateControl : UserControl
     {
-        public MoterStateControl()
+        public MotorStateControl()
         {
             InitializeComponent();
         }
             // 외부에서 주입할 VM
-        public MoterStateControlVM ViewModel
+        public MotorStateControlVM ViewModel
         {
-            get => (MoterStateControlVM)GetValue(ViewModelProperty);
+            get => (MotorStateControlVM)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
                 nameof(ViewModel),
-                typeof(MoterStateControlVM),
-                typeof(MoterStateControl),
+                typeof(MotorStateControlVM),
+                typeof(MotorStateControl),
                 new PropertyMetadata(null));
     }
 }

@@ -7,7 +7,7 @@ namespace EGGPLANT.ViewModels
      *  에러 번호 및 내용, 원인과 조치 방법에 대해 메모
      *  정의된 에러가 발생시 부저가 발생하며 부저음을 설정할 수 있음
      * **/
-    public partial class Usub05ViewModel : ObservableObject
+    public partial class USub05ViewModel : ObservableObject
     {
         [ObservableProperty]
         private ObservableCollection<Error> errorList = new ObservableCollection<Error>();
@@ -17,7 +17,7 @@ namespace EGGPLANT.ViewModels
 
         [ObservableProperty] private Error selectedError;
 
-        public Usub05ViewModel()
+        public USub05ViewModel()
         {
             // 더미 데이터
             var buzzer1 = new Buzzer(id: 1, name: "BUZZER #1");

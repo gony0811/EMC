@@ -14,7 +14,7 @@ namespace EGGPLANT
         {
             InitializeComponent();
             var store = App.Container.Resolve<MotorStateStore>();
-            MoterState.DataContext = store.X;
+            MotorState.DataContext = store.X;
         }
     }
 }

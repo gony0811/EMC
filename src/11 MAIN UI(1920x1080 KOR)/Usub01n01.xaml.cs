@@ -7,9 +7,9 @@ namespace EGGPLANT
     /// <summary>
     /// Interaction logic for Usub01n01.xaml
     /// </summary>
-    public partial class Usub01n01 : UserControl
+    public partial class USub01n01 : UserControl
     {
-        public Usub01n01()
+        public USub01n01()
         {
             InitializeComponent();
         }

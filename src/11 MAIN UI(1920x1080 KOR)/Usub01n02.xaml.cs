@@ -10,9 +10,9 @@ namespace EGGPLANT
     /// <summary>
     /// Interaction logic for Usub01n02.xaml
     /// </summary>
-    public partial class Usub01n02 : UserControl
+    public partial class USub01n02 : UserControl
     {
-        public Usub01n02()
+        public USub01n02()
         {
 
             InitializeComponent();
@@ -70,7 +70,7 @@ namespace EGGPLANT
             Displacement3.Actions = actions;
         }
 
-        public Usub01n02(USubViewModel01n02 vm, MotorStateStore store)
+        public USub01n02(USub01n02ViewModel vm, MotorStateStore store)
         {
             InitializeComponent();
             DataContext = vm;

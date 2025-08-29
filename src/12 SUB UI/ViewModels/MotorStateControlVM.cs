@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace EGGPLANT
 {
-    public partial class MoterStateControlVM : ObservableObject
+    public partial class MotorStateControlVM : ObservableObject
     {
         [ObservableProperty] private string title = "";
 
@@ -14,9 +14,9 @@ namespace EGGPLANT
 
         [ObservableProperty] string cp = "0.0";
 
-        public MoterStateControlVM() { }
+        public MotorStateControlVM() { }
 
-        public MoterStateControlVM(ObservableCollection<StateCellVM> motorStates, string ep, string cp)
+        public MotorStateControlVM(ObservableCollection<StateCellVM> motorStates, string ep, string cp)
         {
             MotorStates = motorStates;
             Ep = ep;

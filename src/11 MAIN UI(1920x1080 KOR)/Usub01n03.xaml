@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EGGPLANT.Usub01n03"
+﻿<UserControl x:Class="EGGPLANT.USub01n03"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -45,7 +45,7 @@
 
         <!-- Image View -->
         <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="3">
-            <uc:ImagePanel></uc:ImagePanel>
+            <uc:ImagePanel/>
         </Border>
         
         <!-- 모터 상태 -->
@@ -56,9 +56,9 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <uc:MoterStateControl x:Name="XMotorState" Grid.Column="0"></uc:MoterStateControl>
-                    <uc:MoterStateControl x:Name="YMotorState" Grid.Column="1"></uc:MoterStateControl>
-                    <uc:MoterStateControl x:Name="ZMotorState" Grid.Column="2"></uc:MoterStateControl>
+                    <uc:MotorStateControl x:Name="XMotorState" Grid.Column="0"></uc:MotorStateControl>
+                    <uc:MotorStateControl x:Name="YMotorState" Grid.Column="1"></uc:MotorStateControl>
+                    <uc:MotorStateControl x:Name="ZMotorState" Grid.Column="2"></uc:MotorStateControl>
                 </Grid>
             </Border>
         

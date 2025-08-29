@@ -7,9 +7,9 @@ namespace EGGPLANT
 
     public partial class MotorStateStore : ObservableObject
     {
-        [ObservableProperty] private MoterStateControlVM x = new() { Title = "X축" };
-        [ObservableProperty] private MoterStateControlVM y = new() { Title = "Y축" };
-        [ObservableProperty] private MoterStateControlVM z = new() { Title = "Z축" };
+        [ObservableProperty] private MotorStateControlVM x = new() { Title = "X축" };
+        [ObservableProperty] private MotorStateControlVM y = new() { Title = "Y축" };
+        [ObservableProperty] private MotorStateControlVM z = new() { Title = "Z축" };
 
         public MotorStateStore()
         {
@@ -52,7 +52,7 @@ namespace EGGPLANT
 
         }
         // 장치 이벤트 등 백그라운드에서 들어오면 UI 스레드로 합류
-        public void UpdateAxis(Axis axis, Action<MoterStateControlVM> apply)
+        public void UpdateAxis(Axis axis, Action<MotorStateControlVM> apply)
         {
             var target = axis switch { Axis.X => X, Axis.Y => Y, Axis.Z => Z, _ => X };
             if (System.Windows.Application.Current.Dispatcher.CheckAccess())

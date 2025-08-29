@@ -1,10 +1,9 @@
 ﻿
-using EGGPLANT;
 using System.Windows;
 using System.Windows.Controls;
 using MessageBox = System.Windows.MessageBox;
 
-namespace EGGPLANT._11_MAIN_UI_1920x1080_KOR_
+namespace EGGPLANT
 {
     /// <summary>
     /// USub03.xaml에 대한 상호 작용 논리
