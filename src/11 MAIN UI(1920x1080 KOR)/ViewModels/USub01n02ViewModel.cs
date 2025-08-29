@@ -3,7 +3,7 @@ using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel01n02 : ObservableObject
+    public partial class USub01n02ViewModel : ObservableObject
     {
         [ObservableProperty]
         private double pitch;
@@ -13,7 +13,7 @@ namespace EGGPLANT.ViewModels
         private ManualOperationModel manualOperationModel = new ManualOperationModel();
 
 
-        public USubViewModel01n02()
+        public USub01n02ViewModel()
         {
         }
     }

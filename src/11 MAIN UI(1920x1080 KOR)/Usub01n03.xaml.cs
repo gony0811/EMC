@@ -1,25 +1,17 @@
-﻿using Autofac;
-using EGGPLANT._13_DataStore;
-using EGGPLANT.ViewModels;
+﻿using EGGPLANT.ViewModels;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace EGGPLANT
 {
     /// <summary>
-    /// Interaction logic for Usub01n02.xaml
+    /// Interaction logic for USub01n02.xaml
     /// </summary>
-    public partial class Usub01n03 : UserControl
+    public partial class USub01n03 : UserControl
     {
-        public Usub01n03()
+        public USub01n03()
         {
+            this.DataContext = new USub01n03ViewModel();
             InitializeComponent();
-
-            this.DataContext = new USubViewModel01n03();
-            var store = App.Container.Resolve<MotorStateStore>();
-
-            XMotorState.DataContext = store.X;
-            YMotorState.DataContext = store.Y;
-            ZMotorState.DataContext = store.Z;
         }
     }
 }
