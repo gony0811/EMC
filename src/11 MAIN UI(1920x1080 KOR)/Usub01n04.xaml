@@ -30,17 +30,17 @@
 
         <!-- Stage X -->
         <Border Grid.Column="0" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
+            
         </Border>
 
         <!-- Stage Y -->
         <Border Grid.Column="1" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
+            
         </Border>
 
         <!-- Stage Z -->
         <Border Grid.Column="2" Grid.Row="0">
-            <uc:StageParameterControl></uc:StageParameterControl>
+            
         </Border>
 
         <!-- Image View -->

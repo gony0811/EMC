@@ -7,78 +7,79 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="Black"></Setter>
-                <Setter Property="BorderThickness" Value="1"></Setter>
-                <Setter Property="Margin" Value="2"></Setter>
+            <Style TargetType="Border" x:Key="Section">
+                <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Accent}"></Setter>
+                <Setter Property="BorderThickness" Value=".5"></Setter>
+                <Setter Property="CornerRadius" Value="5"></Setter>
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
-        <Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+              VerticalScrollBarVisibility="Auto"
+              CanContentScroll="False">
+        <Grid Margin="12"
+            MinWidth="1600"  
+            MinHeight="900">
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.3*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
+                <RowDefinition Height="Auto"/>
+                <!-- AxisWaypointList 묶음 -->
+                <RowDefinition Height="Auto"/>
+                <!-- 변위1 -->
+                <RowDefinition Height="Auto"/>
+                <!-- 변위2 -->
+                <RowDefinition Height="Auto"/>
+                <!-- 변위3 -->
+                <RowDefinition Height="Auto"/>
+                <!-- 모터 상태(두 줄로 잡아도 Auto면 OK) -->
+                <RowDefinition Height="Auto"/>
+                <!-- 수동 조작 -->
             </Grid.RowDefinitions>
 
-            <!-- Stage X -->
-            <Border Grid.Column="0" Grid.Row="0">
-                <uc:AxisWaypointList x:Name="XAxisList"></uc:AxisWaypointList>
+            <!-- Stage X/Y/Z (제목/헤더 포함해서 자체 높이만큼 Auto) -->
+            <GroupBox Grid.Column="0" Grid.Row="0" Margin="6" Header="X">
+                <uc:AxisWaypointList x:Name="XAxisList"/>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Grid.Row="0" Margin="6"  Header="Y">
+                <uc:AxisWaypointList x:Name="YAxisList"/>
+            </GroupBox>
+            <GroupBox Grid.Column="2" Grid.Row="0" Margin="6"  Header="Z">
+                <uc:AxisWaypointList x:Name="ZAxisList"/>
+            </GroupBox>
+
+            <!-- 변위 센서 1/2/3 -->
+            <Border Grid.Column="0" Grid.Row="1" Margin="6" Style="{StaticResource Section}">
+                <uc:DisplacementControl x:Name="Displacement1"/>
+            </Border>
+            <Border Grid.Column="0" Grid.Row="2" Margin="6" Style="{StaticResource Section}">
+                <uc:DisplacementControl x:Name="Displacement2"/>
+            </Border>
+            <Border Grid.Column="0" Grid.Row="3" Margin="6" Style="{StaticResource Section}">
+                <uc:DisplacementControl x:Name="Displacement3"/>
             </Border>
 
-            <!-- Stage Y -->
-            <Border Grid.Column="1" Grid.Row="0">
-                <uc:AxisWaypointList x:Name="YAxisList"></uc:AxisWaypointList>
-            </Border>
-
-            <!-- Stage Z -->
-            <Border Grid.Column="2" Grid.Row="0">
-                <uc:AxisWaypointList x:Name="ZAxisList"></uc:AxisWaypointList>
-            </Border>
-
-            <!-- 변위 센서 1 -->
-            <Border Grid.Column="0" Grid.Row="1">
-                <uc:DisplacementControl></uc:DisplacementControl>
-            </Border>
-
-            <!-- 변위 센서 2 -->
-            <Border Grid.Column="0" Grid.Row="2">
-                <uc:DisplacementControl></uc:DisplacementControl>
-            </Border>
-
-            <!-- 변위 센서 3 -->
-            <Border Grid.Column="0" Grid.Row="3">
-                <uc:DisplacementControl></uc:DisplacementControl>
-            </Border>
-
-            <!-- 모터 상태 -->
-            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
+            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Margin="6" Style="{StaticResource Section}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <uc:MoterStateControl x:Name="XMotorState" Grid.Column="0"></uc:MoterStateControl>
-                    <uc:MoterStateControl x:Name="YMotorState" Grid.Column="1"></uc:MoterStateControl>
-                    <uc:MoterStateControl x:Name="ZMotorState" Grid.Column="2"></uc:MoterStateControl>
+                    <uc:MoterStateControl x:Name="XMotorState" Grid.Column="0" Margin="4"/>
+                    <uc:MoterStateControl x:Name="YMotorState" Grid.Column="1" Margin="4"/>
+                    <uc:MoterStateControl x:Name="ZMotorState" Grid.Column="2" Margin="4"/>
                 </Grid>
-
-
             </Border>
 
             <!-- 수동 조작 -->
-            <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
-                
-                <uc:ManualOperation ></uc:ManualOperation>
+            <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Margin="6" Style="{StaticResource Section}">
+                <uc:ManualOperation/>
             </Border>
         </Grid>
     </ScrollViewer>

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using EGGPLANT._13_DataStore;
 using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels
@@ -6,8 +7,10 @@ namespace EGGPLANT.ViewModels
     public partial class USubViewModel01n02 : ObservableObject
     {
         [ObservableProperty]
-        private double pitch;
+        private MotorStateStore motorState;
 
+        [ObservableProperty]
+        private double pitch;
 
         [ObservableProperty]
         private ManualOperationModel manualOperationModel = new ManualOperationModel();
@@ -15,6 +18,7 @@ namespace EGGPLANT.ViewModels
 
         public USubViewModel01n02()
         {
+
         }
     }
 }

@@ -26,14 +26,6 @@
             <!-- 아이템 영역 -->
         </Grid.RowDefinitions>
 
-        <!-- 제목 -->
-        <TextBlock Grid.Row="0"
-                   Text="{Binding Title, ElementName=root}"
-                   Margin="0,0,0,8"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="White"
-                   TextTrimming="CharacterEllipsis"/>
 
         <!-- 컬럼 헤더 (AxisWaypointSet과 동일한 그리드 구성) -->
         <Border Grid.Row="1" BorderBrush="#16233B" BorderThickness="0,0,0,1" Padding="0,2">
