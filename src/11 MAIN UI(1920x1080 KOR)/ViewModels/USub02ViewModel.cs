@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel02 : ObservableObject
+    public partial class USub02ViewModel : ObservableObject
     {
         // 현재 디바이스, 공용 파라미터, 기본 파라미터 선택, 디바이스 목록, 아이템 이름, 
         [ObservableProperty]
@@ -27,8 +27,8 @@ namespace EGGPLANT.ViewModels
         [ObservableProperty]
         private ObservableCollection<ParameterModel> items = new ObservableCollection<ParameterModel>();
 
-
-        public USubViewModel02()
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public USub02ViewModel()
         {
             // 샘플 데이터 Device 목록
             Devices.Add(new DeviceItem { Index = 1, Name = "Camera #1", IsInUse = true });
@@ -60,14 +60,13 @@ namespace EGGPLANT.ViewModels
             Items.Add(new ParameterModel { Name = "LDS 측정 응답 TIME OUT 시간", Value = "200", Unit = "ms" });
             Items.Add(new ParameterModel { Name = "CROSS 오차", Value = "20.00", Unit = "um" });
 
-
             foreach (var d in Devices) HookItem(d);
             Devices.CollectionChanged += (_, e) =>
             {
                 if (e.NewItems != null) foreach (DeviceItem d in e.NewItems) HookItem(d);
             };
         }
-
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private void HookItem(DeviceItem d)
         {
             d.PropertyChanged += (_, e) =>

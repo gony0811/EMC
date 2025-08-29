@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Markup.Localizer;
 
 namespace EGGPLANT
 {
@@ -42,17 +41,17 @@ namespace EGGPLANT
             switch (tb.Tag as string)
             {
                 case "Tab1":
-                    ContentFrame.Content = App.Container.Resolve<Usub01n01>();
-                    break;
+                    ContentFrame.Content = App.Container.Resolve<USub01n01>();
+					break;
                 case "Tab2":
-                    ContentFrame.Content = App.Container.Resolve<Usub01n02>();
-                    break;
+                    ContentFrame.Content = App.Container.Resolve<USub01n02>();
+					break;
                 case "Tab3":
-                    ContentFrame.Content = App.Container.Resolve<Usub01n03>();
-                    break;
+                    ContentFrame.Content = App.Container.Resolve<USub01n03>();
+					break;
                 case "Tab4":
-                    ContentFrame.Content = App.Container.Resolve<Usub01n04>();
-                    break;
+                    ContentFrame.Content = App.Container.Resolve<USub01n04>();
+					break;
             }
         }
     }

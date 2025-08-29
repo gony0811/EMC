@@ -14,11 +14,11 @@ namespace EGGPLANT
     /// <summary>
     /// Usub05.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class Usub05 : Page
+    public partial class USub05 : Page
     {
-        public Usub05()
+        public USub05()
         {
-            this.DataContext = new UsubViewModel05();
+            this.DataContext = new USub05ViewModel();
             InitializeComponent();
             
         }
