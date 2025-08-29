@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel02 : ObservableObject
+    public partial class USub02ViewModel : ObservableObject
     {
         // 현재 디바이스, 공용 파라미터, 기본 파라미터 선택, 디바이스 목록, 아이템 이름, 
         [ObservableProperty]
@@ -28,7 +28,7 @@ namespace EGGPLANT.ViewModels
         private ObservableCollection<ParameterModel> items = new ObservableCollection<ParameterModel>();
 
 
-        public USubViewModel02()
+        public USub02ViewModel()
         {
             // 샘플 데이터 Device 목록
             Devices.Add(new DeviceItem { Index = 1, Name = "Camera #1", IsInUse = true });

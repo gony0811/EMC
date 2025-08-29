@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace EGGPLANT._13_DataStore
+namespace EGGPLANT
 {
     public class StageInfo : ObservableObject
     {

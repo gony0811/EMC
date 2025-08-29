@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Windows.Data;
 using Binding = System.Windows.Data.Binding;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public enum LampState { Off, On, Blink }
 

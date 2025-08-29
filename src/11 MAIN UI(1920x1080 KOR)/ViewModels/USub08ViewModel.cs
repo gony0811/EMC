@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel08 : ObservableObject 
+    public partial class USub08ViewModel : ObservableObject 
     {
         [ObservableProperty]
         private ObservableCollection<SensorIoItemViewModel> inputIoItems = new ObservableCollection<SensorIoItemViewModel>();
@@ -12,7 +12,7 @@ namespace EGGPLANT.ViewModels
         [ObservableProperty]
         private ObservableCollection<SensorIoItemViewModel> outputIoItems = new ObservableCollection<SensorIoItemViewModel>();
 
-        public USubViewModel08()
+        public USub08ViewModel()
         {
             // Sensor Item 정리
             // 입력 신호 샘플  

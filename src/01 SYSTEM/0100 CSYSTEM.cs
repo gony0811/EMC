@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
 using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
-using EGGPLANT._13_DataStore;
+using EGGPLANT;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;

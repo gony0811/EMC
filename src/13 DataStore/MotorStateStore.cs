@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EGGPLANT._12_SUB_UI;
+using EGGPLANT;
 
-namespace EGGPLANT._13_DataStore
+namespace EGGPLANT
 {
     public enum Axis { X, Y, Z }
 

@@ -1,12 +1,12 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EGGPLANT._12_SUB_UI;
+using EGGPLANT;
 using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel09 : ObservableObject
+    public partial class USub09ViewModel : ObservableObject
     {
         [ObservableProperty]
         private PowerLampMode mode;
@@ -20,7 +20,7 @@ namespace EGGPLANT.ViewModels
         [ObservableProperty]
         private LampState bottomPowerLamp;
 
-        public USubViewModel09()
+        public USub09ViewModel()
         {
             TopPowerLamp = LampState.Off;
             MiddlePowerLamp = LampState.Off;

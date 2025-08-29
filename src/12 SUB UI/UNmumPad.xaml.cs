@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public partial class UNmumPad : Window, INotifyPropertyChanged
     {

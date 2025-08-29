@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     /// <summary>
     /// Interaction logic for AxisWaypointSet.xaml

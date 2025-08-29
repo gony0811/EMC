@@ -1,4 +1,4 @@
-﻿namespace EGGPLANT._12_SUB_UI
+﻿namespace EGGPLANT
 {
     public enum State
     {

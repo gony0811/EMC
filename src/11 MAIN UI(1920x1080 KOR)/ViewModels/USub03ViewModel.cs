@@ -2,10 +2,10 @@
 
 namespace EGGPLANT.ViewModels
 {
-    public partial class USubViewModel03 : ObservableObject
+    public partial class USub03ViewModel : ObservableObject
     {
 
-        public USubViewModel03()
+        public USub03ViewModel()
         {
         }
     }

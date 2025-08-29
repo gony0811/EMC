@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using EGGPLANT._13_DataStore;
 using EGGPLANT.ViewModels;
 using UserControl = System.Windows.Controls.UserControl;
 

@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using EGGPLANT._11_MAIN_UI_1920x1080_KOR_;
-using EGGPLANT._13_DataStore;
+using EGGPLANT;
 using EGGPLANT.ViewModels;
 
 namespace EGGPLANT

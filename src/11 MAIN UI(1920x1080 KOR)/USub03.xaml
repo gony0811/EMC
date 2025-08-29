@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EGGPLANT._11_MAIN_UI_1920x1080_KOR_"
       mc:Ignorable="d"
-      xmlns:uc="clr-namespace:EGGPLANT._12_SUB_UI"
+      xmlns:uc="clr-namespace:EGGPLANT"
       Title="USub03">
     <!-- 사용자 화면 -->
     <Page.Resources>

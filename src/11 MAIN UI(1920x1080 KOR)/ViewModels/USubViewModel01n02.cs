@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EGGPLANT._13_DataStore;
+using EGGPLANT;
 using EGGPLANT.Models;
 
 namespace EGGPLANT.ViewModels

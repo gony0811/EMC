@@ -10,7 +10,7 @@ namespace EGGPLANT
     {
         public USub09()
         {
-            this.DataContext = new USubViewModel09();
+            this.DataContext = new USub09ViewModel();
             InitializeComponent();
         }
     }

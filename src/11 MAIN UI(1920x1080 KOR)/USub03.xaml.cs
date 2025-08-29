@@ -1,5 +1,5 @@
 ﻿
-using EGGPLANT._12_SUB_UI;
+using EGGPLANT;
 using System.Windows;
 using System.Windows.Controls;
 using MessageBox = System.Windows.MessageBox;

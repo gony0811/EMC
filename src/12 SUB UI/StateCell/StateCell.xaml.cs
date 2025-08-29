@@ -3,7 +3,7 @@ using System.Windows.Media;
 using Brush = System.Windows.Media.Brush;
 using UserControl = System.Windows.Controls.UserControl;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public partial class StateCell : UserControl
     {

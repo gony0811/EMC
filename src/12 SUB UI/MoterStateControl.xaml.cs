@@ -2,10 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using EGGPLANT._12_SUB_UI;
 using Binding = System.Windows.Data.Binding;
 
-namespace EGGPLANT._12_SUB_UI
+namespace EGGPLANT
 {
     public partial class MoterStateControl : UserControl
     {
