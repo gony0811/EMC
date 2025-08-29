@@ -23,8 +23,8 @@ namespace EGGPLANT
     /// </summary>
     public partial class UError : Window
     {
-        private CError FError = null;
-        private CErrorList FErrorList = null;
+        private CError FError = App.Container.Resolve<CError>();
+        private CErrorList FErrorList = App.Container.Resolve<CErrorList>();
         private int FEIndex = 0;
         private int FLEStep = 0;
         private int FLEIndex = 0;
@@ -34,9 +34,6 @@ namespace EGGPLANT
         public UError()
         {
             InitializeComponent();
-
-            FError = App.Container.Resolve<CError>();
-            FErrorList = App.Container.Resolve<CErrorList>();
             Width = 489;
             FTimer = new DispatcherTimer();
             FTimer.Interval = TimeSpan.FromMilliseconds(50);

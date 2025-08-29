@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace EGGPLANT
 {
@@ -12,43 +14,10 @@ namespace EGGPLANT
 
     class CStepProc : IDisposable
     {
-        protected int FStep = 0;
-        protected int FPrevStep = 0;
-        protected int FTimeCount = 0;
-        protected CDelay FDelay = new CDelay();
-        protected CDelay FDelayEx = new CDelay();
-        private int FThreadInterval = 1;
-        private int ErrorIndex = 0;
-
-        public int ThreadInterval
+        public string Version
         {
-            get { return FThreadInterval; }
-            set
-            {
-                if (FThreadInterval != value && value > 0)
-                {
-                    FThreadInterval = value;
-                }
-            }
+            get { return "STEP PROC - sean.kim(V25.08.29.001)"; }
         }
-
-        public int Step { get => FStep; }
-        public int PrevStep { get => FPrevStep; }
-
-        public RUN_MODE RunMode = RUN_MODE.STOP;
-
-        protected int FElement;
-        public int Element
-        { get { return FElement; } }
-
-        private string FClassName;
-        public string ClassName
-        { get { return FClassName; } }
-
-        protected int FScanTime;
-        public int ScanTime
-        { get { return FScanTime; } }
-
         public CStepProc(string AClassName, int AScanTime = 1, int AElement = 0)
         {
             FStep = 0;
@@ -59,7 +28,9 @@ namespace EGGPLANT
             PauseEnabled = 0;
             FTimeOverCount = 0; ;
             FHandOperateIndex = 0;
+            FWindowInstanceCount = 0;
 
+            for (int i = 1; i < 10; i++) { FWindowInstance[i] = null; }
             for (int i = 0; i < 10; i++) { FCycleTime[i] = 0; FCycleCount[i] = 0; }
 
             RunMode = RUN_MODE.STOP;
@@ -67,29 +38,59 @@ namespace EGGPLANT
             FScanTime = AScanTime;
             FClassName = AClassName;
         }
-
-
-
-        public bool GetBit(int AValue, int AIndex)
+        public CStepProc(string AClassName, int AScanTime, int AElement, Window AWindowInstance)
         {
-            if ((AValue & (0x01 << AIndex)) != 0) return true;
-            return false;
-        }
-        public void SetBit(ref int AValue, int AIndex, bool ASet)
-        {
-            if (ASet) AValue = (AValue | (0x01 << AIndex));
-            else AValue = (AValue & ~(0x01 << AIndex));
-        }
-
-        public void Next()
-        {
+            FStep = 0;
+            FPrevStep = 0;
             FTimeCount = 0;
-            FStep++;
+            ErrorIndex = 0;
+            PauseStatus = 0;
+            PauseEnabled = 0;
+            FTimeOverCount = 0; ;
+            FHandOperateIndex = 0;
+            FWindowInstanceCount = 0;
+
+            for (int i = 1; i < 10; i++) { FWindowInstance[i] = null; }
+            for (int i = 0; i < 10; i++) { FCycleTime[i] = 0; FCycleCount[i] = 0; }
+
+            RunMode = RUN_MODE.STOP;
+            FElement = AElement;
+            FScanTime = AScanTime;
+            FClassName = AClassName;
+            AddWindowInstance(AWindowInstance);
         }
-        public void Move(int AStep)
+
+        ~CStepProc()
         {
-            FTimeCount = 0;
-            FStep = AStep;
+            Dispose(false);
+        }
+        #region Dispose 구문
+        protected bool FDisposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool ADisposing)
+        {
+            if (FDisposed) return;
+            if (ADisposing) { /* IDisposable 인터페이스를 구현하는 멤버들을 여기서 정리합니다. */}
+
+            FDisposed = true;
+        }
+        #endregion
+
+        private string FClassName;
+        public string ClassName
+        { get { return FClassName; } }
+
+        protected int FScanTime;
+        public int ScanTime
+        { get { return FScanTime; } }
+
+        public void CalibrateDelay(ref int ADelay)
+        {
+            ADelay = ADelay / FScanTime;
         }
 
         #region 스텝 시간 측정용
@@ -117,6 +118,92 @@ namespace EGGPLANT
             }
         }
         #endregion
+
+        protected int FElement;
+        public int Element
+        { get { return FElement; } }
+
+        protected int FWindowInstanceCount = 0;
+        protected Window[] FWindowInstance = new Window[10];
+        public void AddWindowInstance(Window AWindowInstance)
+        {
+            if (AWindowInstance == null) return;
+            if (FWindowInstanceCount >= 10) return;
+
+            FWindowInstance[FWindowInstanceCount] = AWindowInstance;
+            FWindowInstanceCount++;
+        }
+
+        public void PostMessage(uint Msg, int wParam, int lParam)
+        {
+            if (FWindowInstance[0] == null) return;
+
+            if (FWindowInstance[0].Dispatcher.CheckAccess())
+            {
+                FWindowInstance[0].Dispatcher.BeginInvoke((MethodInvoker)delegate
+                {
+                    IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(FWindowInstance[0]).Handle;
+                    CMESSAGE.PostMessage(hwnd, Msg, wParam, lParam);
+                });
+            }
+            else
+            {
+                IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(FWindowInstance[0]).Handle;
+                CMESSAGE.PostMessage(hwnd, Msg, wParam, lParam);
+            }
+        }
+        public void PostMessage(Window window, uint Msg, int wParam, int lParam)
+        {
+            if (window.Dispatcher.CheckAccess())
+            {
+                window.Dispatcher.BeginInvoke((MethodInvoker)delegate
+                {
+                    IntPtr hwnd = new WindowInteropHelper(window).Handle;
+                    CMESSAGE.PostMessage(hwnd, Msg, wParam, lParam);
+                });
+            }
+            else
+            {
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+                CMESSAGE.PostMessage(hwnd, Msg, wParam, lParam);
+            }
+        }
+
+        public int ErrorIndex = 0;
+        public RUN_MODE RunMode = RUN_MODE.STOP;
+
+        private int FThreadInterval = 1;
+        public int ThreadInterval
+        {
+            get { return FThreadInterval; }
+            set
+            {
+                if (FThreadInterval != value && value > 0)
+                {
+                    FThreadInterval = value;
+                }
+            }
+        }
+
+        protected CDelay FDelay = new CDelay();
+        protected CDelay FDelayEx = new CDelay();
+
+        protected int FStep = 0;
+        protected int FPrevStep = 0;
+        protected int FTimeCount = 0;
+        public int Step { get { return FStep; } }
+        public int PrevStep { get { return FPrevStep; } }
+
+        public void Next()
+        {
+            FTimeCount = 0;
+            FStep++;
+        }
+        public void Move(int AStep)
+        {
+            FTimeCount = 0;
+            FStep = AStep;
+        }
 
         #region 기본 동작 기능
         public virtual int Always()
@@ -295,6 +382,7 @@ namespace EGGPLANT
 
         }
         #endregion
+
         #region 매뉴얼(수동) 동작 기능
         protected int FHandOperateIndex = 0;
         public int HandOperateIndex { get { return FHandOperateIndex; } }
@@ -316,6 +404,7 @@ namespace EGGPLANT
             return true;
         }
         #endregion
+
         #region 타임 오버 기능
         protected int FTimeOverCount = 0;
         protected TTimeOver[] FTimeOver = new TTimeOver[100];
@@ -371,6 +460,7 @@ namespace EGGPLANT
             return true;
         }
         #endregion
+
         #region 싸이클 타임 측정 기능
         protected int[] FCycleTime = new int[10];
         protected int[] FCycleCount = new int[10];
@@ -409,6 +499,7 @@ namespace EGGPLANT
             return FCycleTime[AIndex];
         }
         #endregion
+
         #region Pause 기능
         public int PauseStatus = 0;
         public int PauseEnabled = 0;
@@ -434,25 +525,27 @@ namespace EGGPLANT
         }
         #endregion
 
-        protected bool FDisposed = false;
-        public void Dispose()
+        //기본적으로 사용하는 옵션
+        public bool GetBit(int AValue, int AIndex)
         {
-            Dispose(true);
+            if ((AValue & (0x01 << AIndex)) != 0) return true;
+            return false;
         }
-
-        protected virtual void Dispose(bool ADisposing)
+        public void SetBit(ref int AValue, int AIndex, bool ASet)
         {
-            if (FDisposed) return;
-            if (ADisposing) { /* IDisposable 인터페이스를 구현하는 멤버들을 여기서 정리합니다. */}
-
-            FDisposed = true;
+            if (ASet) AValue = (AValue | (0x01 << AIndex));
+            else AValue = (AValue & ~(0x01 << AIndex));
         }
     }
 
-    class CDelay : IDisposable
+    class CDelay
     {
         public CDelay()
         {
+        }
+        ~CDelay()
+        {
+            if (FWatch.IsRunning) FWatch.Stop();
         }
 
         private System.Diagnostics.Stopwatch FWatch = new System.Diagnostics.Stopwatch();
@@ -474,11 +567,6 @@ namespace EGGPLANT
         {
             if (FWatch.IsRunning) FWatch.Stop();
             FTimeOut = false;
-        }
-
-        public void Dispose()
-        {
-            if (FWatch.IsRunning) FWatch.Stop();
         }
 
         private bool FTimeOut = true;

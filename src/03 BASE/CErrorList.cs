@@ -10,7 +10,7 @@ namespace EGGPLANT
     public enum ERROR_MODE { WARNING = 0, ERROR = 1, UN_KNOWN = 99 };
     public enum ERROR_KIND { MACHINE = 0, MATERIAL = 1, MAN = 2, METHODE = 3, };
 
-    class CErrorListItem
+    public class CErrorListItem
     {
         public CErrorListItem(CErrorList AOwner, int AIndex)
         {
@@ -90,12 +90,17 @@ namespace EGGPLANT
             }
         }
     }
-    class CErrorList : IDisposable
+    public class CErrorList : IDisposable
     {
         static public int __MAX_ERROR_COUNT__ = 10001;
         public string Version
         {
             get { return "ERROR LIST - HoPe(V19.01.07.001)"; }
+        }
+
+        public CErrorList()
+        {
+
         }
 
         public CErrorList(string AClassName)

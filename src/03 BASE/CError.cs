@@ -82,7 +82,7 @@ namespace EGGPLANT
         private bool FHappen;
         public bool Happen { get { return FHappen; } }
     }
-    class CError : IDisposable
+    public class CError : IDisposable
     {
         [DllImport("user32.dll")]
         static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
@@ -93,15 +93,19 @@ namespace EGGPLANT
             get { return "ERROR - Sean(V25.08.19.001)"; }
         }
 
-        private CSYS SYS = null;
+        private UError ErrorWindow = null;
+
+        public CError()
+        {
+
+        }
 
         public CError(string AClassName)
         {
             FClassName = AClassName;
+            ErrorWindow = App.Container.Resolve<UError>();
             FConfigDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\CONFIG\\";
-            FSystemDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\LOG\\ERROR LOG\\";
-
-            SYS = App.Container.Resolve<CSYS>();
+            FSystemDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\LOG\\ERROR LOG\\";           
 
             if (!System.IO.Directory.Exists(FConfigDirectory)) System.IO.Directory.CreateDirectory(FConfigDirectory);
             if (!System.IO.Directory.Exists(FSystemDirectory)) System.IO.Directory.CreateDirectory(FSystemDirectory);
@@ -155,10 +159,10 @@ namespace EGGPLANT
                 switch (AStyle)
                 {
                     case TASK_STYPE.NORMAL:
-                        SYS.FError.Execute(AMode, AWParam, ALParam);
+                        ErrorWindow.Execute(AMode, AWParam, ALParam);
                         break;
                     case TASK_STYPE.EMEGENCY:
-                        EGGPLANT.FEmergency.Execute(AWParam, ALParam);
+                        ErrorWindow.Execute(AMode, AWParam, ALParam);
                         break;
                 }
             });
@@ -168,7 +172,7 @@ namespace EGGPLANT
         {
             var task = Task.Run(() =>
             {
-                UConfirmFromError.Execute(ACaption, AMessage, MessageBoxButtons.OK, AShowTime);
+                //UConfirmFromError.Execute(ACaption, AMessage, MessageBoxButtons.OK, AShowTime);
             });
             await task;
         }
@@ -454,6 +458,7 @@ namespace EGGPLANT
             public CBuzzer(int ABuzzerIndex)
             {
                 FBuzzerIndex = ABuzzerIndex;
+                
             }
 
             private int FTickCount = 0;
@@ -463,20 +468,18 @@ namespace EGGPLANT
             private int FToggleCount = 0;
             private int FSetToggleCount = 0;
             private BUZZER_MODE FBuzzerMode = BUZZER_MODE.OFF;
-
             private void SetBuzzer(bool AValue)
             {
                 if (FBuzzerIndex < 0) return;
-                if (CMIT.PmacIO == null) return;
-
-                CMIT.PmacIO.Output[FBuzzerIndex] = AValue;
+                //if (CMIT.PmacIO == null) return;
+                //CMIT.PmacIO.Output[FBuzzerIndex] = AValue;
             }
             private bool IsOnBuzzer()
             {
                 if (FBuzzerIndex < 0) return false;
-                if (CMIT.PmacIO == null) return false;
-
-                return CMIT.PmacIO.Output[FBuzzerIndex];
+                //if (CMIT.PmacIO == null) return false;
+                //return CMIT.PmacIO.Output[FBuzzerIndex];
+                return false;
             }
             public void OnExecute()
             {
@@ -631,7 +634,7 @@ namespace EGGPLANT
                 }
             }
         }
-        #endregion
+#endregion
 
         #region 에러 처리
         public enum STATUS { NONE = 0x00, BUZZER = 0x01, WARNING = 0x10, ERROR = 0x20, }
@@ -643,6 +646,9 @@ namespace EGGPLANT
         private int FPrevIndex = 0;
         private int FPrevHappenTime = 0;
         private int FContinueEventIgnoreTime = 0;
+        private CErrorList FErrorList = App.Container.Resolve<CErrorList>();
+        private CExecute FExecuteProc = App.Container.Resolve<CExecute>();
+
 
         public int Index
         {
@@ -651,7 +657,7 @@ namespace EGGPLANT
             {
                 if (FIndex == value) return;
 
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null) SetIndex(value, CMIT.ErrorList.GetItem(value).Mode);
+                if (FErrorList != null && FExecuteProc != null) SetIndex(value, FErrorList.GetItem(value).Mode);
                 else SetIndex(value, ERROR_MODE.UN_KNOWN);
             }
         }
@@ -665,21 +671,21 @@ namespace EGGPLANT
                 if (interval < 10) return;
                 if (AIndex == 0)
                 {
-                    if (CMIT.ErrorList.GetItem(FIndex).Level > 0) return;
+                    if (FErrorList.GetItem(FIndex).Level > 0) return;
                 }
 
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, false,
-                                                                CMIT.ErrorList.GetItem(FIndex).Mode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, 0, 0));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, false,
+                                                                FErrorList.GetItem(FIndex).Mode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, 0, 0));
                 }
             }
             FTickCount = Environment.TickCount;
 
             int rank = 0;
-            if (CMIT.ExecuteProc.RunMode == RUN_MODE.RUN)
+            if (FExecuteProc.RunMode == RUN_MODE.RUN)
             {
                 if ((FPrevIndex != AIndex) || (Environment.TickCount - FPrevHappenTime) > FContinueEventIgnoreTime * 1000)
                 {
@@ -693,16 +699,18 @@ namespace EGGPLANT
             if (FIndex != 0)
             {
                 StepLogFileName = "";
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, true, AMode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, rank, 0));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, true, AMode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, rank, 0));
 
                     if (AMode == ERROR_MODE.ERROR) FErrStatus = STATUS.BUZZER | STATUS.ERROR;
                     else FErrStatus = STATUS.BUZZER | STATUS.WARNING;
 
-                    if (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(CMIT.ErrorList.GetItem(FIndex).Buzzer);
+                    // sean.kim 2025-08-29
+                    // Option 정보 처리
+                    //f (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(FErrorList.GetItem(FIndex).Buzzer);
                 }
             }
             else
@@ -711,8 +719,8 @@ namespace EGGPLANT
                 Buzzer(-1);
             }
 
-            TaskEProcess(TASK_STYPE.NORMAL, FIndex, CMIT.ErrorList.GetItem(FIndex).Level, AMode);
-            TaskEProcess(TASK_STYPE.EMEGENCY, 0, CMIT.ErrorList.GetItem(FIndex).Level, AMode);
+            TaskEProcess(TASK_STYPE.NORMAL, FIndex, FErrorList.GetItem(FIndex).Level, AMode);
+            TaskEProcess(TASK_STYPE.EMEGENCY, 0, FErrorList.GetItem(FIndex).Level, AMode);
         }
 
         public void DisplayWindowShow(TASK_STYPE AStyle, int AWParam, int ALParam, ERROR_MODE AMode)
@@ -734,21 +742,21 @@ namespace EGGPLANT
                 if (interval < 10) return;
                 if (AIndex == 0)
                 {
-                    if (CMIT.ErrorList.GetItem(FIndex).Level > 0) return;
+                    if (FErrorList.GetItem(FIndex).Level > 0) return;
                 }
 
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, false,
-                                                                CMIT.ErrorList.GetItem(FIndex).Mode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, 0, 0));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, false,
+                                                                FErrorList.GetItem(FIndex).Mode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, 0, 0));
                 }
             }
             FTickCount = Environment.TickCount;
 
             int rank = 0;
-            if (CMIT.ExecuteProc.RunMode == RUN_MODE.RUN)
+            if (FExecuteProc != null && FExecuteProc.RunMode == RUN_MODE.RUN)
             {
                 if ((FPrevIndex != AIndex) || (Environment.TickCount - FPrevHappenTime) > FContinueEventIgnoreTime * 1000)
                 {
@@ -763,18 +771,21 @@ namespace EGGPLANT
             if (FIndex != 0)
             {
                 StepLogFileName = "";
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, true,
-                                                                CMIT.ErrorList.GetItem(FIndex).Mode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, rank, 0));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, true,
+                                                                FErrorList.GetItem(FIndex).Mode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, rank, 0));
 
-                    if (CMIT.ErrorList.GetItem(FIndex).Mode == ERROR_MODE.ERROR) FErrStatus = STATUS.BUZZER | STATUS.ERROR;
+                    if (FErrorList.GetItem(FIndex).Mode == ERROR_MODE.ERROR) FErrStatus = STATUS.BUZZER | STATUS.ERROR;
                     else FErrStatus = STATUS.BUZZER | STATUS.WARNING;
 
-                    mode = CMIT.ErrorList.GetItem(FIndex).Mode;
-                    if (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(CMIT.ErrorList.GetItem(FIndex).Buzzer);
+                    mode = FErrorList.GetItem(FIndex).Mode;
+
+                    // sean.kim 2025-08-29
+                    // Option 정보 처리
+                    //if (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(FErrorList.GetItem(FIndex).Buzzer);
                 }
             }
             else
@@ -783,8 +794,8 @@ namespace EGGPLANT
                 Buzzer(-1);
             }
 
-            TaskEProcess(TASK_STYPE.NORMAL, 0, CMIT.ErrorList.GetItem(FIndex).Level, mode);
-            TaskEProcess(TASK_STYPE.EMEGENCY, FIndex, CMIT.ErrorList.GetItem(FIndex).Level, mode);
+            TaskEProcess(TASK_STYPE.NORMAL, 0, FErrorList.GetItem(FIndex).Level, mode);
+            TaskEProcess(TASK_STYPE.EMEGENCY, FIndex, FErrorList.GetItem(FIndex).Level, mode);
         }
         public void ProcessError(int AIndex, int AStep)
         {
@@ -792,17 +803,17 @@ namespace EGGPLANT
 
             if (FIndex != 0)
             {
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, false,
-                                                                CMIT.ErrorList.GetItem(FIndex).Mode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, 0, 0));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, false,
+                                                                FErrorList.GetItem(FIndex).Mode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, 0, 0));
                 }
             }
 
             int rank = 0;
-            if (CMIT.ExecuteProc.RunMode == RUN_MODE.RUN)
+            if (FExecuteProc != null && FExecuteProc.RunMode == RUN_MODE.RUN)
             {
                 if ((FPrevIndex != AIndex) || (Environment.TickCount - FPrevHappenTime) > FContinueEventIgnoreTime * 1000)
                 {
@@ -816,19 +827,21 @@ namespace EGGPLANT
             FIndex = AIndex;
             if (FIndex != 0)
             {
-                if (CMIT.ErrorList != null && CMIT.ExecuteProc != null)
+                if (FErrorList != null && FExecuteProc != null)
                 {
-                    FErrItemList.Enqueue(new CErrorItem(FIndex, CMIT.ErrorList.GetItem(FIndex).Title, true,
-                                                                CMIT.ErrorList.GetItem(FIndex).Mode,
-                                                                CMIT.ErrorList.GetItem(FIndex).Kind,
-                                                                CMIT.ExecuteProc.RunMode, rank, AStep));
+                    FErrItemList.Enqueue(new CErrorItem(FIndex, FErrorList.GetItem(FIndex).Title, true,
+                                                                FErrorList.GetItem(FIndex).Mode,
+                                                                FErrorList.GetItem(FIndex).Kind,
+                                                                FExecuteProc.RunMode, rank, AStep));
 
-                    if (CMIT.ErrorList.GetItem(FIndex).Mode == ERROR_MODE.ERROR) FErrStatus = STATUS.BUZZER | STATUS.ERROR;
+                    if (FErrorList.GetItem(FIndex).Mode == ERROR_MODE.ERROR) FErrStatus = STATUS.BUZZER | STATUS.ERROR;
                     else FErrStatus = STATUS.BUZZER | STATUS.WARNING;
 
                     SaveStep();
-                    mode = CMIT.ErrorList.GetItem(FIndex).Mode;
-                    if (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(CMIT.ErrorList.GetItem(FIndex).Buzzer);
+                    mode = FErrorList.GetItem(FIndex).Mode;
+                    // sean.kim 2025-08-29
+                    // Option 정보 처리
+                    //if (CMIT.Struct != null && (CMIT.Struct.OptionBuzzerSkip == 0) && (CMIT.Struct.OptionGreenMode == 0)) Buzzer(FErrorList.GetItem(FIndex).Buzzer);
                 }
             }
             else
@@ -837,8 +850,8 @@ namespace EGGPLANT
                 Buzzer(-1);
             }
 
-            TaskEProcess(TASK_STYPE.NORMAL, FIndex, CMIT.ErrorList.GetItem(FIndex).Level + AStep * 100, mode);
-            TaskEProcess(TASK_STYPE.EMEGENCY, 0, CMIT.ErrorList.GetItem(FIndex).Level + AStep * 100, mode);
+            TaskEProcess(TASK_STYPE.NORMAL, FIndex, FErrorList.GetItem(FIndex).Level + AStep * 100, mode);
+            TaskEProcess(TASK_STYPE.EMEGENCY, 0, FErrorList.GetItem(FIndex).Level + AStep * 100, mode);
         }
 
         public void ShowErrorMessageBox(string ACaption, string AMessage, int AShowTime = 10)
@@ -851,15 +864,15 @@ namespace EGGPLANT
         public string StepLogFileName = "";
         private void SaveStep()
         {
-            if (CMIT.ExecuteProc == null) return;
+            if (FExecuteProc == null) return;
 
             StringBuilder sb = new StringBuilder();
-            sb.Append($"STEP INDEX,{CMIT.ExecuteProc.AStepIndex},SETP OVER FLOW,{CMIT.ExecuteProc.LStepOverFlow},\r\n\r\n");
+            sb.Append($"STEP INDEX,{FExecuteProc.AStepIndex},SETP OVER FLOW,{FExecuteProc.LStepOverFlow},\r\n\r\n");
 
-            uint ccnt = CMIT.ExecuteProc.Count;
+            uint ccnt = FExecuteProc.Count;
             for (uint c = 0; c < ccnt; c++)
             {
-                sb.Append($"{CMIT.ExecuteProc.GetItem(c).ClassName},");
+                sb.Append($"{FExecuteProc.GetItem(c).ClassName},");
             }
 
             for (uint r = 0; r < 10000; r++)
@@ -867,7 +880,7 @@ namespace EGGPLANT
                 sb.Append("\r\n");
                 for (uint c = 0; c < ccnt; c++)
                 {
-                    sb.Append($"{CMIT.ExecuteProc.GetItem(c).Step:D4},");
+                    sb.Append($"{FExecuteProc.GetItem(c).Step:D4},");
                 }
             }
 

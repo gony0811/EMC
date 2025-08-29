@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
+using EGGPLANT.Device.PowerPmac;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -69,11 +70,13 @@ namespace EGGPLANT
         public USub02ViewModel FSub02ViewModel = App.Container.Resolve<USub02ViewModel>();
         public USub02 FSub02 = App.Container.Resolve<USub02>();
         public USub05 FSub05 = App.Container.Resolve<USub05>();
-
         public UError FError = App.Container.Resolve<UError>();
-
-        public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
-        public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
+        
+        //public CTrace DeviceLogTrace = App.Container.ResolveKeyed<CTrace>("DeviceLogTrace");
+        //public CTrace Trace = App.Container.ResolveKeyed<CTrace>("Trace");
+        //public CErrorList ErrorList = App.Container.Resolve<CErrorList>();
+        //public CError Error = App.Container.Resolve<CError>();
+        //public CPmacMotion PmacMotion = App.Container.Resolve<CPmacMotion>();
 
         public void GoToSub01() => FMain.MainFrame.Navigate(FSub01);
         public void GoToSub02() => FMain.MainFrame.Navigate(FSub02);

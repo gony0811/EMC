@@ -57,11 +57,13 @@ namespace EGGPLANT
         private ObservableCollection<string> logMessages = new ObservableCollection<string>();
 
 
+
         // public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>();
 
         // 수정 코드
         public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>() ?? throw new InvalidOperationException("CSYS 인스턴스를 생성할 수 없습니다. App.Container가 null이거나 등록되지 않았습니다.");
 
+        public CTrace Trace { get; } = App.Container?.ResolveKeyed<CTrace>("Trace") ?? throw new InvalidOperationException("Trace 인스턴스를 생성할 수 없습니다. App.Container가 null이거나 등록되지 않았습니다.");
 
         public UMainViewModel()
         {
@@ -92,7 +94,7 @@ namespace EGGPLANT
             IsTowerLampChecked = false;
             // Navigate to the initial page
             CSYS.GoToSub01();
-            CSYS.Trace.Trace("UMainViewModeL", "UMainViewModel initialized successfully.");
+            Trace.Trace("UMainViewModeL", "UMainViewModel initialized successfully.");
 
         }
 

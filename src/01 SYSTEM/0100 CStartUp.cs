@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EGGPLANT.Device.PowerPmac;
 using EGGPLANT.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -36,11 +37,15 @@ namespace EGGPLANT
             builder.RegisterType<USub01n04ViewModel>().InstancePerDependency();
 
             builder.RegisterType<UError>().SingleInstance();
-            builder.RegisterType<UErrorViewModel>().InstancePerDependency();
 
             builder.RegisterInstance<CTrace>(new CTrace("DeviceLogTrace")).Keyed<CTrace>("DeviceLogTrace");
             builder.RegisterInstance<CTrace>(new CTrace("Trace")).Keyed<CTrace>("Trace");
-            builder.RegisterType<CProcessMap>().AsSelf().SingleInstance();
+            builder.RegisterType<CProcessMap>().SingleInstance();
+
+            builder.RegisterType<CErrorList>().SingleInstance();
+            builder.RegisterType<CError>().SingleInstance();
+            builder.RegisterType<CPmacMotion>().SingleInstance();
+            builder.RegisterType<CExecute>().SingleInstance();
             return builder.Build();
         }
 
