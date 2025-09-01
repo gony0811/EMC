@@ -34,8 +34,7 @@ namespace EGGPLANT
         public UInt32 KeepDate = 0;
         public DateTime ToDay = DateTime.Now;
 
-         
-
+        
 
         public CTrace(string AClassName, string ADirectory = "", UInt32 AKeepDate = 30, UInt32 AMaxTraceBufferCount = 1) 
         {

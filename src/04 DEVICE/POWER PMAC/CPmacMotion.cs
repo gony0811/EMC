@@ -1460,16 +1460,33 @@ namespace EGGPLANT.Device.PowerPmac
 
         public CPmacMotion(int AMotionCount)
         {
+
+        }
+
+        //-------------------------------------------------------------------------------------------
+
+        #region Initalzed 구문
+
+        private bool FInitialized = false;
+        public bool Initialized { get { return FInitialized; } }
+
+        public bool Initialize(int AMotionCount)
+        {
             FDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\CONFIG\\";
             if (!System.IO.Directory.Exists(FDirectory)) System.IO.Directory.CreateDirectory(FDirectory);
 
             FItem = new CPMacMotionItem[AMotionCount];
             for (int i = 0; i < FItem.Length; i++) FItem[i] = new CPMacMotionItem(this, i);
-
-            FInitialized = Initialize();
+           
             OpenParameter();
             OpenDefaultPosition();
+
+            FInitialized = CPMacBasic.Initialize();
+
+            return FInitialized;
         }
+
+        #endregion
 
         protected CPMacMotionItem[] FItem = null;
         public int MotionCount { get { return FItem.Length; } }
@@ -1514,19 +1531,7 @@ namespace EGGPLANT.Device.PowerPmac
         }
         #endregion
 
-        //-------------------------------------------------------------------------------------------
 
-        #region Initalzed 구문
-
-        private bool FInitialized = false;
-        public bool Initialized { get { return FInitialized; } }
-
-        public bool Initialize()
-        {
-            return CPMacBasic.Initialize();
-        }
-
-        #endregion
 
         //-------------------------------------------------------------------------------------------
 

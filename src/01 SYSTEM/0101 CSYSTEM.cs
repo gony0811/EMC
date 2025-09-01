@@ -638,6 +638,13 @@ namespace EGGPLANT
             else AValue = AValue & ~(0x01 << AIndex);
         }
 
+        static public uint IpToUInt32(string ip)
+        {
+            var bytes = System.Net.IPAddress.Parse(ip).GetAddressBytes();
+            if (BitConverter.IsLittleEndian) Array.Reverse(bytes); // 네트워크(빅엔디언)로 맞춤
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+
         static public uint StrIpAddrToDWord(string ipAddress)
         {
             UInt32 uIPAddress;

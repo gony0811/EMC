@@ -39,7 +39,7 @@ namespace EGGPLANT.Device.PowerPmac
         static private string FDirectory;
         public string Directory { get { return FDirectory; } }
 
-        static private string FIP = "192.168.0.200";
+        static private string FIP = "172.20.0.200";
         public string IP { get { return FIP; } }
 
         static public uint FDeviceID1 = 0;
@@ -58,11 +58,13 @@ namespace EGGPLANT.Device.PowerPmac
                 FDeviceOpen = PMAC.OpenPmacDevice(FDeviceID1);
 #elif (__POWER_PMAC__ == true)
                 FDeviceID1 = 0x00;
-                FDeviceOpen = PMAC.DTKPowerPmacOpen(CETC.StrIpAddrToDWord(FIP), (UInt32)DTK_MODE_TYPE.DM_GPASCII);
+                FDeviceOpen = PMAC.DTKPowerPmacOpen(CETC.IpToUInt32(FIP), (UInt32)DTK_MODE_TYPE.DM_GPASCII);
 #else
 				Initialized = true;
 #endif		    
             }
+
+            Initialized = (FDeviceOpen == 0)? false : true;
             return Initialized;
         }
 
