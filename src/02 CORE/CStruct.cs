@@ -9,6 +9,7 @@ namespace EGGPLANT
 {
     class CStructBase
     {
+        public CStructBase() { }
         public CStructBase(string AClassName)
         {
             FClassName = AClassName;
@@ -22,6 +23,11 @@ namespace EGGPLANT
         protected int FRunStatus = 1;
         protected int FInRequest = 0;                     //true : 자재 진입 허용, false : 자재 진입 불가
         protected int FOutRequest = 0;                    //true : 자재 배출 허용, false : 자재 배출 불가
+
+        public void Initialize(string AClassName)
+        {
+            FClassName = AClassName;
+        }
 
         protected virtual void SetIdle(int AIdle)
         {

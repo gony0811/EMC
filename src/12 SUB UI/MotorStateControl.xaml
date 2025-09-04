@@ -8,9 +8,15 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
+            <!-- styles/defaultresource.xaml을 병합하여 리소스 오류 방지 -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Styles/DefaultResource.xaml"/>
+                <ResourceDictionary Source="/Styles/defaultresource.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="Black"></Setter>
+                <Setter Property="BorderThickness" Value="1"></Setter>
+                <Setter Property="Margin" Value="2"></Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <!-- 헤더 + 리스트 -->

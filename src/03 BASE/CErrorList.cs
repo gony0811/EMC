@@ -103,7 +103,7 @@ namespace EGGPLANT
 
         }
 
-        public CErrorList(string AClassName)
+        public void Initialize(string AClassName)
         {
             FClassName = AClassName;
             FDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\CONFIG\\";
@@ -112,6 +112,7 @@ namespace EGGPLANT
             for (int i = 0; i < __MAX_ERROR_COUNT__; i++) FItem[i] = new CErrorListItem(this, i);
             OpenParameter();
         }
+
         ~CErrorList()
         {
             Dispose(false);
