@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using EGGPLANT;
-
 using System.Windows;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -23,13 +21,13 @@ namespace EGGPLANT
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             base.OnStartup(e);
             // Initialize the main window
-            var Mutex = new System.Threading.Mutex(false, Project);
+            var Mutex = new Mutex(false, Project);
 
             if (!Mutex.WaitOne(0, false))
             {
                 // If another instance is already running, exit the application
                 MessageBox.Show($"이미 해당 프로그램{Project}이 구동 중입니다.", "에러", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
+                Current.Shutdown();
                 return;
             }
             

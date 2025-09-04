@@ -43,9 +43,10 @@
                      FontSize="16"
                      FontWeight="SemiBold"/>
                     </Border>
-                    <Button Content="엔지니어(ENGINEER)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10"></Button>
-                    <Button Content="관리자(ADMINISTRATOR)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10"></Button>
-                    <Button Content="서비스 엔지니어(SERVICE ENGINEER)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10"></Button>
+                    <Button Content="작업자" Height="40" FontWeight="DemiBold" Margin="0,0,0,10" Command="{Binding OperatorSelectCommand}"></Button>
+                    <Button Content="엔지니어(ENGINEER)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10" Command="{Binding EngineerSelectCommand}"></Button>
+                    <Button Content="관리자(ADMINISTRATOR)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10" Command="{Binding AdminSelectCommand}"></Button>
+                    <Button Content="서비스 엔지니어(SERVICE ENGINEER)" Height="40" FontWeight="DemiBold" Margin="0,0,0,10" Command="{Binding SESelectCommand}"></Button>
                 </StackPanel>
             </Border>
 
@@ -67,145 +68,214 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0" Grid.Row="0">
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5" VerticalAlignment="Center" Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="권한 설정(작업자)" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
+                               
+
+                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Margin="0,0,10,0" MinWidth="250">
+
+                                            <!-- ⬇️ 이 스타일이 핵심: 목록이 비면 섹션 전체를 감춤 -->
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasItems, ElementName=OperatorList}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+
+                                            <StackPanel>
+                                                <Border>
+                                                    <TextBlock Text="권한 설정(작업자)" Foreground="White"
+                                                                 FontWeight="DemiBold" FontSize="16"
+                                                                 TextAlignment="Left" Padding="10"/>
+                                                </Border>
+
+                                                <!-- 목록 -->
+                                                <ItemsControl x:Name="OperatorList" ItemsSource="{Binding OperatorSettings}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <uc:HeaderAction LabelText="{Binding PermissionName}">
+                                                                <uc:HeaderAction.ActionContent>
+                                                                    <Button Command="{Binding DataContext.SetPermissionCommand,
+                                                                            RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                            CommandParameter="{Binding}">
+                                                                        <Button.Style>
+                                                                            <Style TargetType="Button">
+                                                                                <Setter Property="Content" Value="불가"/>
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                                                                        <Setter Property="Content" Value="허용"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </Button.Style>
+                                                                    </Button>
+                                                                </uc:HeaderAction.ActionContent>
+                                                            </uc:HeaderAction>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
                                         </Border>
-                                        <uc:HeaderAction LabelText="파라미터 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="파라미터 변경" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="로그 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="에러목록 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="수동조작 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                                        
 
-                                        <uc:HeaderAction LabelText="모터 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="센서 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-
-                                        <uc:HeaderAction LabelText="경광등 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" 
-                                        HorizontalAlignment="Center" VerticalAlignment="Center"  
+                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
                                         Margin="0,0,10,0" MinWidth="250">
+
+                                    <!-- ⬇️ 이 스타일이 핵심: 목록이 비면 섹션 전체를 감춤 -->
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasItems, ElementName=EngineerList}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
                                     <StackPanel>
                                         <Border>
-                                            <TextBlock Text="권한 설정(엔지니어)" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"/>
+                                            <TextBlock Text="권한 설정(엔지니어)" Foreground="White"
+                                                         FontWeight="DemiBold" FontSize="16"
+                                                         TextAlignment="Left" Padding="10"/>
                                         </Border>
-                                        <uc:HeaderAction LabelText="파라미터 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="파라미터 변경" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="로그 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="에러목록 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="수동조작 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
 
-                                        <uc:HeaderAction LabelText="모터 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="센서 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-
-                                        <uc:HeaderAction LabelText="경광등 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                                        <!-- 목록 -->
+                                        <ItemsControl x:Name="EngineerList" ItemsSource="{Binding EngineerSettings}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <uc:HeaderAction LabelText="{Binding PermissionName}">
+                                                        <uc:HeaderAction.ActionContent>
+                                                            <Button Command="{Binding DataContext.SetPermissionCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                    CommandParameter="{Binding}">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button">
+                                                                        <Setter Property="Content" Value="불가"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                                                                <Setter Property="Content" Value="허용"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
+                                                            </Button>
+                                                        </uc:HeaderAction.ActionContent>
+                                                    </uc:HeaderAction>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </Border>
+
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0" Grid.Row="1">
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5"  Margin="0,0,10,0" MinWidth="250">
+                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5"
+                                        HorizontalAlignment="Center" Margin="0,0,10,0" MinWidth="250">
+
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasItems, ElementName=UserList}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
                                     <StackPanel>
                                         <Border>
-                                            <TextBlock Text="사용자 옵션" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
+                                            <TextBlock Text="사용자 옵션" Foreground="White"
+                                                         FontWeight="DemiBold" FontSize="16"
+                                                         TextAlignment="Left" Padding="10"/>
                                         </Border>
-                                        <uc:HeaderAction LabelText="DOOR" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="BUZZER" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="테스트 모드" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="보정 능력 연속 측정" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+
+                                        <ItemsControl x:Name="UserList" ItemsSource="{Binding UserSettings}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <uc:HeaderAction LabelText="{Binding PermissionName}">
+                                                        <uc:HeaderAction.ActionContent>
+                                                            <ToggleButton
+                                                                            IsThreeState="False"
+                                                                            IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                            Command="{Binding DataContext.SetPermissionCommand,
+                                                                                              RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                            CommandParameter="{Binding}">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Content" Value="미사용"/>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked" Value="True">
+                                                                                <Setter Property="Content" Value="사용"/>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+                                                        </uc:HeaderAction.ActionContent>
+                                                    </uc:HeaderAction>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5"
+                                        HorizontalAlignment="Center" Margin="0,0,10,0" MinWidth="250">
+
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasItems, ElementName=ServiceEngineerList}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <StackPanel>
+                                        <Border>
+                                            <TextBlock Text="서비스 엔지니어 옵션" Foreground="White"
+                                                             FontWeight="DemiBold" FontSize="16"
+                                                             TextAlignment="Left" Padding="10"/>
+                                        </Border>
+
+                                        <ItemsControl x:Name="ServiceEngineerList" ItemsSource="{Binding ServiceEngineerOptions}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <uc:HeaderAction LabelText="{Binding PermissionName}">
+                                                        <uc:HeaderAction.ActionContent>
+                                                            <ToggleButton
+                                                                            IsThreeState="False"
+                                                                            IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                            Command="{Binding DataContext.SetPermissionCommand,
+                                                                                              RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                            CommandParameter="{Binding}">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Content" Value="미사용"/>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked" Value="True">
+                                                                                <Setter Property="Content" Value="사용"/>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+                                                        </uc:HeaderAction.ActionContent>
+                                                    </uc:HeaderAction>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </Border>
 
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5"   Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="Service Engineer Option" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
-                                        </Border>
-                                        <uc:HeaderAction LabelText="드라이(IDLE)런" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="미사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-
-                                    </StackPanel>
-                                </Border>
                             </StackPanel>
 
                             <Border BorderBrush="#0767B3"  

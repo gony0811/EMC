@@ -1,14 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EGGPLANT.ViewModels
 {
     public partial class UInitializeViewModel: ObservableObject
     {
+           
+
         [ObservableProperty]
         private int progress;
 
@@ -17,5 +15,17 @@ namespace EGGPLANT.ViewModels
 
         [ObservableProperty]
         private string status; // "진행 중...", "완료"
+
+        public UInitializeViewModel()
+        {
+            //_authService = authService;
+            
+        }
+
+        // DB Load
+        public async Task LoadRolesAsync(CancellationToken ct = default)
+        {
+            
+        }
     }
 }

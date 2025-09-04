@@ -70,6 +70,7 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}" 
                               x:Name="Main" MinHeight="80" MinWidth="120" 
+                              
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsMainChecked}" Tag="MAIN">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -80,6 +81,7 @@
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
                         x:Name="Parameter" MinHeight="80" MinWidth="120"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsEnabled="{Binding UseParam}"
                               IsChecked="{Binding IsParamChecked}" Tag="PARAM">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Table" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
@@ -98,6 +100,7 @@
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"   
                         x:Name="Log" MinHeight="80" MinWidth="120"  
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
+                              IsEnabled="{Binding UseLog}"
                               IsChecked="{Binding IsLogChecked}" Tag="LOG">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="ChartHistogram" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
@@ -106,6 +109,7 @@
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"   
                         x:Name="Error" MinHeight="80" MinWidth="120" 
+                              IsEnabled="{Binding UseError}"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsErrorChecked}" Tag="ERROR">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -115,6 +119,7 @@
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
                         x:Name="Manual" MinHeight="80" MinWidth="120" 
+                              IsEnabled="{Binding UseManual}"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsManualChecked}" Tag="MANUAL">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -124,6 +129,7 @@
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
                         x:Name="Motion" MinHeight="80" MinWidth="120" 
+                              IsEnabled="{Binding UseMotion}"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsMotionChecked}" Tag="MOTION">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -133,6 +139,7 @@
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
                         x:Name="Sensor" MinHeight="80" MinWidth="120" 
+                              IsEnabled="{Binding UseDirectIO}"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsDirectIOChecked}" Tag="SENSOR">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -142,6 +149,7 @@
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"  
                         x:Name="SignalTower" MinHeight="80" MinWidth="120" 
+                              IsEnabled="{Binding UseTowerLamp}"
                               Command="{Binding NavigateClickCommand}" CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}" 
                               IsChecked="{Binding IsTowerLampChecked}" Tag="TOWERLAMP">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">

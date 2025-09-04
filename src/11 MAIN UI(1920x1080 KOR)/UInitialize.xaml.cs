@@ -1,32 +1,20 @@
 ﻿using Autofac;
 using EGGPLANT.Models;
 using EGGPLANT.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
 namespace EGGPLANT
 {
     
     public partial class UInitialize : Window
     {
-        public UInitializeViewModel VM { get; } = new UInitializeViewModel();
+        public UInitializeViewModel VM;
+
         private CancellationTokenSource _cts;
 
-        public UInitialize()
+        public UInitialize(UInitializeViewModel viewModel)
         {
+            VM = viewModel;
             InitializeComponent();
-            DataContext = VM;
             Loaded += Initialize;
         }
 
@@ -38,9 +26,9 @@ namespace EGGPLANT
             var createSteps = new List<Step>
             {
                 // STEP 1 - LOG IN / LANGUAGE 초기화
-                new Step("LOG IN / LANGUAGE 초기화", async ct =>
+                new Step("Role 초기화", async ct =>
                 {
-
+                    VM.LoadRolesAsync();
                     await Task.CompletedTask;
                 }),
 

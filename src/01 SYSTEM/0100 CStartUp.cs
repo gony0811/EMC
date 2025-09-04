@@ -1,12 +1,9 @@
 ﻿using Autofac;
+using CommunityToolkit.Mvvm.Messaging;
 using EGGPLANT.Device.PowerPmac;
 using EGGPLANT.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Data.SQLite;
 
 namespace EGGPLANT
 {
@@ -14,13 +11,45 @@ namespace EGGPLANT
     {
         public static IContainer Build()
         {
+            // DB Setting
+            // DB가 없으면 파일+테이블을 한 번만 생성
+            DB.EnsureCreatedOnce();
+
             var builder = new ContainerBuilder();
 
+            var cs = new SQLiteConnectionStringBuilder
+            {
+                DataSource = DB.DbPath,
+                Version = 3,
+                ForeignKeys = true
+            }.ToString();
+
+            builder.RegisterInstance(cs)
+                   .Named<string>("sqlite-conn")
+                   .SingleInstance();
+
+            builder.Register(c => new SqliteConnectionFactory(
+                                c.ResolveNamed<string>("sqlite-conn")))
+                   .As<ISqliteConnectionFactory>()
+                   .SingleInstance();
+
+            builder.RegisterType<AuthzService>()
+              .As<IAuthzService>()
+              .InstancePerLifetimeScope();
+
+            // DB Setting End
+
+            // 느슨한 결합
+            builder.RegisterInstance(WeakReferenceMessenger.Default)
+               .As<IMessenger>()
+               .SingleInstance();
+
             builder.RegisterType<UInitialize>().SingleInstance();
+            builder.RegisterType<UInitializeViewModel>().InstancePerDependency();
             builder.RegisterType<CSYS>().AsSelf().SingleInstance();
             builder.RegisterType<UDevHistory>().SingleInstance();
             builder.RegisterType<UMain>().SingleInstance();
-            builder.RegisterType<UMainViewModel>().InstancePerDependency();
+            builder.RegisterType<UMainViewModel>().AsSelf().SingleInstance();
 
             builder.RegisterType<USub01>().SingleInstance();
             builder.RegisterType<USub01ViewModel>().InstancePerDependency();
@@ -33,7 +62,8 @@ namespace EGGPLANT
             //builder.RegisterType<USubViewModel01n02>().AsSelf().InstancePerDependency();
 
             builder.RegisterType<USub01n03>().SingleInstance();
-            builder.RegisterType<USub01n03ViewModel>().InstancePerDependency();
+            builder.RegisterType<USub01n03ViewModel>().AsSelf();
+
             builder.RegisterType<USub01n04>().SingleInstance();
             builder.RegisterType<USub01n04ViewModel>().InstancePerDependency();
 
