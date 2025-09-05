@@ -7,6 +7,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EGGPLANT"
       xmlns:uc="clr-namespace:EGGPLANT"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       Title="USub02">
     <!-- 파라미터 화면 -->
@@ -52,7 +53,7 @@
                         <Border Grid.Column="0" Margin="0,0,4,0">
                             <TextBlock Text="현재 디바이스" Foreground="White" VerticalAlignment="Center"></TextBlock>
                         </Border>
-                        <TextBox Grid.Column="1" Text="{Binding CurrentDevice}"
+                        <TextBox Grid.Column="1" Text="{Binding CurrentRecipe}"
                                  Style="{StaticResource TextBox.Rounded.Panel}"
                                  IsReadOnly="True"
                                  Focusable="False"
@@ -60,8 +61,7 @@
                                  ContextMenu="{x:Null}"           
                                  AllowDrop="False"     
                                  IsTabStop="False" 
-                                 VerticalAlignment="Center"
-        />
+                                 VerticalAlignment="Center"/>
                     </Grid>
                     <!-- 파라미터 타입 선택창 && P/V 전환 버튼 Row 1 -->
                     <StackPanel Grid.Row="1" Margin="5" Orientation="Horizontal" >
@@ -72,6 +72,7 @@
                     <!-- 디바이스 목록 및 상호작용 버튼  Row 2 -->
                     <DockPanel Grid.Row="2" LastChildFill="True" Margin="0,4,0,0">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                            <Button Content="생성" Margin="0,0,6,0" Command="{Binding CreateRecipeCommand}"/>
                             <Button Content="복사" Margin="0,0,6,0"/>
                             <Button Content="삭제"/>
                         </StackPanel>
@@ -82,28 +83,31 @@
                     </DockPanel>
                     <!-- 디바이스 목록 -->
                     <DataGrid Grid.Row="3"
-                              ItemsSource="{Binding Devices}"
-                              SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                              ItemsSource="{Binding Recipes}"
+                              SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
                               Style="{StaticResource DataGrid.Transparent}"
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
                               HeadersVisibility="Column"
                               FontSize="16"
                               Margin="0,8,0,0"
-                              ColumnWidth="*"               
-                              HorizontalAlignment="Stretch">
+                              ColumnWidth="*"
+                              HorizontalAlignment="Stretch"
+                              IsReadOnly="True"                
+                              SelectionUnit="FullRow">
 
-                        <!-- 더블클릭 → VM.Command(SelectedDevice) -->
-                        <DataGrid.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick"
-                                          Command="{Binding InteractCommand}"
-                                          CommandParameter="{Binding SelectedDevice}"/>
-                        </DataGrid.InputBindings>
+                        <!-- 클릭/더블클릭 시 현재 선택 행(아이템)을 그대로 파라미터로 전달 -->
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <!-- 단일 클릭 -->
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnRowClick"/>
+                                <!-- 더블 클릭 -->
+                            </Style>
+                        </DataGrid.RowStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="#" Binding="{Binding Index}" IsReadOnly="True" Width="90" MinWidth="80" />
+                            <DataGridTextColumn Header="#" Binding="{Binding RecipeId}" IsReadOnly="True" Width="90" MinWidth="80" />
 
-                            <!-- 이름 + 우측 "사용중" 뱃지 -->
                             <DataGridTemplateColumn Header="이름" Width="*" MinWidth="250">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -115,66 +119,76 @@
                                                     Background="#22008000"
                                                     BorderBrush="#19E225"
                                                     BorderThickness="1"
-                                                    Visibility="{Binding IsInUse, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    Visibility="{Binding IsActive, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <TextBlock Text="사용중" FontSize="16" Foreground="#19E225"/>
                                             </Border>
 
                                             <TextBlock Text="{Binding Name}"
-                                                        FontSize="16"
-                                                        VerticalAlignment="Center"
-                                                        TextTrimming="CharacterEllipsis"/>
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
                                         </DockPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+
                 </Grid>
             </GroupBox>
 
             <GroupBox Style="{StaticResource TitledBox}" Header="파라미터 목록" Grid.Column="1" Grid.Row="1" Margin="10">
-                <DataGrid x:Name="ParamGrid"
-                            Grid.Column="1"
-                            ItemsSource="{Binding Items}"
-                            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                            Style="{StaticResource DataGrid.Transparent}"
-                            FontSize="18"
-                            AutoGenerateColumns="False"
-                            CanUserAddRows="False"
-                            HeadersVisibility="Column"
-                            RowHeaderWidth="0"
-                            Margin="0,8,0,0"
-                            BeginningEdit="ParamGrid_BeginningEdit">    
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name"
-                                            Binding="{Binding Name}"
-                                            IsReadOnly="True"
-                                            Width="2*"/>  
-                        <!-- ↓ Value 컬럼(편집 가능) -->
-                        <DataGridTextColumn Header="Value"
-                                              Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
-                                              Width="Auto">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <DataGrid x:Name="ParamGrid"
+                                ItemsSource="{Binding Parameters}"
+                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                Style="{StaticResource DataGrid.Transparent}"
+                                FontSize="18"
+                                AutoGenerateColumns="False"
+                                CanUserAddRows="False"
+                                HeadersVisibility="Column"
+                                RowHeaderWidth="0"
+                                Margin="0,8,0,0"
+                                BeginningEdit="ParamGrid_BeginningEdit">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name"
+                                                Binding="{Binding Name}"
+                                                IsReadOnly="True"
+                                                Width="2*"/>
+                            <!-- ↓ Value 컬럼(편집 가능) -->
+                            <DataGridTextColumn Header="Value"
+                                                Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Width="Auto">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn.EditingElementStyle>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.EditingElementStyle>
+                            </DataGridTextColumn>
 
-                        <DataGridTemplateColumn Width="100" IsReadOnly="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Unit}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                            <DataGridTemplateColumn Width="100" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Unit}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Content="파라미터 생성" Command="{Binding CreateParameterCommand}" Grid.Row="1" HorizontalAlignment="Right" Width="100" Height="30" Margin="8"  BorderBrush="White"></Button>
+                    
+                </Grid>
+                
+                
             </GroupBox>
         </Grid>
     </Border>

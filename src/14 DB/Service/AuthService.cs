@@ -1,6 +1,4 @@
-﻿using Dapper;
-using System.Windows.Xps;
-namespace EGGPLANT
+﻿namespace EGGPLANT
 {
 
     // 권한 조회 서비스
