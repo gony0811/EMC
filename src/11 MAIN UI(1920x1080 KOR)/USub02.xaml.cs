@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace EGGPLANT
 {
@@ -13,18 +14,15 @@ namespace EGGPLANT
     /// </summary>
     public partial class USub02 : Page
     {
-        public USub02()
+        public USub02(USub02ViewModel vm)
         {
+            DataContext = vm;
             InitializeComponent();
-            Init();
+           
         }
 
-        private void Init()
-        {
-            DataContext = new USub02ViewModel();
-            //this.tbCurrentDevice.Text = "TEST DEVICE";
-            //this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
-        }
+
+
         private void ParamGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             // "Value" 컬럼에서만 가로채기
@@ -33,7 +31,7 @@ namespace EGGPLANT
 
             e.Cancel = true; // 기본 셀 편집 막고 모달로 대체
 
-            if (e.Row?.Item is not ParameterModel item)
+            if (e.Row?.Item is not ParameterVM item)
                 return;
 
             // 모달 생성 및 초기값 설정
@@ -42,8 +40,8 @@ namespace EGGPLANT
                 Owner = Window.GetWindow(this),
                 CurrentValue = item.Value ?? "0",
                 // 필요 시 최대/최소 설정 (없으면 생략/빈 문자열)
-                MaximumValue = item.MaximumValue,
-                MinimumValue = item.MinimumValue,
+                MaximumValue = item.Maximum,
+                MinimumValue = item.Minimum,
                 // Step = 1.0,          // +/− 증감 단위
                 // AllowDecimal = true, // 소수 허용
             };
@@ -58,5 +56,19 @@ namespace EGGPLANT
                 ParamGrid.Items.Refresh();
             }
         }
+
+        private void OnRowClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGridRow row && DataContext is USub02ViewModel vm)
+            {
+                var item = row.DataContext; // 현재 행의 아이템(RecipeVM)
+                if (vm.RecipeClickCommand.CanExecute(item))
+                {
+                    vm.RecipeClickCommand.Execute(item);
+                    e.Handled = true; // DataGrid 내부 처리로 이벤트가 다시 소비되지 않도록
+                }
+            }
+        }
+
     }
 }
