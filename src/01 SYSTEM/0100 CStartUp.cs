@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using EGGPLANT.Device.PowerPmac;
 using EGGPLANT.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using System.Data.SQLite;
 
 namespace EGGPLANT
@@ -24,17 +23,20 @@ namespace EGGPLANT
                 ForeignKeys = true
             }.ToString();
 
-            builder.RegisterInstance(cs)
-                   .Named<string>("sqlite-conn")
-                   .SingleInstance();
+            builder.Register(_ => new SqliteConnectionFactory(cs))
+                .As<ISqliteConnectionFactory>()
+                .SingleInstance();
 
-            builder.Register(c => new SqliteConnectionFactory(
-                                c.ResolveNamed<string>("sqlite-conn")))
-                   .As<ISqliteConnectionFactory>()
-                   .SingleInstance();
+            builder.RegisterType<CommonService>()
+              .As<ICommonService>()
+              .InstancePerLifetimeScope();
 
             builder.RegisterType<AuthzService>()
               .As<IAuthzService>()
+              .InstancePerLifetimeScope();
+
+            builder.RegisterType<RecipeService>()
+              .As<IRecipeService>()
               .InstancePerLifetimeScope();
 
             // DB Setting End
@@ -46,6 +48,7 @@ namespace EGGPLANT
 
             builder.RegisterType<UInitialize>().SingleInstance();
             builder.RegisterType<UInitializeViewModel>().InstancePerDependency();
+            builder.RegisterType<CommonData>().SingleInstance();
             builder.RegisterType<CSYS>().AsSelf().SingleInstance();
             builder.RegisterType<UDevHistory>().SingleInstance();
             builder.RegisterType<UMain>().SingleInstance();
@@ -90,6 +93,13 @@ namespace EGGPLANT
             builder.RegisterType<CExecute>().SingleInstance();
 
             builder.RegisterType<MotorStateStore>().SingleInstance();
+
+            builder.RegisterType<RecipeCreateViewModel>().InstancePerDependency();
+            builder.RegisterType<RecipeCreateWindow>().InstancePerDependency();
+
+            builder.RegisterType<ParameterCreateVM>().InstancePerDependency();
+            builder.RegisterType<ParameterCreateWindow>().InstancePerDependency();
+
             return builder.Build();
         }
 

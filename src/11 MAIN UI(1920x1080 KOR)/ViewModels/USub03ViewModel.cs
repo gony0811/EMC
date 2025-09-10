@@ -48,7 +48,6 @@ namespace EGGPLANT.ViewModels
             {
                 _messenger.Send("ENGINEER");
             }
-            
         }
 
         [RelayCommand]

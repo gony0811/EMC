@@ -52,6 +52,64 @@ CREATE TABLE IF NOT EXISTS RoleCategoryManage (
 CREATE INDEX IF NOT EXISTS IX_RoleCategoryManage_RoleId ON RoleCategoryManage(RoleId);
 CREATE INDEX IF NOT EXISTS IX_RoleCategoryManage_CategoryId ON RoleCategoryManage(CategoryId);
 
+-- 1) 레시피
+CREATE TABLE IF NOT EXISTS Recipes (
+  RecipeId   INTEGER PRIMARY KEY AUTOINCREMENT,
+  Name       TEXT NOT NULL UNIQUE,
+  IsActive   INTEGER NOT NULL DEFAULT 0, -- 0/1
+  CreatedAt  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UpdatedAt  TEXT
+);
+
+-- "활성 레시피는 최대 1개" 보장 (IsActive=1 행은 1개만 허용)
+CREATE UNIQUE INDEX IF NOT EXISTS UX_Recipes_OnlyOneActive
+ON Recipes(IsActive) WHERE IsActive = 1;
+
+-- UpdatedAt 자동 갱신
+CREATE TRIGGER IF NOT EXISTS TR_Recipes_Update
+AFTER UPDATE ON Recipes
+FOR EACH ROW
+BEGIN
+  UPDATE Recipes SET UpdatedAt = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+  WHERE RecipeId = NEW.RecipeId;
+END;
+
+-- 2) 값 타입 (예: INT/REAL/TEXT/BOOL 등)
+CREATE TABLE IF NOT EXISTS ValueType (
+  ValueTypeId INTEGER PRIMARY KEY AUTOINCREMENT,
+  Name        TEXT NOT NULL UNIQUE  -- e.g., 'INT','REAL','TEXT','BOOL'
+);
+
+-- 3) 단위 (선택: 없으면 NULL)
+CREATE TABLE IF NOT EXISTS Unit (
+  UnitId   INTEGER PRIMARY KEY AUTOINCREMENT,
+  Name     TEXT NOT NULL UNIQUE,   -- e.g., 'mm','deg','sec'
+  Symbol   TEXT                    -- e.g., '㎜','°','s'
+);
+
+-- 4) 파라미터 (레시피별 파라미터 정의 + 값)
+CREATE TABLE IF NOT EXISTS RecipeParam (
+    RecipeId        INTEGER     NOT NULL,
+    ParameterId     INTEGER     NOT NULL PRIMARY KEY,         -- 레시피 내 파라미터 ID
+    Name            TEXT        NOT NULL,         -- 파라미터 이름(요구사항 반영)
+    Value           TEXT        NOT NULL,
+    Maximum         TEXT        ,
+    Minimum         TEXT        ,
+    ValueTypeId     INTEGER     NOT NULL,
+    UnitId          INTEGER,                      -- NULL 허용(SET NULL과 일치)
+    Description     TEXT,
+
+    FOREIGN KEY(ValueTypeId) REFERENCES ValueType(ValueTypeId)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY(UnitId)      REFERENCES Unit(UnitId)
+        ON DELETE SET NULL  ON UPDATE CASCADE,
+    FOREIGN KEY(RecipeId)    REFERENCES Recipes(RecipeId)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 조회용(필요 시): ParameterId로 자주 찾으면 유지
+CREATE INDEX IF NOT EXISTS IX_RecipeParam_Param ON RecipeParam(ParameterId);
+
 -- ========== 기본 Roles 시드 ==========
 INSERT OR IGNORE INTO Roles(RoleId, Name, Description, Password, IsActive, CreatedAt, UpdatedAt) VALUES
 ('OPERATOR','작업자','일반 작업자 권한','',1,strftime('%Y-%m-%dT%H:%M:%SZ','now'),NULL),
