@@ -73,8 +73,8 @@
                     <DockPanel Grid.Row="2" LastChildFill="True" Margin="0,4,0,0">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                             <Button Content="생성" Margin="0,0,6,0" Command="{Binding CreateRecipeCommand}"/>
-                            <Button Content="복사" Margin="0,0,6,0"/>
-                            <Button Content="삭제"/>
+                            <Button Content="복사" Margin="0,0,6,0" Command="{Binding CopyRecipeCommand}" CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                            <Button Content="삭제" Command="{Binding DeleteRecipeCommand}" CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
                         </StackPanel>
 
                         <TextBlock Text="디바이스 목록"
@@ -82,7 +82,8 @@
                                      HorizontalAlignment="Left" TextAlignment="Right"/>
                     </DockPanel>
                     <!-- 디바이스 목록 -->
-                    <DataGrid Grid.Row="3"
+                    <DataGrid x:Name="RecipeGrid"
+                              Grid.Row="3"
                               ItemsSource="{Binding Recipes}"
                               SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
                               Style="{StaticResource DataGrid.Transparent}"
@@ -93,17 +94,23 @@
                               Margin="0,8,0,0"
                               ColumnWidth="*"
                               HorizontalAlignment="Stretch"
-                              IsReadOnly="True"                
-                              SelectionUnit="FullRow">
-
-                        <!-- 클릭/더블클릭 시 현재 선택 행(아이템)을 그대로 파라미터로 전달 -->
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <!-- 단일 클릭 -->
-                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnRowClick"/>
-                                <!-- 더블 클릭 -->
-                            </Style>
-                        </DataGrid.RowStyle>
+                              IsReadOnly="True"
+                              SelectionUnit="FullRow"
+                              IsSynchronizedWithCurrentItem="True">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction
+                                    Command="{Binding SelectRecipeCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <DataGrid.InputBindings>
+                            
+                            <!-- 더블클릭 -->
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding DataContext.UseRecipeCommand, ElementName=RecipeGrid}"
+                                          CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                        </DataGrid.InputBindings>
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Binding="{Binding RecipeId}" IsReadOnly="True" Width="90" MinWidth="80" />
@@ -154,6 +161,14 @@
                                 RowHeaderWidth="0"
                                 Margin="0,8,0,0"
                                 BeginningEdit="ParamGrid_BeginningEdit">
+                        <DataGrid.InputBindings>
+
+                            <!-- 더블클릭 -->
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding DataContext.UpdateParameterCommand, ElementName=ParamGrid}"
+                                          CommandParameter="{Binding SelectedItem, ElementName=ParamGrid}"/>       
+                        </DataGrid.InputBindings>
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name"
                                                 Binding="{Binding Name}"

@@ -1,4 +1,7 @@
-﻿namespace EGGPLANT
+﻿
+using System.Xml.Linq;
+
+namespace EGGPLANT
 {
     // 공통으로 사용될 데이터 리스트
     public class CommonData
@@ -25,6 +28,30 @@
             foreach (var t in await commonService.GetValueTypes()) Types.Add(t);
 
             _loaded = true;
+        }
+
+        public UnitDto? FindUnit(string name)
+        {
+            foreach (UnitDto dto in Units)
+            {
+                if (dto.Name.Equals(name))
+                {
+                    return dto;
+                }
+            }
+            return null;
+        }
+
+        public ValueTypeDto? FindValueType(string name)
+        {
+            foreach(ValueTypeDto dto in Types)
+            {
+                if (dto.Name.Equals(name))
+                {
+                    return dto;
+                }
+            }
+            return null;
         }
     }
 }

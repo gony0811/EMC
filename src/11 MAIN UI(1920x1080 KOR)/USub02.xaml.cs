@@ -20,9 +20,6 @@ namespace EGGPLANT
             InitializeComponent();
            
         }
-
-
-
         private void ParamGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             // "Value" 컬럼에서만 가로채기
@@ -57,18 +54,18 @@ namespace EGGPLANT
             }
         }
 
-        private void OnRowClick(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is DataGridRow row && DataContext is USub02ViewModel vm)
-            {
-                var item = row.DataContext; // 현재 행의 아이템(RecipeVM)
-                if (vm.RecipeClickCommand.CanExecute(item))
-                {
-                    vm.RecipeClickCommand.Execute(item);
-                    e.Handled = true; // DataGrid 내부 처리로 이벤트가 다시 소비되지 않도록
-                }
-            }
-        }
+        //private void OnRowClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (sender is DataGridRow row && DataContext is USub02ViewModel vm)
+        //    {
+        //        var item = row.DataContext; // 현재 행의 아이템(RecipeVM)
+        //        if (vm.RecipeClickCommand.CanExecute(item))
+        //        {
+        //            vm.RecipeClickCommand.Execute(item);
+        //            e.Handled = true; 
+        //        }
+        //    }
+        //}
 
     }
 }

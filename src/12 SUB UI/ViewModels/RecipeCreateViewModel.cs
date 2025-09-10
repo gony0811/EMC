@@ -15,6 +15,8 @@ namespace EGGPLANT
 
         public event Action<bool>? RequestClose; // true: OK, false: Cancel
 
+        public RecipeDto Result { get; private set; } = new RecipeDto();
+
         public RecipeCreateViewModel(IRecipeService svc)
         {
             _svc = svc;
@@ -31,20 +33,20 @@ namespace EGGPLANT
         {
             if (!CanSave) return;
 
-            try
+            if (Name == null || string.IsNullOrWhiteSpace(Name))
             {
-                var dto = new RecipeDto
-                {
-                    Name = Name.Trim(),
-                    IsActive = IsActive
-                };
-                await _svc.CreateRecipe(dto);
-                RequestClose?.Invoke(true);
+                MessageBox.Show("이름은 필수입니다.", "유효성 검사 실패",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
-            catch (Exception ex)
+
+            Result = new RecipeDto
             {
-                MessageBox.Show(ex.Message, "레시피 생성 실패", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                Name = Name.Trim(),
+                IsActive = IsActive
+            };
+            //await _svc.CreateRecipe(dto);
+            RequestClose?.Invoke(true);            
         }
 
     }

@@ -8,10 +8,10 @@ namespace EGGPLANT
 {
     public partial class ParameterCreateVM : ObservableObject
     {
-        private readonly IRecipeService _svc;
         private readonly CommonData _common;
         private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
         public int RecipeId { get; }
+        public int? ParameterId { get; set; }
         public List<UnitDto> Units { get; }
         public List<ValueTypeDto> ValueTypes { get; }
         public event Action<bool>? RequestClose; // true: OK, false: Cancel
@@ -28,9 +28,9 @@ namespace EGGPLANT
         [ObservableProperty] private bool isActive = false;
         [ObservableProperty] private bool canSave = false;
 
-        public ParameterCreateVM(IRecipeService svc, CommonData commonData, int recipeId)
+        public RecipeParamDto Result { get; private set; }
+        public ParameterCreateVM(CommonData commonData, int recipeId)
         {
-            _svc = svc;
             _common = commonData;
             RecipeId = recipeId;
             Units = _common.Units;
@@ -45,7 +45,7 @@ namespace EGGPLANT
         }
 
         [RelayCommand]
-        public async Task CreateParameter()
+        public async void Save()
         {
             // 1) 유효성 검사 + DTO 생성
             if (!TryBuildParameterDto(out var paramDto, out var err))
@@ -58,7 +58,8 @@ namespace EGGPLANT
             // 2) 저장
             try
             {
-                await _svc.CreateParamter(paramDto); 
+                Result = paramDto;
+                
                 RequestClose?.Invoke(true);          
             }
             catch (Exception ex)
@@ -68,7 +69,12 @@ namespace EGGPLANT
             }
         }
 
-
+        [RelayCommand]
+        public void Cancel()
+        {
+            Result = null;
+            RequestClose?.Invoke(false);
+        }
 
         // 유효성 검사
         public bool TryBuildParameterDto(out RecipeParamDto dto, out string error)
@@ -153,7 +159,7 @@ namespace EGGPLANT
                         // 범위 개념 없음
                         break;
                     }
-                case "TEXT":
+                case "STRING":
                     {
                         // 텍스트는 추가 제약 없음. (min/max 입력돼 있어도 무시)
                         break;
@@ -173,6 +179,7 @@ namespace EGGPLANT
             dto = new RecipeParamDto
             {
                 RecipeId = RecipeId,
+                ParameterId = ParameterId,
                 Name = Name.Trim(),
                 Value = Value.Trim(),
                 Minimum = string.IsNullOrWhiteSpace(Minimum) ? "" : Minimum.Trim(),
