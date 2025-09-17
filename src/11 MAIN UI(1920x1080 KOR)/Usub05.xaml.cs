@@ -1,4 +1,12 @@
-﻿using System.Windows.Controls;
+﻿using EGGPLANT.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 
 namespace EGGPLANT
@@ -8,9 +16,9 @@ namespace EGGPLANT
     /// </summary>
     public partial class USub05 : Page
     {
-        public USub05(USub05ViewModel vm)
+        public USub05()
         {
-            this.DataContext = vm;
+            this.DataContext = new USub05ViewModel();
             InitializeComponent();
         }
     }
