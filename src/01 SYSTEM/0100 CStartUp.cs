@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using CommunityToolkit.Mvvm.Messaging;
 using EGGPLANT.Device.PowerPmac;
 using EGGPLANT.ViewModels;
-using System.Data.SQLite;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace EGGPLANT
 {
@@ -10,49 +10,67 @@ namespace EGGPLANT
     {
         public static IContainer Build()
         {
-            // DB Setting
-            // DB가 없으면 파일+테이블을 한 번만 생성
-            DB.EnsureCreatedOnce();
-
             var builder = new ContainerBuilder();
 
-            var cs = new SQLiteConnectionStringBuilder
+            // === 공통 DB 경로 & 연결문자열 ===
+            var dbPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "MyApp", "emc.db");
+            Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+            var connStr = $"Data Source={dbPath};Cache=Shared;Pooling=True";
+
+            // === DbContext (창/화면 스코프 단위) ===
+            builder.Register(ctx =>
             {
-                DataSource = DB.DbPath,
-                Version = 3,
-                ForeignKeys = true
-            }.ToString();
+                var opts = new DbContextOptionsBuilder<AppDb>()
+                    .UseSqlite(connStr)
+                    .Options;
+                return new AppDb(opts);
+            })
+            .AsSelf()
+            .InstancePerLifetimeScope();
 
-            builder.Register(_ => new SqliteConnectionFactory(cs))
-                .As<ISqliteConnectionFactory>()
-                .SingleInstance();
+            // === 가벼운 인-스코프 팩토리(Func<AppDb>) ===
+            builder.Register<Func<AppDb>>(ctx =>
+            {
+                var scope = ctx.Resolve<ILifetimeScope>();
+                return () => scope.Resolve<AppDb>();
+            });
 
-            builder.RegisterType<CommonService>()
-              .As<ICommonService>()
-              .InstancePerLifetimeScope();
+            // === 스코프-소유 런타임 팩토리(IAppDbFactory) ===
+            builder.RegisterType<AppDbFactory>()
+                   .As<IAppDbFactory>()
+                   .SingleInstance();
 
-            builder.RegisterType<AuthzService>()
-              .As<IAuthzService>()
-              .InstancePerLifetimeScope();
+            // === 컨테이너 빌드 직후 1회 DB 초기화 ===
+            builder.RegisterBuildCallback(c =>
+            {
+                using var s = c.BeginLifetimeScope();
+                var db = s.Resolve<AppDb>();
+                db.Database.Migrate(); // 마이그레이션 적용(없으면 생성)
 
-            builder.RegisterType<RecipeService>()
-              .As<IRecipeService>()
-              .InstancePerLifetimeScope();
+                db.Database.OpenConnection();
+                try
+                {
+                    db.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
+                    db.Database.ExecuteSqlRaw("PRAGMA foreign_keys=ON;");
+                }
+                finally { db.Database.CloseConnection(); }
+            });
+            builder.RegisterGeneric(typeof(DbRepository<>))
+               .As(typeof(IDbRepository<>))
+               .InstancePerLifetimeScope();
 
-            // DB Setting End
-
-            // 느슨한 결합
-            builder.RegisterInstance(WeakReferenceMessenger.Default)
-               .As<IMessenger>()
-               .SingleInstance();
+            builder.RegisterType<RecipeService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ParameterService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ErrorService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<UserService>().AsSelf().InstancePerLifetimeScope();
 
             builder.RegisterType<UInitialize>().SingleInstance();
-            builder.RegisterType<UInitializeViewModel>().InstancePerDependency();
-            builder.RegisterType<CommonData>().SingleInstance();
             builder.RegisterType<CSYS>().AsSelf().SingleInstance();
             builder.RegisterType<UDevHistory>().SingleInstance();
             builder.RegisterType<UMain>().SingleInstance();
-            builder.RegisterType<UMainViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<UMainViewModel>().InstancePerDependency();
 
             builder.RegisterType<USub01>().SingleInstance();
             builder.RegisterType<USub01ViewModel>().InstancePerDependency();
@@ -65,8 +83,7 @@ namespace EGGPLANT
             //builder.RegisterType<USubViewModel01n02>().AsSelf().InstancePerDependency();
 
             builder.RegisterType<USub01n03>().SingleInstance();
-            builder.RegisterType<USub01n03ViewModel>().AsSelf();
-
+            builder.RegisterType<USub01n03ViewModel>().InstancePerDependency();
             builder.RegisterType<USub01n04>().SingleInstance();
             builder.RegisterType<USub01n04ViewModel>().InstancePerDependency();
 
@@ -94,11 +111,9 @@ namespace EGGPLANT
 
             builder.RegisterType<MotorStateStore>().SingleInstance();
 
-            builder.RegisterType<RecipeCreateViewModel>().InstancePerDependency();
+            builder.RegisterType<RecipeCreateVM>().InstancePerDependency();
             builder.RegisterType<RecipeCreateWindow>().InstancePerDependency();
-
-            builder.RegisterType<ParameterCreateVM>().InstancePerDependency();
-            builder.RegisterType<ParameterCreateWindow>().InstancePerDependency();
+            builder.RegisterType<UserViewModel>().InstancePerDependency();
 
             return builder.Build();
         }

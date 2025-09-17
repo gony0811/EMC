@@ -1,7 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Data;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
-namespace EGGPLANT.ViewModels
+namespace EGGPLANT
 {
     /** 에러 목록과 관련된 뷰모델 정의 클래스
      *  에러 번호 및 내용, 원인과 조치 방법에 대해 메모
@@ -9,6 +16,8 @@ namespace EGGPLANT.ViewModels
      * **/
     public partial class USub05ViewModel : ObservableObject
     {
+        private readonly ErrorService _errorService;
+
         [ObservableProperty]
         private ObservableCollection<Error> errorList = new ObservableCollection<Error>();
 
@@ -17,67 +26,78 @@ namespace EGGPLANT.ViewModels
 
         [ObservableProperty] private Error selectedError;
 
-        public USub05ViewModel()
-        {
-            // 더미 데이터
-            var buzzer1 = new Buzzer(id: 1, name: "BUZZER #1");
-            var buzzer2 = new Buzzer(id: 2, name: "BUZZER #2");
-            BuzzerList.Add(buzzer1);
-            BuzzerList.Add(buzzer2);
 
-            ErrorList.Add(new Error { Id = 100, ErrorContents = "모터 과열", Cause = "냉각팬 정지/통풍 불량", Solution = "팬 교체 및 통풍 경로 점검", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 101, ErrorContents = "센서 단선", Cause = "커넥터 이탈/케이블 단선", Solution = "배선 재결선 및 고정", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 102, ErrorContents = "비상정지 감지", Cause = "E-STOP 버튼 눌림", Solution = "원인 제거 후 리셋", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 103, ErrorContents = "도어 오픈", Cause = "안전도어 미폐쇄", Solution = "도어 닫고 인터락 확인", UseBuzzer = buzzer2 });
-            ErrorList.Add(new Error { Id = 104, ErrorContents = "공압 저압", Cause = "메인 레귤레이터 압력 저하", Solution = "압력 세팅/누기 점검", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 105, ErrorContents = "서보 과전류", Cause = "부하 과대/축 걸림", Solution = "기구 이물 제거 및 토크 설정 조정", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 106, ErrorContents = "엔코더 이상", Cause = "엔코더 신호 소실", Solution = "커넥터 재체결/엔코더 교체", UseBuzzer = buzzer2 });
-            ErrorList.Add(new Error { Id = 107, ErrorContents = "통신 타임아웃", Cause = "네트워크 지연/케이블 불량", Solution = "스위치/케이블 점검 및 재기동", UseBuzzer = buzzer2 });
-            ErrorList.Add(new Error { Id = 108, ErrorContents = "리미트 스위치 감지", Cause = "축 한계 넘김", Solution = "원점 복귀 및 한계값 재설정", UseBuzzer = buzzer1 });
-            ErrorList.Add(new Error { Id = 109, ErrorContents = "윤활유 부족", Cause = "오일 레벨 저하", Solution = "윤활유 보충 및 누유 점검", UseBuzzer = buzzer2 });
+        public USub05ViewModel(ErrorService errorService)
+        {
+            _errorService = errorService;
+            Initialize();
         }
-    }
 
-    // Error 클래스 정의
-    public partial class Error : ObservableObject
-    {
-        [ObservableProperty]
-        private int id;   // 에러 번호 ( 식별자 ) 
-
-        [ObservableProperty]
-        private string errorContents;   // 에러 내용
-
-        [ObservableProperty]
-        private string cause; // 에러 원인
-
-        [ObservableProperty]
-        private string solution;    // 해결 방법
-
-        [ObservableProperty]
-        private Buzzer useBuzzer;
-
-        public bool Matches(int id)
+        // 생성 
+        [RelayCommand]
+        public void CreateError()
         {
-            if (this.Id == id)
+            Error error = new Error();
+            ErrorList.Add(error);
+            _ = _errorService.AddAsync(error);
+        }
+
+        // 저장
+        [RelayCommand]
+        public async Task SaveError(CancellationToken ct = default)
+        {
+            CommitPendingEdits(ErrorList);
+
+            try
             {
-                return true;
+                await _errorService.SaveAsync(ct);
+                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+            }catch(Exception e)
+            {
+                AlertModal.Ask(GetOwnerWindow(), "저장실패", "저장에 실패했습니다.");
             }
-            return false;
+            
         }
-    }
 
-    public partial class Buzzer : ObservableObject
-    {
-        [ObservableProperty]
-        private int id;     // 식별자
-
-        [ObservableProperty]
-        private string name;
-
-        public Buzzer(int id, string name)
+        // 되돌리기
+        [RelayCommand]
+        public async Task Discard(CancellationToken ct = default)
         {
-            this.id = id;
-            this.name = name;
+            CommitPendingEdits(ErrorList);
+            await _errorService.DiscardChangesAsync(ct);
+
+            var fresh = await _errorService.GetListAsync(ct);
+            ErrorList.Clear();
+            foreach (var e in fresh) ErrorList.Add(e);
         }
+
+        // 초기화 
+        public async Task Initialize()
+        {
+            try {
+                var errorList = await _errorService.GetListAsync();
+
+                ErrorList.Clear();
+                ErrorList = new ObservableCollection<Error>(errorList);
+            }catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+
+        private static void CommitPendingEdits(IList<Error> items)
+        {
+            var view = CollectionViewSource.GetDefaultView(items);
+            if (view is IEditableCollectionView v)
+            {
+                if (v.IsEditingItem) v.CommitEdit();
+                if (v.IsAddingNew) v.CommitNew();
+            }
+        }
+
+        private static Window? GetOwnerWindow() =>
+            Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+            ?? Application.Current?.MainWindow;
     }
 }
