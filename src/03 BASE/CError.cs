@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -334,7 +335,7 @@ namespace EGGPLANT
             string path = System.IO.Path.GetDirectoryName(AFileName);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            using (var connection = new System.Data.SQLite.SQLiteConnection($"Data Source={AFileName}"))
+            using (var connection = new SqliteConnection($"Data Source={AFileName}"))
             {
                 using (var command = connection.CreateCommand())
                 {
@@ -374,7 +375,7 @@ namespace EGGPLANT
             string file = $"{FSystemDirectory}{DateTime.Now.Year:D4}\\{DateTime.Now.Month:D2}\\ERR-{DateTime.Now.Day:D2}.DB";
             CreateSQLTable(file);
 
-            using (var connection = new System.Data.SQLite.SQLiteConnection($"Data Source={file}"))
+            using (var connection = new SqliteConnection($"Data Source={file}"))
             {
                 FSQLiteLock.EnterWriteLock();
                 using (var command = connection.CreateCommand())
