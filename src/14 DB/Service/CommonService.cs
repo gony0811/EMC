@@ -9,13 +9,13 @@
 
     public class CommonService : BaseService, ICommonService
     {
-        public CommonService(ISqliteConnectionFactory factory) : base(factory){ }
+        public CommonService(ISqliteConnectionFactory factory) : base(factory) { }
 
         public async Task<IReadOnlyList<UnitDto>> GetUnits()
         {
             using var conn = Open();
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT UnitId, Name, Symbol FROM Unit ORDER BY Name;"; 
+            cmd.CommandText = "SELECT UnitId, Name, Symbol FROM Unit ORDER BY Name;";
 
             var list = new List<UnitDto>();
             using var rd = await cmd.ExecuteReaderAsync();

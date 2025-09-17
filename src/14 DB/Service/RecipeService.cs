@@ -17,6 +17,9 @@ namespace EGGPLANT
         // Recipe 업데이트
         Task UpdateRecipe(RecipeDto dto);
 
+        // 사용할 Recipe 변경
+        Task UseRecipe(int? recipeId);
+        Task<int> CopyRecipeAsync(int sourceRecipeId, string newName, bool setActive = false);
         // 레시피 파라미터 조회
         Task<IReadOnlyList<RecipeParamDto>> GetParameters(int recipeId);
 
@@ -31,7 +34,7 @@ namespace EGGPLANT
     }
     public sealed class RecipeService : BaseService, IRecipeService
     {
-        
+
         public RecipeService(ISqliteConnectionFactory factory) : base(factory) { }
 
 
@@ -201,13 +204,75 @@ namespace EGGPLANT
             tx.Commit();
         }
 
+        public async Task UseRecipe(int? recipeId)
+        {
+            if (recipeId is null) throw new ArgumentNullException(nameof(recipeId));
+
+            using var conn = Open();
+            using var tx = conn.BeginTransaction();
+
+            // 0) 존재 확인
+            using (var exists = conn.CreateCommand())
+            {
+                exists.Transaction = tx;
+                exists.CommandText = "SELECT 1 FROM Recipes WHERE RecipeId=@rid LIMIT 1;";
+                exists.Parameters.AddWithValue("@rid", recipeId.Value);
+                var ok = await exists.ExecuteScalarAsync();
+                if (ok is null)
+                    throw new InvalidOperationException($"RecipeId={recipeId} 가 존재하지 않습니다.");
+            }
+
+            // 1) 현재 활성 레시피 확인
+            int? currentId = null;
+            using (var cur = conn.CreateCommand())
+            {
+                cur.Transaction = tx;
+                cur.CommandText = "SELECT RecipeId FROM Recipes WHERE IsActive=1 LIMIT 1;";
+                var o = await cur.ExecuteScalarAsync();
+                if (o != null && o != DBNull.Value)
+                    currentId = Convert.ToInt32(o);
+            }
+
+            // 2) 이미 같은 레시피면 종료
+            if (currentId.HasValue && currentId.Value == recipeId.Value)
+            {
+                tx.Commit();
+                return;
+            }
+
+            // 3) 현재 활성 레시피 비활성화(있을 때만)
+            using (var deactivate = conn.CreateCommand())
+            {
+                deactivate.Transaction = tx;
+                deactivate.CommandText = "UPDATE Recipes SET IsActive=0 WHERE IsActive=1;";
+                await deactivate.ExecuteNonQueryAsync();
+            }
+
+            // 4) 대상 레시피 활성화
+            using (var activate = conn.CreateCommand())
+            {
+                activate.Transaction = tx;
+                activate.CommandText = "UPDATE Recipes SET IsActive=1 WHERE RecipeId=@rid;";
+                activate.Parameters.AddWithValue("@rid", recipeId.Value);
+
+                var changed = await activate.ExecuteNonQueryAsync();
+                if (changed != 1)
+                    throw new InvalidOperationException("활성화 대상 레시피 갱신에 실패했습니다.");
+            }
+
+            tx.Commit();
+        }
+
+
+
+
         public async Task UpdateParamter(RecipeParamDto dto)
         {
             if (dto is null) throw new ArgumentNullException(nameof(dto));
             using var conn = Open();
             using var tx = conn.BeginTransaction();
 
-            int valueTypeId = await EnsureValueTypeIdAsync(conn, tx, dto.ValueType);
+            int? valueTypeId = await EnsureValueTypeIdAsync(conn, tx, dto.ValueType);
             int? unitId = await EnsureUnitIdAsync(conn, tx, dto.Unit);
 
             using (var cmd = conn.CreateCommand())
@@ -243,8 +308,8 @@ namespace EGGPLANT
         {
             using var conn = Open();
             using var cmd = conn.CreateCommand();
-                cmd.CommandText = "DELETE FROM RecipeParam WHERE ParameterId=@pid;"; // 전체 레시피에서 해당 파라미터 ID 삭제
-                cmd.Parameters.AddWithValue("@pid", id);
+            cmd.CommandText = "DELETE FROM RecipeParam WHERE ParameterId=@pid;"; // 전체 레시피에서 해당 파라미터 ID 삭제
+            cmd.Parameters.AddWithValue("@pid", id);
             await cmd.ExecuteNonQueryAsync();
         }
 
@@ -317,6 +382,129 @@ namespace EGGPLANT
                 return Convert.ToInt32(id, CultureInfo.InvariantCulture);
             }
         }
+
+        public async Task<int> CopyRecipeAsync(int sourceRecipeId, string newName, bool setActive = false)
+        {
+            using var conn = Open();
+            using var tx = conn.BeginTransaction();
+
+            // 1) 원본 존재/이름 중복 검사
+            using (var chk = conn.CreateCommand())
+            {
+                chk.Transaction = tx;
+                chk.CommandText = "SELECT COUNT(1) FROM Recipes WHERE RecipeId=@id;";
+                chk.Parameters.AddWithValue("@id", sourceRecipeId);
+                if (Convert.ToInt32(await chk.ExecuteScalarAsync()) == 0)
+                    throw new InvalidOperationException("원본 레시피가 없습니다.");
+            }
+            using (var chkName = conn.CreateCommand())
+            {
+                chkName.Transaction = tx;
+                chkName.CommandText = "SELECT COUNT(1) FROM Recipes WHERE Name=@n;";
+                chkName.Parameters.AddWithValue("@n", newName);
+                if (Convert.ToInt32(await chkName.ExecuteScalarAsync()) > 0)
+                    throw new InvalidOperationException("동일 이름의 레시피가 이미 존재합니다.");
+            }
+
+            // 2) 새 레시피 생성(+활성 처리 옵션)
+            if (setActive)
+            {
+                using var deact = conn.CreateCommand();
+                deact.Transaction = tx;
+                deact.CommandText = "UPDATE Recipes SET IsActive=0 WHERE IsActive=1;";
+                await deact.ExecuteNonQueryAsync();
+            }
+
+            long newRecipeId;
+            using (var ins = conn.CreateCommand())
+            {
+                ins.Transaction = tx;
+                ins.CommandText = "INSERT INTO Recipes(Name, IsActive) VALUES(@n, @a);";
+                ins.Parameters.AddWithValue("@n", newName);
+                ins.Parameters.AddWithValue("@a", setActive ? 1 : 0);
+                await ins.ExecuteNonQueryAsync();
+                newRecipeId = conn.LastInsertRowId;
+            }
+
+            // 3) 원본 파라미터 조회
+            var srcParams = new List<(string Name, string Value, string? Max, string? Min, int ValueTypeId, int? UnitId, string? Desc)>();
+            using (var sel = conn.CreateCommand())
+            {
+                sel.Transaction = tx;
+                sel.CommandText = @"
+            SELECT Name, Value, Maximum, Minimum, ValueTypeId, UnitId, Description
+            FROM RecipeParam
+            WHERE RecipeId=@rid
+            ORDER BY ParameterId;";
+                sel.Parameters.AddWithValue("@rid", sourceRecipeId);
+
+                using var rd = await sel.ExecuteReaderAsync();
+                while (await rd.ReadAsync())
+                {
+                    srcParams.Add((
+                        rd.GetString(0),
+                        rd.GetString(1),
+                        rd.IsDBNull(2) ? null : rd.GetString(2),
+                        rd.IsDBNull(3) ? null : rd.GetString(3),
+                        rd.GetInt32(4),
+                        rd.IsDBNull(5) ? (int?)null : rd.GetInt32(5),
+                        rd.IsDBNull(6) ? null : rd.GetString(6)
+                    ));
+                }
+            }
+
+            // 4) 새 레시피에서 시작할 ParameterId = 현재 최대값 + 1
+            int startParamId;
+            using (var maxCmd = conn.CreateCommand())
+            {
+                maxCmd.Transaction = tx;
+                maxCmd.CommandText = "SELECT IFNULL(MAX(ParameterId), 0) FROM RecipeParam;";
+                maxCmd.Parameters.AddWithValue("@rid", (int)newRecipeId);
+                startParamId = Convert.ToInt32(await maxCmd.ExecuteScalarAsync());
+            }
+            int nextParamId = startParamId + 1;
+
+            // 5) 복사 삽입
+            using (var insP = conn.CreateCommand())
+            {
+                insP.Transaction = tx;
+                insP.CommandText = @"
+            INSERT INTO RecipeParam
+                (RecipeId, ParameterId, Name, Value, Maximum, Minimum, ValueTypeId, UnitId, Description)
+            VALUES
+                (@rid, @pid, @name, @val, @max, @min, @vtid, @unitid, @desc);";
+
+                var pRid = insP.Parameters.Add("@rid", System.Data.DbType.Int32);
+                var pPid = insP.Parameters.Add("@pid", System.Data.DbType.Int32);
+                var pName = insP.Parameters.Add("@name", System.Data.DbType.String);
+                var pVal = insP.Parameters.Add("@val", System.Data.DbType.String);
+                var pMax = insP.Parameters.Add("@max", System.Data.DbType.String);
+                var pMin = insP.Parameters.Add("@min", System.Data.DbType.String);
+                var pVtId = insP.Parameters.Add("@vtid", System.Data.DbType.Int32);
+                var pUnitId = insP.Parameters.Add("@unitid", System.Data.DbType.Int32);
+                var pDesc = insP.Parameters.Add("@desc", System.Data.DbType.String);
+
+                foreach (var s in srcParams)
+                {
+                    pRid.Value = (int)newRecipeId;
+                    pPid.Value = nextParamId++;
+                    pName.Value = s.Name;
+                    pVal.Value = s.Value;
+                    pMax.Value = (object?)s.Max ?? DBNull.Value;
+                    pMin.Value = (object?)s.Min ?? DBNull.Value;
+                    pVtId.Value = s.ValueTypeId;
+                    pUnitId.Value = (object?)s.UnitId ?? DBNull.Value;
+                    pDesc.Value = (object?)s.Desc ?? DBNull.Value;
+
+                    await insP.ExecuteNonQueryAsync();
+                }
+            }
+
+            tx.Commit();
+            return (int)newRecipeId;
+        }
+
+
 
         private static async Task<int> NextParameterIdAsync(SQLiteConnection conn, SQLiteTransaction tx, int recipeId)
         {

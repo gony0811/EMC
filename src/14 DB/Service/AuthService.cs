@@ -25,7 +25,7 @@
             hashCmd.CommandText = "SELECT Password FROM Roles WHERE RoleId=@r AND IsActive=1 LIMIT 1;";
             hashCmd.Parameters.AddWithValue("@r", roleId);
             var hash = (string?)await hashCmd.ExecuteScalarAsync() ?? "";
-            
+
             if (!hash.Equals(plain))
                 throw new UnauthorizedAccessException("RoleId 또는 비밀번호가 올바르지 않습니다.");
 
@@ -106,10 +106,10 @@
             using var conn = _factory.CreateOpen();
             using var tx = conn.BeginTransaction();
 
-            bool result = false; 
+            bool result = false;
             // 1) 권한 목록 조회
             var cmd = conn.CreateCommand();
-            cmd.CommandText = 
+            cmd.CommandText =
                 @"
                     UPDATE Permission 
                     SET IsEnabled = @on

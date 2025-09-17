@@ -30,28 +30,38 @@
                 <uc:TitleBar Title="에러 정보"/>
             </Border>
             <!-- 에러 목록 -->
-            <GroupBox Style="{StaticResource TitledBox}" Header="에러 목록" Grid.Column="0" Grid.Row="1" Margin="10" >
-                <DataGrid 
-                      Style="{StaticResource DataGrid.Transparent}"
-                      FontSize="18"
-                      ItemsSource="{Binding ErrorList}" 
-                      SelectedItem="{Binding SelectedError, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="True"     
-                      IsReadOnly="True"
-                      HeadersVisibility="Column"
-                      RowHeaderWidth="0"      
-                      VirtualizingPanel.IsVirtualizing="True"
-                      VirtualizingPanel.VirtualizationMode="Recycling"
-                      EnableRowVirtualization="True"
-                      ScrollViewer.CanContentScroll="True"         
-                      Margin="0,8,8,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="에러 번호" Binding="{Binding Id}" Width="100" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="에러 내용" Binding="{Binding ErrorContents}" Width="2*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </GroupBox>
+            <Grid Grid.Column="0" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"> </RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <GroupBox Style="{StaticResource TitledBox}" Header="에러 목록" Grid.Row="0"  Margin="10" >
+                    <DataGrid 
+                          Style="{StaticResource DataGrid.Transparent}"
+                          FontSize="18"
+                          ItemsSource="{Binding ErrorList}" 
+                          SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"     
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          RowHeaderWidth="0"      
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          EnableRowVirtualization="True"
+                          ScrollViewer.CanContentScroll="True"         
+                          Margin="0,8,8,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="에러 번호" Binding="{Binding Id}" Width="100" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="에러 내용" Binding="{Binding ErrorContents}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="생성"
+                </StackPanel>
+            </Grid>
+            
 
 
             <!-- 편집부 -->
