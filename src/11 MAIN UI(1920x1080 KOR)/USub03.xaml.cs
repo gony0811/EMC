@@ -1,4 +1,5 @@
 ﻿
+using EGGPLANT.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using MessageBox = System.Windows.MessageBox;
@@ -10,9 +11,11 @@ namespace EGGPLANT
     /// </summary>
     public partial class USub03 : Page
     {
-        public USub03()
+        public USub03(USub03ViewModel vm)
         {
+            DataContext = vm;
             InitializeComponent();
+            
         }
         private void OnEngineerChange(object sender, RoutedEventArgs e)
         {

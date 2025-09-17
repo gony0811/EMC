@@ -1,9 +1,12 @@
 ﻿using Autofac;
-using EGGPLANT;
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace EGGPLANT
 {
@@ -18,12 +21,13 @@ namespace EGGPLANT
         private static IContainer container = CStartUp.Build();
 
         static public IContainer Container { get => container; private set => container = value; }
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             base.OnStartup(e);
+
             // Initialize the main window
-            var Mutex = new System.Threading.Mutex(false, Project);
+            var Mutex = new Mutex(false, Project);
 
             if (!Mutex.WaitOne(0, false))
             {
@@ -33,14 +37,18 @@ namespace EGGPLANT
                 return;
             }
             
-
             var initWindow = Container.Resolve<UInitialize>();
             bool? result = initWindow.ShowDialog();
 
+            //var userVM = Container.Resolve<UserViewModel>();
+            //await userVM.InitializeAsync();
+
             if (result == true)
             {
+                var scope = Container.BeginLifetimeScope();
                 UMain mainWindow = Container.Resolve<UMain>();
                 mainWindow.DataContext = Container.Resolve<UMainViewModel>();
+                mainWindow.Closed += (_, __) => scope.Dispose();
                 mainWindow.Show();
                 this.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 Mutex.ReleaseMutex();

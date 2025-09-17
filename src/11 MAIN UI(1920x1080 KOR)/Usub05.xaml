@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EGGPLANT"
       xmlns:uc="clr-namespace:EGGPLANT"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="에러 목록">
@@ -13,6 +14,13 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Styles/DefaultResource.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <CollectionViewSource x:Key="ErrorsSource" Source="{Binding ErrorList}" />
+
+            <CompositeCollection x:Key="ErrorsWithAdder">
+                <CollectionContainer Collection="{Binding Source={StaticResource ErrorsSource}}" />
+                <sys:String>__ADD__</sys:String>
+            </CompositeCollection>
         </ResourceDictionary>
     </Page.Resources>
     <!-- 에러 리스트 화면 -->
@@ -30,30 +38,71 @@
                 <uc:TitleBar Title="에러 정보"/>
             </Border>
             <!-- 에러 목록 -->
-            <GroupBox Style="{StaticResource TitledBox}" Header="에러 목록" Grid.Column="0" Grid.Row="1" Margin="10" >
-                <DataGrid 
-                      Style="{StaticResource DataGrid.Transparent}"
-                      FontSize="18"
-                      ItemsSource="{Binding ErrorList}" 
-                      SelectedItem="{Binding SelectedError, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="True"     
-                      IsReadOnly="True"
-                      HeadersVisibility="Column"
-                      RowHeaderWidth="0"      
-                      VirtualizingPanel.IsVirtualizing="True"
-                      VirtualizingPanel.VirtualizationMode="Recycling"
-                      EnableRowVirtualization="True"
-                      ScrollViewer.CanContentScroll="True"         
-                      Margin="0,8,8,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="에러 번호" Binding="{Binding Id}" Width="100" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="에러 내용" Binding="{Binding ErrorContents}" Width="2*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </GroupBox>
+            <Grid  Grid.Column="0" Grid.Row="1" Margin="10" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <GroupBox Style="{StaticResource TitledBox}" Header="에러 목록">
+                    <DataGrid
+                        x:Name="ErrorGrid"
+                        Style="{StaticResource DataGrid.Transparent}"
+                        FontSize="18"
+                        ItemsSource="{Binding Source={StaticResource ErrorsWithAdder}}"
+                        SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"         
+                        IsReadOnly="True"
+                  
+                        HeadersVisibility="Column"
+                        RowHeaderWidth="0"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling"
+                        EnableRowVirtualization="True"
+                        ScrollViewer.CanContentScroll="True"
+                        Margin="0,8,8,0"
+                        CanUserSortColumns="False">
 
+                        <!-- 일반 행 컬럼 정의 -->
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="에러 번호" Binding="{Binding Number}" Width="100" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="에러 내용" Binding="{Binding Name}" Width="2*"/>
+                        </DataGrid.Columns>
 
+                        <!-- 맨 아래 가짜 항목(__ADD__) 행 템플릿 -->
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <!-- 아이템이 문자열 "__ADD__"이면 플러스 행으로 렌더 -->
+                                    <DataTrigger Binding="{Binding}" Value="__ADD__">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridRow">
+                                                    <Border Background="Transparent" Padding="4">
+                                                        <Button
+                                                                Content="➕  새 에러 추가"
+                                                                HorizontalAlignment="Center"
+                                                                Padding="12,6"
+                                                                Command="{Binding DataContext.CreateErrorCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <!-- 선택/포커스 스타일 비활성화(보기 깔끔) -->
+                                        <Setter Property="IsHitTestVisible" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </GroupBox>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="되돌리기" Width="90" Height="30" Command="{Binding DiscardCommand}" />
+                    <Button Content="저장"     Width="80" Height="30" Command="{Binding SaveErrorCommand}" Margin="8,0,0,0"/>
+                </StackPanel>
+            </Grid>
+            
             <!-- 편집부 -->
             <GroupBox Style="{StaticResource TitledBox}" Header="상세 정보" Grid.Row="1" Grid.Column="1" Margin="10" >
                 <StackPanel Margin="10" DataContext="{Binding SelectedError}">
@@ -65,14 +114,14 @@
                         <Border Grid.Column="0"  Background="{StaticResource Brush.Panel}" CornerRadius="5" Padding="12">
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock Text="에러번호" Margin="0,0,0,6" Foreground="#E6FFFFFF"/>
-                                <TextBox Style="{StaticResource TextBox.Rounded.Panel}" Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <TextBox Style="{StaticResource TextBox.Rounded.Panel}" Text="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                             </StackPanel>
                         </Border>
                         
                         <Border Grid.Column="1" Background="{StaticResource Brush.Panel}" CornerRadius="5" Padding="12">
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock Text="에러명" Margin="0,0,0,6" Foreground="#E6FFFFFF"/>
-                                <TextBox Text="{Binding ErrorContents, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                          Style="{StaticResource TextBox.Rounded.Panel}" Width="300" />
                             </StackPanel>
                         </Border>

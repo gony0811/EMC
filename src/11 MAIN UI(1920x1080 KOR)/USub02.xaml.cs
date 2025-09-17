@@ -13,18 +13,12 @@ namespace EGGPLANT
     /// </summary>
     public partial class USub02 : Page
     {
-        public USub02()
+        public USub02(USub02ViewModel vm)
         {
+            DataContext = vm;
             InitializeComponent();
-            Init();
         }
 
-        private void Init()
-        {
-            DataContext = new USub02ViewModel();
-            //this.tbCurrentDevice.Text = "TEST DEVICE";
-            //this.tbCurrentDevice.TextAlignment = TextAlignment.Center;
-        }
         private void ParamGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             // "Value" 컬럼에서만 가로채기
