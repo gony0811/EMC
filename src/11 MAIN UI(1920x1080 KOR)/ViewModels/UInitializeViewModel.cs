@@ -75,7 +75,7 @@ namespace EGGPLANT.ViewModels
                 // STEP 5  - 모션 클래스를 생성
                 new Step("MOTION CONTROL을 생성 중입니다.", async ct =>
                 {
-                    //App.Container.Resolve<CPmacMotion>().Initialize(5);
+                    App.Container.Resolve<CPmacMotion>().Initialize(5);
 
                     await Task.CompletedTask;
                     await Task.Delay(150, ct);

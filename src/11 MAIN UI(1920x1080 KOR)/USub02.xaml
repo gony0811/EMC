@@ -53,18 +53,15 @@
                         <Border Grid.Column="0" Margin="0,0,4,0">
                             <TextBlock Text="현재 디바이스" Foreground="White" VerticalAlignment="Center"></TextBlock>
                         </Border>
-                        <TextBox Grid.Column="1" Text="{Binding SelectedRecipe.Name}"
+                        <TextBox Grid.Column="1" Text="{Binding CurrentRecipe}"
                                  Style="{StaticResource TextBox.Rounded.Panel}"
-                                 TextAlignment="Right"
-                                 FontWeight="Bold"
                                  IsReadOnly="True"
                                  Focusable="False"
                                  Cursor="Arrow"
                                  ContextMenu="{x:Null}"           
                                  AllowDrop="False"     
                                  IsTabStop="False" 
-                                 VerticalAlignment="Center"
-        />
+                                 VerticalAlignment="Center"/>
                     </Grid>
                     <!-- 파라미터 타입 선택창 && P/V 전환 버튼 Row 1 -->
                     <StackPanel Grid.Row="1" Margin="5" Orientation="Horizontal" >
@@ -75,11 +72,9 @@
                     <!-- 디바이스 목록 및 상호작용 버튼  Row 2 -->
                     <DockPanel Grid.Row="2" LastChildFill="True" Margin="0,4,0,0">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                            <Button Content="생성" Command="{Binding CreateRecipeCommand}" Margin="0,0,6,0"/>
-                            <Button Content="복사"  Margin="0,0,6,0" Command="{Binding CopyRecipeCommand}" 
-                                    CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
-                            <Button Content="삭제" Command="{Binding DeleteRecipeCommand}" 
-                                    CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                            <Button Content="생성" Margin="0,0,6,0" Command="{Binding CreateRecipeCommand}"/>
+                            <Button Content="복사" Margin="0,0,6,0" Command="{Binding CopyRecipeCommand}" CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                            <Button Content="삭제" Command="{Binding DeleteRecipeCommand}" CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
                         </StackPanel>
 
                         <TextBlock Text="디바이스 목록"
@@ -87,8 +82,8 @@
                                      HorizontalAlignment="Left" TextAlignment="Right"/>
                     </DockPanel>
                     <!-- 디바이스 목록 -->
-                    <DataGrid  x:Name="RecipeGrid"
-                               Grid.Row="3"
+                    <DataGrid x:Name="RecipeGrid"
+                              Grid.Row="3"
                               ItemsSource="{Binding Recipes}"
                               SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
                               Style="{StaticResource DataGrid.Transparent}"
@@ -97,26 +92,29 @@
                               HeadersVisibility="Column"
                               FontSize="16"
                               Margin="0,8,0,0"
-                              ColumnWidth="*"               
-                              HorizontalAlignment="Stretch">
+                              ColumnWidth="*"
+                              HorizontalAlignment="Stretch"
+                              IsReadOnly="True"
+                              SelectionUnit="FullRow"
+                              IsSynchronizedWithCurrentItem="True">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction
-                                      Command="{Binding DataContext.ClickRecipeCommand, ElementName=RecipeGrid}"
-                                      CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}" />
+                                    Command="{Binding SelectRecipeCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <!-- 더블클릭 → VM.Command(SelectedDevice) -->
                         <DataGrid.InputBindings>
+                            
+                            <!-- 더블클릭 -->
                             <MouseBinding MouseAction="LeftDoubleClick"
-                                           Command="{Binding DataContext.ChangeUseRecipeCommand, ElementName=RecipeGrid}"
-                                           CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
+                                          Command="{Binding DataContext.UseRecipeCommand, ElementName=RecipeGrid}"
+                                          CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"/>
                         </DataGrid.InputBindings>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="#" Binding="{Binding Id}" IsReadOnly="True" Width="90" MinWidth="80" />
+                            <DataGridTextColumn Header="#" Binding="{Binding RecipeId}" IsReadOnly="True" Width="90" MinWidth="80" />
 
-                            <!-- 이름 + 우측 "사용중" 뱃지 -->
                             <DataGridTemplateColumn Header="이름" Width="*" MinWidth="250">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -133,27 +131,27 @@
                                             </Border>
 
                                             <TextBlock Text="{Binding Name}"
-                                                        FontSize="16"
-                                                        VerticalAlignment="Center"
-                                                        TextTrimming="CharacterEllipsis"/>
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
                                         </DockPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+
                 </Grid>
             </GroupBox>
 
             <GroupBox Style="{StaticResource TitledBox}" Header="파라미터 목록" Grid.Column="1" Grid.Row="1" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <DataGrid x:Name="ParamGrid"
-                                Grid.Row="0"
-                                ItemsSource="{Binding RecipeParam}"
+                                ItemsSource="{Binding Parameters}"
                                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                 Style="{StaticResource DataGrid.Transparent}"
                                 FontSize="18"
@@ -164,9 +162,11 @@
                                 Margin="0,8,0,0"
                                 BeginningEdit="ParamGrid_BeginningEdit">
                         <DataGrid.InputBindings>
+
+                            <!-- 더블클릭 -->
                             <MouseBinding MouseAction="LeftDoubleClick"
-                                           Command="{Binding DataContext.UpdateParameterCommand, ElementName=ParamGrid}"
-                                           CommandParameter="{Binding SelectedItem, ElementName=ParamGrid}"/>
+                                          Command="{Binding DataContext.UpdateParameterCommand, ElementName=ParamGrid}"
+                                          CommandParameter="{Binding SelectedItem, ElementName=ParamGrid}"/>       
                         </DataGrid.InputBindings>
 
                         <DataGrid.Columns>
@@ -176,8 +176,8 @@
                                                 Width="2*"/>
                             <!-- ↓ Value 컬럼(편집 가능) -->
                             <DataGridTextColumn Header="Value"
-                                                  Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
-                                                  Width="Auto">
+                                                Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Width="Auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextAlignment" Value="Right"/>
@@ -193,20 +193,16 @@
                             <DataGridTemplateColumn Width="100" IsReadOnly="True">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Unit.Name}" />
+                                        <TextBlock Text="{Binding Unit}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="10">
-                        <Button Content="생성" 
-                                Width="80" Height="30" 
-                                Command="{Binding CreateParameterCommand}"
-                                CommandParameter="{Binding SelectedItem, ElementName=RecipeGrid}"
-                                ></Button>
-                    </StackPanel>
+                    <Button Content="파라미터 생성" Command="{Binding CreateParameterCommand}" Grid.Row="1" HorizontalAlignment="Right" Width="100" Height="30" Margin="8"  BorderBrush="White"></Button>
+                    
                 </Grid>
+                
                 
             </GroupBox>
         </Grid>

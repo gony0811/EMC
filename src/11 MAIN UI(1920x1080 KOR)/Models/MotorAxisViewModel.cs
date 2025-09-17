@@ -27,7 +27,7 @@ namespace EGGPLANT.Models
                     ServoOff();
                 }
             });
-            //HomeCommand = new RelayCommand(() => {  });
+            HomeCommand = new RelayCommand(() => {  });
         }
 
         private void OnToggleServo(bool on)
