@@ -1,10 +1,10 @@
-﻿
-using Autofac;
+﻿using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ControlzEx.Standard;
-using EGGPLANT;
+using EGGPLANT.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -13,243 +13,416 @@ namespace EGGPLANT.ViewModels
 {
     public partial class USub02ViewModel : ObservableObject
     {
-        private IRecipeService _recipeService;
-        private CommonData _commonData;
+        private readonly IDbRepository<Recipe> _recipeRepo;
+        private readonly IDbRepository<RecipeParam> _paramRepo;
+        private readonly IDbRepository<Unit> _unitRepo;
+        private readonly IDbRepository<ValueTypeDef> _valueTypeRepo;
+        private readonly RecipeService _recipeService;
+        private readonly ParameterService _parameterService;
 
-        // 현재 디바이스, 공용 파라미터, 기본 파라미터 선택, 디바이스 목록, 아이템 이름, 
-        [ObservableProperty]
-        private string currentRecipe;
+        // 목록들
+        [ObservableProperty] private ObservableCollection<Recipe> recipes = new();
+        [ObservableProperty] private ObservableCollection<RecipeParam> recipeParam = new();
 
-        // 공용 & 기본 파라미터 선택
-        [ObservableProperty]
-        private bool parameterType = true; // False: 공용, True: 기본 파라미터
+        // 선택/상태
+        [ObservableProperty] private Recipe? selectedRecipe;
+        [ObservableProperty] private bool isBusy;
 
-        [ObservableProperty]
-        private ObservableCollection<RecipeVM> recipes = new ObservableCollection<RecipeVM>();
+        // (필요 시) 기타 UI 상태
+        [ObservableProperty] private string? currentDevice;
+        [ObservableProperty] private bool parameterType = true; // False: 공용, True: 기본
+        [ObservableProperty] private ObservableCollection<DeviceItem> devices = new();
+        [ObservableProperty] private DeviceItem? selectedDevice;
+        [ObservableProperty] private DeviceItem? activeDevice;
+        [ObservableProperty] private ObservableCollection<ParameterModel> items = new();
 
-        [ObservableProperty]
-        private RecipeVM selectedRecipe;
+        // 룩업(다이얼로그에 전달 용)
+        public List<Unit> Units { get; } = new();
+        public List<ValueTypeDef> ValueTypes { get; } = new();
 
-
-        [ObservableProperty]
-        private ObservableCollection<ParameterVM> parameters = new ObservableCollection<ParameterVM>();
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public USub02ViewModel(IRecipeService recipeService, CommonData commonData)
+        public USub02ViewModel(
+            IDbRepository<Recipe> repo,
+            IDbRepository<RecipeParam> paramRepo,
+            IDbRepository<Unit> unitRepo,
+            IDbRepository<ValueTypeDef> valueTypeRepo,
+            RecipeService recipeService,
+            ParameterService parameterService)
         {
-            _recipeService = recipeService;
-            _commonData = commonData;
-            InitRecipe();
-            
+            _recipeRepo       = repo;
+            _paramRepo        = paramRepo;
+            _unitRepo         = unitRepo;
+            _valueTypeRepo    = valueTypeRepo;
+            _recipeService    = recipeService;
+            _parameterService = parameterService;
+
+            _ = InitializeAsync();
         }
 
-        [RelayCommand]
-        public async void CreateRecipe()
+        private async Task InitializeAsync(CancellationToken ct = default)
         {
-            var vm = App.Container.Resolve<RecipeCreateViewModel>();
-
-            var win = App.Container.Resolve<RecipeCreateWindow>(
-                new TypedParameter(typeof(RecipeCreateViewModel), vm));
-
-            var owner = Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-            win.Owner = owner;
-
-            var result = win.ShowDialog();
-            if (result == true && vm.Result is not null)
+            try
             {
-                await _recipeService.CreateRecipe(vm.Result);
-                InitRecipe();
+                IsBusy = true;
+
+                // 룩업/레시피 병렬 로딩
+                await Task.WhenAll(GetUnits(ct), GetValueTypes(ct), GetAllRecipe(ct));
+
+                // 초기 선택 레시피의 파라미터 로드
+                if (SelectedRecipe is not null)
+                    await LoadRecipeParamsAsync(SelectedRecipe, ct);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.GetBaseException().Message, "초기화 오류");
+            }
+            finally { IsBusy = false; }
+        }
+
+        // SelectedRecipe 바뀌면 자동 로딩
+        partial void OnSelectedRecipeChanged(Recipe? value)
+        {
+            if (value is null) return;
+            _ = LoadRecipeParamsAsync(value);
+        }
+
+        // 레시피 목록 로딩
+        [RelayCommand]
+        public async Task GetAllRecipe(CancellationToken ct = default)
+        {
+            try
+            {
+                var list = await _recipeRepo.ListAsync(
+                    orderBy: q => q.OrderBy(r => r.Id),
+                    asNoTracking: true,
+                    ct: ct);
+
+                var prevId  = SelectedRecipe?.Id;
+                var active  = list.FirstOrDefault(r => r.IsActive);
+                var keepPrev = list.FirstOrDefault(r => r.Id == prevId);
+                var toSelect = active ?? keepPrev ?? list.FirstOrDefault();
+
+                Recipes.Clear();
+                foreach (var r in list) Recipes.Add(r);
+
+                if (!ReferenceEquals(SelectedRecipe, toSelect))
+                    SelectedRecipe = toSelect;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.GetBaseException().Message, "레시피 로드 오류");
             }
         }
 
-        [RelayCommand]
-        public async void CopyRecipe(RecipeVM item)
+        // (선택) DataGrid 단일 클릭 바인딩용
+        [RelayCommand(CanExecute = nameof(CanClickRecipe))]
+        public async Task ClickRecipe(Recipe? recipe)
         {
-            var vm = App.Container.Resolve<RecipeCreateViewModel>(new NamedParameter("recipeId", item.RecipeId));
-            var win = App.Container.Resolve<RecipeCreateWindow>(new TypedParameter(typeof(RecipeCreateViewModel), vm));
+            if (recipe is null) return;
+            await LoadRecipeParamsAsync(recipe);
+        }
+        private bool CanClickRecipe(Recipe? recipe) => recipe is not null && !IsBusy;
 
-            var owner = Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-            win.Owner = owner;
-
-            var result = win.ShowDialog();
-
-            // 저장 성공이면 화면 갱신
-            if (result == true && vm.Result is not null)
+        private async Task LoadRecipeParamsAsync(Recipe recipe, CancellationToken ct = default)
+        {
+            try
             {
-                await _recipeService.CopyRecipeAsync(item.RecipeId, vm.Name, vm.IsActive);
-                InitRecipe();
+                IsBusy = true;
+                RecipeParam.Clear();
+                var ps = await _parameterService.GetParametersAsync(recipe.Id, ct);
+                foreach (var p in ps) RecipeParam.Add(p);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.GetBaseException().Message, "파라미터 로드 오류");
+            }
+            finally { IsBusy = false; }
+        }
+
+        // ── 생성 ─────────────────────────────────────────────────────────────────
+
+        [RelayCommand]
+        public async Task CreateRecipe(CancellationToken ct = default)
+        {
+
+            var initial = new Recipe();
+            var result = await ShowRecipeDialogAsync(initial, "레시피 생성");
+            if (result is null) return;
+
+            try
+            {
+                await _recipeRepo.AddAsync(result);
+                await _recipeRepo.SaveAsync();
+                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+                await GetAllRecipe(ct);
+            }
+            catch (DbUpdateException ex)
+            {
+                MessageBox.Show(ex.GetBaseException().Message, "저장 오류");
             }
         }
 
-
-
+        // ㅡㅡ 복사  ㅡㅡㅡ 
         [RelayCommand]
-        public void SelectRecipe(RecipeVM item)
+        public async Task CopyRecipe(Recipe recipe, CancellationToken ct = default)
         {
-            if (item is null) return;
-            // 단일 클릭 처리
-            SelectedRecipe = item;
-            CurrentRecipe = item.Name;
-            InitRecipeParams(SelectedRecipe);
-        }
+            Recipe initial = new Recipe();
+            initial.Id = recipe.Id;
 
-        [RelayCommand]
-        public void UseRecipe(RecipeVM item)
-        {
-            var owner = Application.Current?.Windows
-               .OfType<Window>()
-               .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
+            var result = await ShowRecipeDialogAsync(initial, "레시피 복사");
+            if (result is null) return;
 
-            if (ConfirmModal.Ask(owner, "레시피 변경", "레시피를 변경하시겠습니까?") == true)
+            try
             {
-                _recipeService.UseRecipe(item.RecipeId);
-                InitRecipe();
+                await _recipeService.CloneAsync(initial.Id, newName: result.Name);
+                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+                await GetAllRecipe(ct);
+            }
+            catch (DbUpdateException ex)
+            {
+                AlertModal.Ask(GetOwnerWindow(), "중복 오류", "이미 존재하는 이름이 있습니다. 다시 입력해주세요");
             }
         }
 
-
-        [RelayCommand]
-        public async void CreateParameter()
+        [RelayCommand(CanExecute = nameof(CanDeleteRecipe))]
+        public async Task DeleteRecipe(Recipe? recipe)
         {
-            if (SelectedRecipe is null) return;
+            if (recipe is null) return;
 
-            var id = SelectedRecipe.RecipeId;
+            var owner = GetOwnerWindow();
 
-            // VM 먼저 생성(레시피 ID 주입)
-            var vm = App.Container.Resolve<ParameterCreateVM>(
-                new NamedParameter("recipeId", id));
-
-            // 그 VM으로 창 생성
-            var win = App.Container.Resolve<ParameterCreateWindow>(
-                new TypedParameter(typeof(ParameterCreateVM), vm));
-
-            // 소유자 지정
-            var owner = Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-            win.Owner = owner;
-
-            // 모달 오픈 (창이 내부에서 RequestClose 처리)
-            var result = win.ShowDialog();
-
-            // 저장 성공이면 화면 갱신
-            if (result == true && vm.Result is not null)
+            // 사용중 레시피는 금지
+            if (recipe.IsActive)
             {
-                await _recipeService.CreateParamter(vm.Result);
-                InitRecipeParams(SelectedRecipe);
-            }
-        }
-
-        [RelayCommand]
-        public async void UpdateParameter(ParameterVM parameter)
-        {
-            if (SelectedRecipe is null) return;
-
-            var id = SelectedRecipe.RecipeId;
-
-            // VM 먼저 생성(레시피 ID 주입)
-            var vm = App.Container.Resolve<ParameterCreateVM>(
-                new NamedParameter("recipeId", id));
-
-            vm.ParameterId = parameter.ParameterId;
-            vm.Name = parameter.Name;
-            vm.Value = parameter.Value;
-            vm.Minimum = parameter.Minimum;
-            vm.Maximum = parameter.Maximum;
-            vm.SelectedUnit = _commonData.FindUnit(parameter.Unit);
-            vm.SelectedValueType = _commonData.FindValueType(parameter.ValueType);
-            // 그 VM으로 창 생성
-            ParameterCreateWindow win = App.Container.Resolve<ParameterCreateWindow>(
-                new TypedParameter(typeof(ParameterCreateVM), vm));
-
-            // 소유자 지정
-            var owner = Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-            win.Owner = owner;
-
-            // 모달 오픈 (창이 내부에서 RequestClose 처리)
-            var result = win.ShowDialog();
-
-            // 저장 성공이면 화면 갱신
-            if (result == true && vm.Result is not null)
-            {
-                await _recipeService.UpdateParamter(vm.Result);
-                InitRecipeParams(SelectedRecipe);
-            }
-        }
-
-        [RelayCommand]
-        public void DeleteRecipe(RecipeVM item)
-        {
-            // 창을 DI로 꺼내와서 모달 표시
-            var owner = Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-            if (item.IsActive)
-            {
-                AlertModal.Ask(owner, "삭제 불가", "활성 레시피는 삭제할 수 없습니다.");
+                AlertModal.Ask(owner, "경고", "사용중인 레시피는 삭제하실 수 없습니다.");
                 return;
             }
 
-            if (ConfirmModal.Ask(owner, "삭제", $"{item.Name} 레시피를 정말로 삭제하시겠습니까?") == true)
+            // 확인 팝업 결과 체크
+            var yes = ConfirmModal.Ask(owner, "삭제", $"'{recipe.Name}' 레시피를 삭제하시겠습니까?");
+            if (!yes) return;
+
+            IsBusy = true;
+            try
             {
-                _recipeService.DeleteRecipe(item.RecipeId);
-                InitRecipe();
+                // 삭제 시도 (리포지토리 시그니처에 맞춰 호출)
+                var ok = await _recipeRepo.Remove(recipe.Id);   // <- RemoveByIdAsync(bool 반환) 가정
+                if (!ok)
+                {
+                    AlertModal.Ask(owner, "안내", "이미 삭제되었거나 존재하지 않는 레시피입니다.");
+                    return;
+                }
+
+                await _recipeRepo.SaveAsync();
+
+                AlertModal.Ask(owner, "완료", "삭제되었습니다.");
+
+                // 목록/선택/파라미터 갱신
+                await GetAllRecipe();
+                if (SelectedRecipe is not null)
+                    await LoadRecipeParamsAsync(SelectedRecipe);   // 선택된 레시피의 파라미터 다시 로드
+                else
+                    RecipeParam.Clear();                           // 더 이상 선택이 없으면 비움
+            }
+            catch (DbUpdateException ex)
+            {
+                // 대부분 FK 제약(연결된 RecipeParam 존재)일 가능성
+                AlertModal.Ask(owner, "삭제 실패",
+                    "해당 레시피에 연결된 파라미터가 있어 삭제할 수 없습니다.\n" +
+                    "파라미터를 먼저 삭제하거나 관계 설정을 확인하세요.\n\n" +
+                    ex.GetBaseException().Message);
+            }
+            catch (Exception ex)
+            {
+                AlertModal.Ask(owner, "오류", ex.GetBaseException().Message);
+            }
+            finally
+            {
+                IsBusy = false;
+                DeleteRecipeCommand.NotifyCanExecuteChanged();
             }
         }
 
-        
+        private bool CanDeleteRecipe(Recipe? recipe) => !IsBusy && recipe is not null;
 
-
-
-
-        // 레시피 목록 갱신
-        private async void InitRecipe()
+        [RelayCommand]
+        public async Task CreateParameter(Recipe recipe)
         {
-            var list = await _recipeService.GetRecipes();
+            var initial = new RecipeParam();
+            var result = await ShowParameterDialogAsync(initial, "파라미터 생성");
+            if (result is null) return;
 
-            Recipes.Clear();
-
-            RecipeVM? activeVm = null;
-
-            foreach (var dto in list)
+            try
             {
-                var vm = RecipeVM.of(dto);  // 한 번만 생성
-                Recipes.Add(vm);
-
-                if (dto.IsActive)
-                    activeVm = vm;          // 컬렉션에 넣은 그 인스턴스를 기억
+                NormalizeFK(result, recipeId: recipe.Id);
+                await _paramRepo.AddAsync(result);
+                await _paramRepo.SaveAsync();
+                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+                await LoadRecipeParamsAsync(recipe);
             }
-
-            // 활성 레시피가 없으면 첫 항목 선택(옵션)
-            activeVm ??= Recipes.FirstOrDefault();
-
-            if (activeVm != null)
+            catch (DbUpdateException ex)
             {
-                SelectedRecipe = activeVm;          // 컬렉션에 있는 동일 인스턴스
-                CurrentRecipe = activeVm.Name;
-                InitRecipeParams(activeVm);
+                MessageBox.Show(ex.GetBaseException().Message, "저장 오류");
             }
         }
 
-        // 레시피 파라미터 갱신 
-        private async void InitRecipeParams(RecipeVM recipeVM)
+        [RelayCommand]
+        public async Task UpdateParameter(RecipeParam? param)
         {
-            var parameters = await _recipeService.GetParameters(recipeVM.RecipeId);
-            Parameters.Clear();
-
-            foreach(RecipeParamDto dto in parameters)
+            if(param is null)
             {
-                Parameters.Add(ParameterVM.of(dto));
+                return;
             }
+            var copy = new RecipeParam
+            {
+                Id = param.Id,
+                RecipeId = param.RecipeId,
+                Name = param.Name,
+                Value = param.Value,
+                Maximum = param.Maximum,
+                Minimum = param.Minimum,
+                ValueTypeId = param.ValueTypeId,
+                UnitId = param.UnitId,
+                Description = param.Description,
+                ValueType = param.ValueType, // 편집용 뷰모델이 SelectedItem을 쓰는 경우 편의를 위해 유지
+                Unit = param.Unit
+            };
 
+            var result = await ShowParameterDialogAsync(copy, "파라미터 수정");
+            if (result is null) return;
+
+            try
+            {
+                NormalizeFK(result, recipeId: param.RecipeId);
+                _paramRepo.Update(result);
+                await _paramRepo.SaveAsync();
+                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+
+                // 목록 갱신 (선택 레시피 기준)
+                if (SelectedRecipe is not null)
+                    await LoadRecipeParamsAsync(SelectedRecipe);
+            }
+            catch (DbUpdateException ex)
+            {
+                MessageBox.Show(ex.GetBaseException().Message, "저장 오류");
+            }
         }
+
+        // ── 활성 레시피 변경 ─────────────────────────────────────────────────────
+
+        [RelayCommand(IncludeCancelCommand = true, CanExecute = nameof(CanChangeUseRecipe))]
+        private async Task ChangeUseRecipeAsync(Recipe? recipe, CancellationToken ct)
+        {
+            if (recipe is null || recipe.IsActive) return;
+
+            var owner = GetOwnerWindow();
+            if (!ConfirmModal.Ask(owner, "변경", "사용할 레시피를 변경하시겠습니까?"))
+                return;
+
+            IsBusy = true;
+            try
+            {
+                await _recipeService.SetActiveAsync(recipe.Id, ct);
+                await GetAllRecipe(ct);
+            }
+            catch (DbUpdateException)
+            {
+                AlertModal.Ask(owner, "제약 위반", "활성 레시피는 1개만 사용할 수 있어요.\n잠시 후 다시 시도하세요.");
+            }
+            catch (OperationCanceledException) { /* 무시 */ }
+            catch (Exception ex)
+            {
+                AlertModal.Ask(owner, "에러", ex.GetBaseException().Message);
+            }
+            finally
+            {
+                IsBusy = false;
+                ChangeUseRecipeCommand.NotifyCanExecuteChanged();
+            }
+        }
+        private bool CanChangeUseRecipe(Recipe? recipe)
+            => !IsBusy && recipe is not null && !recipe.IsActive;
+
+        // ── 룩업 로딩 ───────────────────────────────────────────────────────────
+
+        private async Task GetUnits(CancellationToken ct = default)
+        {
+            var units = await _unitRepo.ListAsync(ct: ct);
+            Units.Clear();
+            Units.AddRange(units);
+        }
+
+        private async Task GetValueTypes(CancellationToken ct = default)
+        {
+            var vts = await _valueTypeRepo.ListAsync(ct: ct);
+            ValueTypes.Clear();
+            ValueTypes.AddRange(vts);
+        }
+
+        // ── 다이얼로그 헬퍼 ─────────────────────────────────────────────────────
+
+        private async Task<RecipeParam?> ShowParameterDialogAsync(RecipeParam initial, string title)
+        {
+            var vm = new ParameterCreateVM(
+                title: title,
+                initial: initial,
+                units: Units,           // 이미 로딩된 목록 전달
+                valueTypes: ValueTypes);
+
+            var win = new ParameterCreateWindow
+            {
+                Owner = GetOwnerWindow(),
+                DataContext = vm
+            };
+
+            // OK 시 vm.Value 반환
+            var ok = win.ShowDialog() == true;
+            return ok ? vm.Value : null;
+        }
+
+        private async Task<Recipe?> ShowRecipeDialogAsync(Recipe initial, string title)
+        {
+            var vm = new RecipeCreateVM(
+                title: title,
+                initial: initial);
+
+            var win = new RecipeCreateWindow
+            {
+                Owner = GetOwnerWindow(),
+                DataContext = vm
+            };
+
+            // OK 시 vm.Value 반환
+            var ok = win.ShowDialog() == true;
+            return ok ? vm.Value : null;
+        }
+
+        /// FK만 확정하고 네비게이션은 비움(트래킹 문제 방지)
+        private static void NormalizeFK(RecipeParam p, int? recipeId = null)
+        {
+            if (recipeId.HasValue) p.RecipeId = recipeId.Value;
+
+            // SelectedItem 바인딩을 쓰는 경우를 대비해 Id 확정
+            if (p.ValueTypeId <= 0 && p.ValueType is not null)
+                p.ValueTypeId = p.ValueType.Id;
+            if (p.UnitId is null && p.Unit is not null)
+                p.UnitId = p.Unit.Id;
+
+            // 네비게이션 비움 (EF가 새 엔터티 Insert 시도 방지)
+            p.Recipe = null;
+            p.ValueType = null;
+            p.Unit = null;
+
+            // 기본 검증(실패는 곧바로 예외 → 호출부에서 잡음)
+            if (string.IsNullOrWhiteSpace(p.Name))
+                throw new ValidationException("이름을 입력하세요.");
+            if (string.IsNullOrWhiteSpace(p.Value))
+                throw new ValidationException("값을 입력하세요.");
+            if (p.ValueTypeId <= 0)
+                throw new ValidationException("값 타입을 선택하세요.");
+        }
+
+        private static Window? GetOwnerWindow() =>
+            Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+            ?? Application.Current?.MainWindow;
     }
-
-    
 }

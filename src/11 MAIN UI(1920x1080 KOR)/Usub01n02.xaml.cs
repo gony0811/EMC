@@ -50,10 +50,10 @@ namespace EGGPLANT
 
             var actions = new ObservableCollection<ActionButtonVM>
             {
-                new ActionButtonVM("ZERO SET", new RelayCommand(() => {}), 0),
-                new ActionButtonVM("ZERO CANCEL", new RelayCommand(() => {}), 0),
-                new ActionButtonVM("ZERO LIVE", new RelayCommand(() => {}), 0),
-                new ActionButtonVM("ZERO READ", new RelayCommand(() => {}), 0),
+                //new ActionButtonVM("ZERO SET", new RelayCommand(() => {}), 0),
+                //new ActionButtonVM("ZERO CANCEL", new RelayCommand(() => {}), 0),
+                //new ActionButtonVM("ZERO LIVE", new RelayCommand(() => {}), 0),
+                //new ActionButtonVM("ZERO READ", new RelayCommand(() => {}), 0),
 
             };
 

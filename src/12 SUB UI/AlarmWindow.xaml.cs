@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -56,42 +55,6 @@ namespace EGGPLANT
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
-
-        public static bool? ShowDialog(Window owner, string title, string message, IEnumerable<AlarmAction>? actions = null)
-        {
-            var w = new AlarmWindow
-            {
-                Owner = owner,
-                TitleText = title,
-                MessageText = message
-            };
-
-            var list = actions?.ToList() ?? new List<AlarmAction>
-            {
-                new AlarmAction
-                {
-                    Text = "확인",
-                    Kind = ActionKind.Primary,
-                    IsDefault = true,
-                    Command = new RelayCommand<Window>(win =>
-                    {
-                        if (win != null) win.DialogResult = true;
-                    }),
-                    // 템플릿이 Action.CommandParameter를 버튼에 바인딩하므로 윈도우를 넣어줌
-                    CommandParameter = w
-                }
-            };
-
-            // 윈도우 참조가 필요한 액션에 CommandParameter가 비어 있으면 채워준다
-            foreach (var a in list)
-                a.CommandParameter ??= w;
-
-            foreach (var a in list)
-                w.Actions.Add(a);
-
-            return w.ShowDialog();
-        }
-
     }
 
     // 버튼 한 개 정의

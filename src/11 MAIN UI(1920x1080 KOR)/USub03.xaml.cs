@@ -13,8 +13,9 @@ namespace EGGPLANT
     {
         public USub03(USub03ViewModel vm)
         {
-            this.DataContext = vm;
+            DataContext = vm;
             InitializeComponent();
+            
         }
         private void OnEngineerChange(object sender, RoutedEventArgs e)
         {
