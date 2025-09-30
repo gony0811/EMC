@@ -18,9 +18,13 @@ namespace EGGPLANT
         [Required, MaxLength(200)]
         public string Password { get; set; } = "";
 
+        // 숫자가 작을수록 상위
+        public int Rank { get; set; } = 100;
+
         public bool IsActive { get; set; } = true;
 
-
-        public ICollection<RoleCategoryManage> CategoryManages { get; set; } = new List<RoleCategoryManage>();
+        public ICollection<RoleScreenAccess> ScreenAccesses { get; set; } = new List<RoleScreenAccess>();
+        public ICollection<RoleManageRole> ManageTargets { get; set; } = new List<RoleManageRole>();   // 내가 관리하는 대상들
+        public ICollection<RoleManageRole> ManagedBy { get; set; } = new List<RoleManageRole>();
     }
 }

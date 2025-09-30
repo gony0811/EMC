@@ -1,26 +1,18 @@
-﻿namespace EGGPLANT
+﻿using MahApps.Metro.Controls;
+
+namespace EGGPLANT
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class UMain : MahApps.Metro.Controls.MetroWindow
+    public partial class UMain : MetroWindow
     {
-        public UMain()
+        public UMain(UMainViewModel vm)
         {
-            InitializeComponent();     
-            Init();
+            InitializeComponent();
+            DataContext = vm;
         }
 
-        private void Init()
-        {
-            this.tbThread.Text = "1ms";
-            this.tbTime.Text = "오전 00:00:00";
-            this.tbUser.Text = "SERVICE ENGINEER";
-            this.tbBuild.Text = "Build 0000.00.00";
-            this.tbDeveloper.Text = "Developed by EGGPLANT";
-            this.tbStatus.Text = "설비 정지 상태 입니다.(설비 초기화 필요!)";
-            this.tbSerialNumber.Text = "SN : EGGPLANT Copyright(c) EGGPLANT Corp. All rights reserved.";
-
-        }
+        
     }
 }

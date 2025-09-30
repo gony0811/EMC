@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using System.Windows;
 using Application = System.Windows.Application;
 
@@ -8,6 +9,7 @@ namespace EGGPLANT.ViewModels
     public partial class USub03ViewModel : ObservableObject
     {
         public UserViewModel UserVM { get; }
+
         public USub03ViewModel(UserViewModel userViewModel)
         {
             UserVM = userViewModel;
@@ -35,9 +37,10 @@ namespace EGGPLANT.ViewModels
                 }
             }
         }
-        
+
         private static Window? GetOwnerWindow() =>
             Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
             ?? Application.Current?.MainWindow;
     }
+    
 }

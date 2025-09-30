@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="EGGPLANT.SwitchButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:EGGPLANT"
+             Focusable="True">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <local:BoolToTextConverter x:Key="BoolToText"/>
+            <Style x:Key="SwitchBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="#BDBDBD"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Padding" Value="8,2"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Opacity" Value="1"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="Background" Value="#4CAF50"/>
+                    </DataTrigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Opacity" Value="0.85"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.55"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+        
+        
+    </UserControl.Resources>
+
+    <Button x:Name="PART_Button"
+            Style="{x:Null}"
+            Background="Transparent"
+            BorderThickness="0"
+            Padding="0"
+            Focusable="False"
+            Click="OnClick">
+        <Border x:Name="PART_Border" Style="{StaticResource SwitchBorderStyle}">
+            <TextBlock x:Name="PART_Text"
+                       Text="{Binding IsOn, RelativeSource={RelativeSource AncestorType=UserControl},
+                                      Converter={StaticResource BoolToText}, ConverterParameter='ON|OFF'}"
+                       Foreground="White"
+                       FontWeight="SemiBold"/>
+        </Border>
+    </Button>
+</UserControl>

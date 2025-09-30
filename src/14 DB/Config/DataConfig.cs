@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Sqlite.Metadata.Internal;
 using System.Reflection.Emit;
 
 
-namespace EGGPLANT 
+namespace EGGPLANT
 {
     public class RoleConfig : IEntityTypeConfiguration<Role>
     {
@@ -18,78 +18,89 @@ namespace EGGPLANT
              .HasAnnotation(SqliteAnnotationNames.Autoincrement, true);
 
             b.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            b.HasIndex(x => x.Name).IsUnique();
             b.Property(x => x.Description).HasMaxLength(200);
             b.Property(x => x.Password).HasMaxLength(200).IsRequired();
             b.Property(x => x.IsActive).HasDefaultValue(true);
+
+            b.HasMany(x => x.ScreenAccesses)
+             .WithOne(sa => sa.Role)
+             .HasForeignKey(sa => sa.RoleId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            b.HasMany(x => x.ManageTargets)
+             .WithOne(m => m.Manager)
+             .HasForeignKey(m => m.ManagerRoleId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            b.HasMany(x => x.ManagedBy)
+             .WithOne(m => m.Target)
+             .HasForeignKey(m => m.TargetRoleId)
+             .OnDelete(DeleteBehavior.Cascade);
 
             // 필요 시 체크 제약
             b.ToTable(t => t.HasCheckConstraint("CK_Roles_IsActive_01", "IsActive IN (0,1)"));
         }
     }
 
-    public class PermissionCategoryConfig : IEntityTypeConfiguration<PermissionCategory>
+    public class ScreenConfig : IEntityTypeConfiguration<Screen>
     {
-        public void Configure(EntityTypeBuilder<PermissionCategory> b)
+        public void Configure(EntityTypeBuilder<Screen> b)
         {
-            b.ToTable("PermissionCategory");
+            b.ToTable("Screens");
             b.HasKey(x => x.Id);
-            b.Property(x => x.Name).IsRequired();
+            b.Property(x => x.Code).HasMaxLength(100).IsRequired();
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            b.Property(x => x.Path).HasMaxLength(200);
             b.Property(x => x.DisplayOrder).HasDefaultValue(0);
-            b.HasIndex(x => x.Name).IsUnique();
+            b.Property(x => x.IsEnabled).HasDefaultValue(true);
+
+            b.HasMany(x => x.AccessBy)
+             .WithOne(sa => sa.Screen)
+             .HasForeignKey(sa => sa.ScreenId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            b.ToTable(t => t.HasCheckConstraint("CK_Screens_IsEnabled_01", "IsEnabled IN (0,1)"));
+        }
+    }
+    public class RoleScreenAccessConfig : IEntityTypeConfiguration<RoleScreenAccess>
+    {
+        public void Configure(EntityTypeBuilder<RoleScreenAccess> b)
+        {
+            b.ToTable("RoleScreenAccess");
+            b.HasKey(x => new { x.RoleId, x.ScreenId });
+            b.Property(x => x.Granted).HasDefaultValue(true);
+
+            b.HasIndex(x => x.RoleId).HasDatabaseName("IX_RoleScreenAccess_RoleId");
+            b.HasIndex(x => x.ScreenId).HasDatabaseName("IX_RoleScreenAccess_ScreenId");
+
+            b.ToTable(t => t.HasCheckConstraint("CK_RoleScreenAccess_Granted_01", "Granted IN (0,1)"));
         }
     }
 
-    public class PermissionConfig : IEntityTypeConfiguration<Permission>
+    public class RoleManageRoleConfig : IEntityTypeConfiguration<RoleManageRole>
     {
-        public void Configure(EntityTypeBuilder<Permission> b)
+        public void Configure(EntityTypeBuilder<RoleManageRole> b)
         {
-            b.ToTable("Permission");
-            b.HasKey(x => x.Id);
-
-            b.Property(x => x.Name).IsRequired();
-            b.Property(x => x.IsEnabled).HasDefaultValue(false);
-
-            b.HasOne(x => x.Category)
-             .WithMany(c => c.Permissions)
-             .HasForeignKey(x => x.CategoryId)
-             .OnDelete(DeleteBehavior.Restrict); // 스키마는 ON DELETE RESTRICT
-
-            b.HasIndex(x => new { x.CategoryId, x.Name }).IsUnique();
-
-            b.ToTable(t =>
-            {
-                t.HasCheckConstraint("CK_Permission_IsEnabled_01", "IsEnabled IN (0,1)");
-            });
-        }
-    }
-
-    public class RoleCategoryManageConfig : IEntityTypeConfiguration<RoleCategoryManage>
-    {
-        public void Configure(EntityTypeBuilder<RoleCategoryManage> b)
-        {
-            b.ToTable("RoleCategoryManage");
-
-            // 복합 PK
-            b.HasKey(x => new { x.RoleId, x.CategoryId });
-
+            b.ToTable("RoleManageRole");
+            b.HasKey(x => new { x.ManagerRoleId, x.TargetRoleId });
             b.Property(x => x.CanManage).HasDefaultValue(true);
 
-            b.HasOne(x => x.Role)
-             .WithMany(r => r.CategoryManages)
-             .HasForeignKey(x => x.RoleId)
+            b.HasOne(x => x.Manager)
+             .WithMany(r => r.ManageTargets)
+             .HasForeignKey(x => x.ManagerRoleId)
              .OnDelete(DeleteBehavior.Cascade);
 
-            b.HasOne(x => x.Category)
-             .WithMany(c => c.RoleManages)
-             .HasForeignKey(x => x.CategoryId)
+            b.HasOne(x => x.Target)
+             .WithMany(r => r.ManagedBy)
+             .HasForeignKey(x => x.TargetRoleId)
              .OnDelete(DeleteBehavior.Cascade);
-
-            b.HasIndex(x => x.RoleId).HasDatabaseName("IX_RoleCategoryManage_RoleId");
-            b.HasIndex(x => x.CategoryId).HasDatabaseName("IX_RoleCategoryManage_CategoryId");
 
             b.ToTable(t =>
             {
-                t.HasCheckConstraint("CK_RCM_CanManage_01", "CanManage IN (0,1)");
+                t.HasCheckConstraint("CK_RMR_CanManage_01", "CanManage IN (0,1)");
+                t.HasCheckConstraint("CK_RMR_Self_01", "ManagerRoleId <> TargetRoleId");
             });
         }
     }
@@ -129,8 +140,13 @@ namespace EGGPLANT
         {
             b.ToTable("ValueType");
             b.HasKey(x => x.Id);
+            b.Property(x => x.Id)
+                .ValueGeneratedOnAdd()
+                .HasAnnotation(SqliteAnnotationNames.Autoincrement, true);
             b.Property(x => x.Name).IsRequired();
             b.HasIndex(x => x.Name).IsUnique();
+
+
         }
     }
 
@@ -140,6 +156,9 @@ namespace EGGPLANT
         {
             b.ToTable("Unit");
             b.HasKey(x => x.Id);
+            b.Property(x => x.Id)
+                .ValueGeneratedOnAdd()
+                .HasAnnotation(SqliteAnnotationNames.Autoincrement, true);
             b.Property(x => x.Name).IsRequired();
             b.HasIndex(x => x.Name).IsUnique();
         }
@@ -151,7 +170,9 @@ namespace EGGPLANT
         {
             b.ToTable("RecipeParam");
             b.HasKey(x => x.Id);
-
+            b.Property(x => x.Id)
+                .ValueGeneratedOnAdd()
+                .HasAnnotation(SqliteAnnotationNames.Autoincrement, true);
             b.Property(x => x.Name).IsRequired();
             b.Property(x => x.Value).IsRequired();
 
@@ -186,6 +207,15 @@ namespace EGGPLANT
             b.Property(x => x.Number).IsRequired();
             b.HasIndex(x => x.Number).IsUnique();
 
+        }
+    }
+
+    public class RolePermissionRowConfig : IEntityTypeConfiguration<RolePermissionRow>
+    {
+        public void Configure(EntityTypeBuilder<RolePermissionRow> b)
+        {
+            b.HasNoKey();          
+            b.ToView(null);
         }
     }
 }

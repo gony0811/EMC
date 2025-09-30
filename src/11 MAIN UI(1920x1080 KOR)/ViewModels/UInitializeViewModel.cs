@@ -1,18 +1,14 @@
 ﻿using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using EGGPLANT.Device.PowerPmac;
+using EGGPLANT._14_DB.Config;
 using EGGPLANT.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace EGGPLANT.ViewModels
 {
     public partial class UInitializeViewModel: ObservableObject
     {
+        public NavigationViewModel NavVM { get; }
+        public UserViewModel UserVM { get; }
+
         [ObservableProperty]
         private int progress;
 
@@ -25,8 +21,11 @@ namespace EGGPLANT.ViewModels
         public List<Step> InitialSequence { get; private set; }
         private CTrace traceMsg = null;
 
-        public UInitializeViewModel()
+        public UInitializeViewModel(UserViewModel userVM, NavigationViewModel navVM)
         {
+            UserVM = userVM;
+            NavVM = navVM;
+
             Progress = 0;
             Status = "진행 중...";
             CurrentTitle = "초기화 중...";
@@ -34,15 +33,34 @@ namespace EGGPLANT.ViewModels
             Init();
         }
 
-        private void Init()
+        public void Init()
         {
             // 실행 순서대로 생성
             InitialSequence = new List<Step>
             {
-                // STEP 1 - LOG IN / LANGUAGE 초기화
+                new Step("Data Initialize", async ct =>
+                {
+                    using (var scope = App.Container.BeginLifetimeScope())
+                    {
+                        var db = scope.Resolve<AppDb>();
+                        await DbSeeder.EnsureSeededAsync(db);
+                    }
+                    await Task.CompletedTask;
+                }),
+                new Step("화면 설정중", async ct =>
+                {
+                    await NavVM.LoadNavigation();
+                    await Task.CompletedTask;
+                }),
+
                 new Step("LOG IN / LANGUAGE 초기화", async ct =>
                 {
-
+                    await UserVM.InitializeAsync();
+                    using (var scope = App.Container.BeginLifetimeScope())
+                    {
+                        var db = scope.Resolve<AppDb>();
+                        await DbSeeder.EnsureSeededAsync(db);
+                    }
                     await Task.CompletedTask;
                 }),
 
@@ -172,5 +190,6 @@ namespace EGGPLANT.ViewModels
                 }),
             };  
         }
+
     }
 }

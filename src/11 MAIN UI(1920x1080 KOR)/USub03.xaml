@@ -14,7 +14,20 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Styles/DefaultResource.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <local:BoolToTextConverter x:Key="BoolToText"/>
+            <local:BoolToBrushConverter x:Key="BoolToBrush"/>
+            <local:NotConverter x:Key="Not"/>
+            <DataTemplate x:Key="SwitchContentTemplate">
+                <Border Margin="8,0" CornerRadius="8" Padding="8,2" Cursor="Hand"
+                Background="{Binding Granted, Converter={StaticResource BoolToBrush},
+                                      ConverterParameter='#4CAF50|#BDBDBD'}">
+                    <TextBlock Text="{Binding Granted, Converter={StaticResource BoolToText},
+                                       ConverterParameter='ON/OFF'}"
+                     Foreground="White" FontWeight="SemiBold"/>
+                </Border>
+            </DataTemplate>
         </ResourceDictionary>
+        
     </Page.Resources>
 
     <Border Style="{StaticResource Panel.Radius5}">
@@ -36,19 +49,19 @@
 
                 <StackPanel>
                     <Border Background="#0767B3"  
-                    CornerRadius="5"
-                    Padding="5">
+                            CornerRadius="5"
+                            Padding="5">
                         <TextBlock Text=" 사용자 선택"
-                     Foreground="White"
-                     FontSize="16"
-                     FontWeight="SemiBold"/>
+                                     Foreground="White"
+                                     FontSize="16"
+                                     FontWeight="SemiBold"/>
                     </Border>
 
                     <ItemsControl ItemsSource="{Binding UserVM.AuthorityList,
                             diag:PresentationTraceSources.TraceLevel=High}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Description}"
+                                <Button Content="{Binding Name}"
                                         Margin="10" Height="40" MinWidth="110"
                                         Command="{Binding DataContext.ChangeUserCommand,
                                                 RelativeSource={RelativeSource AncestorType=ItemsControl}}"
@@ -62,189 +75,83 @@
             </Border>
 
             <Border Grid.Column="1" Grid.Row="1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <!-- 화면 접근 설정 -->
+                    <ItemsControl ItemsSource="{Binding UserVM.Groups}" Grid.Row="0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <!-- 가로 한 줄 -->
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <Border Grid.Column="0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0" Grid.Row="0">
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5" VerticalAlignment="Center" Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="권한 설정(작업자)" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
-                                        </Border>
-                                        <uc:HeaderAction LabelText="파라미터 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="파라미터 변경" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="로그 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="에러목록 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="수동조작 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                        <!-- 그룹(Expander) 카드 간격/정렬 -->
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Margin" Value="8,0,8,0"/>
+                                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
 
-                                        <uc:HeaderAction LabelText="모터 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="센서 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:RoleScreensGroupVM}">
+                                <!-- 고정(또는 Min) 너비를 주면 카드처럼 정렬이 깔끔합니다 -->
+                                <Expander IsExpanded="True" Margin="0,0,0,8" Width="320">
+                                    <Expander.Header>
+                                        <TextBlock Text="{Binding RoleName}" FontWeight="Bold" FontSize="14"/>
+                                    </Expander.Header>
 
-                                        <uc:HeaderAction LabelText="경광등 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                    </StackPanel>
-                                </Border>
+                                    <!-- 각 그룹 내부는 기존처럼 세로 목록 -->
+                                    <ItemsControl ItemsSource="{Binding Screens}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type local:ScreenItemVM}">
+                                                <Grid Margin="4,2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" 
-                                        HorizontalAlignment="Center" VerticalAlignment="Center"  
-                                        Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="권한 설정(엔지니어)" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"/>
-                                        </Border>
-                                        <uc:HeaderAction LabelText="파라미터 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="파라미터 변경" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="로그 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="에러목록 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="수동조작 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
 
-                                        <uc:HeaderAction LabelText="모터 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="센서 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
+                                                    <Button Grid.Column="1"
+                                            Style="{x:Null}"             
+                                            Command="{Binding ToggleCommand}"
+                                            IsEnabled="{Binding CanToggle}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            Focusable="False">
+                                                        <Border Margin="8,0"
+                                                CornerRadius="8"
+                                                Padding="8,2"
+                                                Cursor="Hand"
+                                                Background="{Binding Granted, Converter={StaticResource BoolToBrush},
+                                                                     ConverterParameter='#4CAF50|#BDBDBD'}">
+                                                            <TextBlock Text="{Binding Granted, Converter={StaticResource BoolToText},
+                                                                     ConverterParameter='ON|OFF'}"
+                                                       Foreground="White"
+                                                       FontWeight="SemiBold"/>
+                                                        </Border>
+                                                    </Button>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                                        <uc:HeaderAction LabelText="경광등 설정 화면" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="불가" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="10" Grid.Column="0" Grid.Row="1">
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5"  Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="사용자 옵션" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
-                                        </Border>
-                                        <uc:HeaderAction LabelText="DOOR" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="BUZZER" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                        <uc:HeaderAction LabelText="테스트 모드" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="보정 능력 연속 측정" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Center" CornerRadius="5"   Margin="0,0,10,0" MinWidth="250">
-                                    <StackPanel>
-                                        <Border>
-                                            <TextBlock Text="Service Engineer Option" Foreground="White" FontWeight="DemiBold" FontSize="16" TextAlignment="Left" Padding="10"></TextBlock>
-                                        </Border>
-                                        <uc:HeaderAction LabelText="드라이(IDLE)런" >
-                                            <uc:HeaderAction.ActionContent>
-                                                <Button Content="미사용" Command="{Binding SetPermissionCommand}"/>
-                                            </uc:HeaderAction.ActionContent>
-                                        </uc:HeaderAction>
-
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-
-                            <Border BorderBrush="#0767B3"  
-                                    BorderThickness="1"
-                                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                    Grid.Column="1" Grid.RowSpan="2"
-                                    CornerRadius="5"
-                                    Margin="10"
-                                >
-                                <StackPanel>
-                                    
-                                    <Border Background="#0767B3"  
-                                            CornerRadius="5"
-                                            Margin="0,0,0,10"
-                                            Padding="5">
-                                        <TextBlock Text=" 비밀번호 변경"
-                                                   Foreground="White"
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold"/>    
-                                    </Border>
-                                    <Button Content="엔지니어 비밀번호 변경" Width="200" Height="60" Margin="10" Click="OnEngineerChange"></Button>
-                                    <Button Content="관리자 비밀번호 변경" Width="200" Height="60" Margin="10"></Button>
-                                </StackPanel>
-                            </Border>
-
-                        </Grid>
-                    </Border>
+                    <StackPanel Orientation="Horizontal">
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>

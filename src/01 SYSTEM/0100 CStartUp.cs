@@ -21,14 +21,14 @@ namespace EGGPLANT
 
             // === DbContext (창/화면 스코프 단위) ===
             builder.Register(ctx =>
-            {
-                var opts = new DbContextOptionsBuilder<AppDb>()
-                    .UseSqlite(connStr)
-                    .Options;
-                return new AppDb(opts);
-            })
-            .AsSelf()
-            .InstancePerLifetimeScope();
+                {
+                    var opts = new DbContextOptionsBuilder<AppDb>()
+                        .UseSqlite(connStr)
+                        .Options;
+                    return new AppDb(opts);
+                })
+                .AsSelf()
+                .InstancePerLifetimeScope();
 
             // === 가벼운 인-스코프 팩토리(Func<AppDb>) ===
             builder.Register<Func<AppDb>>(ctx =>
@@ -60,13 +60,21 @@ namespace EGGPLANT
             builder.RegisterGeneric(typeof(DbRepository<>))
                .As(typeof(IDbRepository<>))
                .InstancePerLifetimeScope();
-
             builder.RegisterType<RecipeService>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ParameterService>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ErrorService>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ScreenService>().AsSelf().InstancePerLifetimeScope();
 
-            builder.RegisterType<UInitialize>().SingleInstance();
+            builder.RegisterType<UInitialize>()
+                 .AsSelf()
+                 .InstancePerDependency()
+                 .OnActivated(e =>
+                 {
+                     if (e.Instance.DataContext == null)
+                         e.Instance.DataContext = e.Context.Resolve<UInitializeViewModel>();
+                 });
+            builder.RegisterType<UInitializeViewModel>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<CSYS>().AsSelf().SingleInstance();
             builder.RegisterType<UDevHistory>().SingleInstance();
             builder.RegisterType<UMain>().SingleInstance();
@@ -74,6 +82,7 @@ namespace EGGPLANT
 
             builder.RegisterType<USub01>().SingleInstance();
             builder.RegisterType<USub01ViewModel>().InstancePerDependency();
+            
 
             builder.RegisterType<USub01n01>().SingleInstance();
             builder.RegisterType<USub01n01ViewModel>().InstancePerDependency();
@@ -113,7 +122,8 @@ namespace EGGPLANT
 
             builder.RegisterType<RecipeCreateVM>().InstancePerDependency();
             builder.RegisterType<RecipeCreateWindow>().InstancePerDependency();
-            builder.RegisterType<UserViewModel>().InstancePerDependency();
+            builder.RegisterType<UserViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<NavigationViewModel>().SingleInstance();
 
             return builder.Build();
         }

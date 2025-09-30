@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Pcomm32Functions;
 using Autofac;
 
@@ -53,15 +48,15 @@ namespace EGGPLANT.Device.PowerPmac
 
             if (LinkCount <= 0)
             {
-#if (__TURBO_PMAC__ == true)
-                FDeviceID1 = 0x00;
-                FDeviceOpen = PMAC.OpenPmacDevice(FDeviceID1);
-#elif (__POWER_PMAC__ == true)
-                FDeviceID1 = 0x00;
-                FDeviceOpen = PMAC.DTKPowerPmacOpen(CETC.IpToUInt32(FIP), (UInt32)DTK_MODE_TYPE.DM_GPASCII);
-#else
-				Initialized = true;
-#endif		    
+                #if (__TURBO_PMAC__ == true)
+                    FDeviceID1 = 0x00;
+                    FDeviceOpen = PMAC.OpenPmacDevice(FDeviceID1);
+                #elif (__POWER_PMAC__ == true)
+                    FDeviceID1 = 0x00;
+                    FDeviceOpen = PMAC.DTKPowerPmacOpen(CETC.IpToUInt32(FIP), (UInt32)DTK_MODE_TYPE.DM_GPASCII);
+                #else
+				    Initialized = true;
+                #endif		    
             }
 
             Initialized = (FDeviceOpen == 0)? false : true;

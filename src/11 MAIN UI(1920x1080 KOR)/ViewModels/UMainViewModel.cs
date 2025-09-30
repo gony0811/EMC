@@ -1,222 +1,121 @@
 ﻿
 using Autofac;
+using Autofac.Features.Indexed;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
+using System.Windows.Controls;
 
 namespace EGGPLANT
 {
     public partial class UMainViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private string? threadText;
+        // 문자열 바인딩용 프로퍼티
+        [ObservableProperty] private string? threadText;
+        [ObservableProperty] private string? timeText;
+        [ObservableProperty] private string? statusText;
+        [ObservableProperty] private string? buildText;
+        [ObservableProperty] private string? developerText;
+        [ObservableProperty] private string? serialNumberText;
+
+        // 메뉴 체크는 nullable 말고 bool 권장 (tri-state 방지)
+        [ObservableProperty] private bool isMainChecked;
+        [ObservableProperty] private bool isParamChecked;
+        [ObservableProperty] private bool isUserChecked;
+        [ObservableProperty] private bool isLogChecked;
+        [ObservableProperty] private bool isErrorChecked;
+        [ObservableProperty] private bool isManualChecked;
+        [ObservableProperty] private bool isMotionChecked;
+        [ObservableProperty] private bool isDirectIOChecked;
+        [ObservableProperty] private bool isTowerLampChecked;
+        [ObservableProperty] private Page? currentPage;
+
+        [ObservableProperty] private ObservableCollection<string> logMessages = new();
+        private readonly ILifetimeScope _scope; // Autofac 스코프
 
         [ObservableProperty]
-        private string? timeText;
+        private NavigationViewModel navVM;
 
         [ObservableProperty]
-        private string? userText;
+        private UserViewModel userVM;
+        public CSYS CSYS { get; }
+        public CTrace Trace { get; }
 
-        [ObservableProperty]
-        private string? statusText;
-
-        [ObservableProperty]
-        private string? buildText;
-
-        [ObservableProperty]
-        private string? developerText;
-
-        [ObservableProperty]
-        private string? serialNumberText;
-
-        [ObservableProperty]
-        private bool? isMainChecked;
-        [ObservableProperty]
-        private bool? isParamChecked;
-        [ObservableProperty]
-        private bool? isUserChecked;
-        [ObservableProperty]
-        private bool? isLogChecked;
-        [ObservableProperty]
-        private bool? isErrorChecked;
-        [ObservableProperty]
-        private bool? isManualChecked;
-        [ObservableProperty]
-        private bool? isMotionChecked;
-        [ObservableProperty]
-        private bool? isDirectIOChecked;
-        [ObservableProperty]
-        private bool? isTowerLampChecked;
-        [ObservableProperty]
-        private ObservableCollection<string> logMessages = new ObservableCollection<string>();
-
-
-
-        // public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>();
-
-        // 수정 코드
-        public CSYS CSYS { get; } = App.Container?.Resolve<CSYS>() ?? throw new InvalidOperationException("CSYS 인스턴스를 생성할 수 없습니다. App.Container가 null이거나 등록되지 않았습니다.");
-
-        public CTrace Trace { get; } = App.Container?.ResolveKeyed<CTrace>("Trace") ?? throw new InvalidOperationException("Trace 인스턴스를 생성할 수 없습니다. App.Container가 null이거나 등록되지 않았습니다.");
-
-        public UMainViewModel()
+        // 🔹 App.Container 사용 금지. DI로 받기.
+        public UMainViewModel(
+            NavigationViewModel navVM,
+            UserViewModel userVM,
+            ILifetimeScope scope,
+            CSYS csys,
+            IIndex<string, CTrace> traces) // keyed resolve는 IIndex로
         {
-            // Initialize properties with default values
-            ThreadText = "1ms";
-            TimeText = "오전 00:00:00";
-            UserText = "SERVICE ENGINEER";
+            NavVM = navVM;
+            UserVM = userVM;
+            _scope = scope;
+            CSYS = csys;
+            Trace = traces["Trace"]; // "Trace" 키로 주입
+
+            ThreadText = "1 ms";
+            TimeText = DateTime.Now.ToString("tt hh:mm:ss");
             StatusText = "설비 정지 상태 입니다.(설비 초기화 필요!)";
-            BuildText = "Build 0000.00.00";
+            BuildText = CSYS.GetBuildVersion();
             DeveloperText = "Developed by EGGPLANT";
-            SerialNumberText = "SN : EGGPLANT Copyright(c) EGGPLANT Corp. All rights reserved.";
-            
-            CSYS.Initialize(AppDomain.CurrentDomain.BaseDirectory);
-            Init();
+            SerialNumberText = "SN : EGGPLANT ...";
+            GoToSub01();
         }
 
-        private void Init()
+        // View(UMain) Loaded 시점에 호출되게 연결
+        public void OnLoaded()
         {
-            // Initialize any additional properties or perform setup tasks here
-            IsMainChecked = true;
-            IsParamChecked = false;
-            IsUserChecked = false;
-            IsLogChecked = false;
-            IsErrorChecked = false;
-            IsManualChecked = false;
-            IsMotionChecked = false;
-            IsDirectIOChecked = false;
-            IsTowerLampChecked = false;
-            // Navigate to the initial page
-            CSYS.GoToSub01();
-            Trace.Trace("UMainViewModel", "UMainViewModel initialized successfully.");
-
+            CSYS.Initialize(AppDomain.CurrentDomain.BaseDirectory);
+            SetMenu(Menu.Main);
+            Trace.Trace("UMainViewModel", "UMainViewModel initialized.");
         }
 
+        // 깔끔한 메뉴 토글 유틸
+        private enum Menu { Main, Param, User, Log, Error, Manual, Motion, Sensor, TowerLamp }
 
+        private void SetMenu(Menu m)
+        {
+            IsMainChecked = m == Menu.Main;
+            IsParamChecked = m == Menu.Param;
+            IsUserChecked = m == Menu.User;
+            IsLogChecked = m == Menu.Log;
+            IsErrorChecked = m == Menu.Error;
+            IsManualChecked = m == Menu.Manual;
+            IsMotionChecked = m == Menu.Motion;
+            IsDirectIOChecked = m == Menu.Sensor;
+            IsTowerLampChecked = m == Menu.TowerLamp;
+        }
 
         [RelayCommand]
         private void NavigateClick(string tag)
         {
-            switch(tag)
+            if (!Enum.TryParse<Menu>(tag, true, out var m)) return;
+
+            switch (m)
             {
-                case "MAIN":
-                    CSYS.GoToSub01();
-                    IsMainChecked = true;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "PARAM":
-                    CSYS.GoToSub02();
-                    IsMainChecked = false;
-                    IsParamChecked = true;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "USER":
-                    CSYS.GoToSub03();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = true;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "LOG":
-                    CSYS.GoToSub04();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = true;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "ERROR":
-                    CSYS.GoToSub05();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = true;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "MANUAL":
-                    CSYS.GoToSub06();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = true;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "MOTION":
-                    CSYS.GoToSub07();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = true;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = false;
-                    break;
-                case "SENSOR":
-                    CSYS.GoToSub08();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = true;
-                    IsTowerLampChecked = false;
-                    break;
-                case "TOWERLAMP":
-                    CSYS.GoToSub09();
-                    IsMainChecked = false;
-                    IsParamChecked = false;
-                    IsUserChecked = false;
-                    IsLogChecked = false;
-                    IsErrorChecked = false;
-                    IsManualChecked = false;
-                    IsMotionChecked = false;
-                    IsDirectIOChecked = false;
-                    IsTowerLampChecked = true;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid tag for navigation");
+                case Menu.Main: GoToSub01(); break;
+                case Menu.Param:GoToSub02(); break;
+                case Menu.User: GoToSub03(); break;
+                case Menu.Log: GoToSub04(); break;
+                case Menu.Error: GoToSub05(); break;
+                case Menu.Manual: GoToSub06(); break;
+                case Menu.Motion: GoToSub07(); break;
+                case Menu.Sensor: GoToSub08(); break;
+                case Menu.TowerLamp: GoToSub09(); break;
             }
-            // Navigate to the main page or perform any action needed
+            SetMenu(m);
         }
+
+        private void GoToSub01() => CurrentPage = _scope.Resolve<USub01>();
+        private void GoToSub02() => CurrentPage = _scope.Resolve<USub02>();
+        private void GoToSub03() => CurrentPage = _scope.Resolve<USub03>();
+        private void GoToSub04() => CurrentPage = _scope.Resolve<USub04>();
+        private void GoToSub05() => CurrentPage = _scope.Resolve<USub05>();
+        private void GoToSub06() => CurrentPage = _scope.Resolve<USub06>();
+        private void GoToSub07() => CurrentPage = _scope.Resolve<USub07>();
+        private void GoToSub08() => CurrentPage = _scope.Resolve<USub08>();
+        private void GoToSub09() => CurrentPage = _scope.Resolve<USub09>();
     }
 }

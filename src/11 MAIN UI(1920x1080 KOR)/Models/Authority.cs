@@ -1,10 +1,12 @@
-﻿namespace EGGPLANT
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace EGGPLANT
 {
-    public class Authority
+    public partial class Authority : ObservableObject
     {
-        public int Id { get;  }
-        public string Name { get; }
-        public string Description { get; }
+        [ObservableProperty] private int id;
+        [ObservableProperty] private string name;
+        [ObservableProperty] private string description;
 
         public Authority()
         {

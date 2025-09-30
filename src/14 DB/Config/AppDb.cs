@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Sqlite.Metadata.Internal;
 using System.IO;
-using System.Reflection.Emit;
 
 namespace EGGPLANT
 {
@@ -11,14 +9,14 @@ namespace EGGPLANT
         public AppDb(DbContextOptions<AppDb> options) : base(options) { }
 
         public DbSet<Role> Roles => Set<Role>();
-        public DbSet<PermissionCategory> PermissionCategory => Set<PermissionCategory>();
-        public DbSet<Permission> Permission => Set<Permission>();
-        public DbSet<RoleCategoryManage> RoleCategoryManage => Set<RoleCategoryManage>();
         public DbSet<Recipe> Recipes => Set<Recipe>();
         public DbSet<ValueTypeDef> ValueTypes => Set<ValueTypeDef>();
         public DbSet<Unit> Units => Set<Unit>();
         public DbSet<RecipeParam> RecipeParams => Set<RecipeParam>();
-
+        public DbSet<RolePermissionRow> RolePermissionRows => Set<RolePermissionRow>();
+        public DbSet<Screen> Screens => Set<Screen>();
+        public DbSet<RoleScreenAccess> RoleScreenAccess => Set<RoleScreenAccess>();
+        public DbSet<RoleManageRole> RoleManageRole => Set<RoleManageRole>();
 
         protected override void OnModelCreating(ModelBuilder b)
         {
