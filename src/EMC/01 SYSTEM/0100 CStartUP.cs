@@ -19,9 +19,8 @@ namespace EMC
             };
 
             // === DB 경로 & 연결문자열 ===
-            var dbPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "MyApp", "emc.db");
+            var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            var dbPath = Path.Combine(exeDir, "emc.db");
             var dbDir = Path.GetDirectoryName(dbPath) ?? AppDomain.CurrentDomain.BaseDirectory;
             Directory.CreateDirectory(dbDir);
             var connStr = $"Data Source={dbPath};Cache=Shared";
@@ -58,7 +57,6 @@ namespace EMC
                     db.Database.CloseConnection();
                 }
             });
-           
 
             cb.RegisterByConvention(scans);
             return cb.Build();

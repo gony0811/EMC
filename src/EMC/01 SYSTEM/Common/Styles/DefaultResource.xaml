@@ -619,4 +619,23 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- 공통 셀 스타일 -->
+    <Style x:Key="Cell" TargetType="Border">
+        <Setter Property="BorderBrush" Value="#3C4A52"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="8,6"/>
+    </Style>
+    <!-- 헤더 셀 -->
+    <Style x:Key="HeaderCell" TargetType="Border" BasedOn="{StaticResource Cell}">
+        <Setter Property="Background" Value="#2B3339"/>
+    </Style>
+    <!-- 텍스트 스타일(옵션) -->
+    <Style x:Key="HeaderText" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#E6FFFFFF"/>
+    </Style>
+    <Style x:Key="ValueText" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#E6FFFFFF"/>
+    </Style>
+
 </ResourceDictionary>

@@ -22,17 +22,17 @@ namespace EMC
         }
 
         // 전체 알람 조회 ( 정렬 : 레벨순 ) 
-        public async Task<IReadOnlyList<Alarm>> GetAlarmList(Sort sort = Sort.Descending)
+        public async Task<IReadOnlyList<Alarm>> GetAlarmList(Sort sort = Sort.Ascending)
         {
-            if (sort == Sort.Ascending) return await alarmRepository.ListAsync(a=> a.Enable == DB.AlarmEnable.ENABLED ,orderBy: q => q.OrderBy(a => a.Code));
+            if (sort == Sort.Ascending) return await alarmRepository.ListAsync(orderBy: q => q.OrderBy(a => a.Code));
             
-            return await alarmRepository.ListAsync( orderBy: q => q.OrderByDescending(a => a.Level));    
+            return await alarmRepository.ListAsync( orderBy: q => q.OrderByDescending(a => a.Code));    
         }
 
         // 알람 Set 상태 조회
         public async Task<IReadOnlyList<Alarm>> GetSetAlarmList()
         {
-            return await alarmRepository.ListAsync(a => a.Status == DB.AlarmStatus.SET && a.Enable == DB.AlarmEnable.ENABLED, orderBy: q => q.OrderByDescending(a => a.Level));
+            return await alarmRepository.ListAsync(a => a.Status == DB.AlarmStatus.SET, orderBy: q => q.OrderByDescending(a => a.Code));
         }
 
 

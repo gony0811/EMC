@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23 d17.14
+VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMC", "EMC\EMC.csproj", "{BB03E139-7A57-4874-90A1-964F6E9507E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMC.DB", "EMC.DB\EMC.DB\EMC.DB.csproj", "{8883C287-FFA5-4DF4-A11A-6B2BE027F13D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPFramework", "EPFramework\EPFramework\EPFramework.csproj", "{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{BB03E139-7A57-4874-90A1-964F6E9507E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB03E139-7A57-4874-90A1-964F6E9507E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB03E139-7A57-4874-90A1-964F6E9507E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8883C287-FFA5-4DF4-A11A-6B2BE027F13D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8883C287-FFA5-4DF4-A11A-6B2BE027F13D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8883C287-FFA5-4DF4-A11A-6B2BE027F13D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8883C287-FFA5-4DF4-A11A-6B2BE027F13D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -41,12 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="EMC.DB">
-      <HintPath>lib\EMC.DB.dll</HintPath>
-    </Reference>
-    <Reference Include="EPFramework">
-      <HintPath>lib\EPFramework.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\EMC.DB\EMC.DB\EMC.DB.csproj" />
+    <ProjectReference Include="..\EPFramework\EPFramework\EPFramework.csproj" />
   </ItemGroup>
 
   <!-- 선택: 생성된 코드 확인용 -->
@@ -60,6 +56,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <BaseOutputPath>..\run</BaseOutputPath>
   </PropertyGroup>
   <!-- 선택: FodyWeavers.xml을 ‘None’로 명시(안 써도 자동 감지됩니다) -->
 </Project>

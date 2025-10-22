@@ -2,6 +2,7 @@
 using EPFramework.IoC;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Hosting;
 
 namespace EMC
 {
@@ -29,7 +30,16 @@ namespace EMC
             }
         }
 
-        
+        public int CountDieCarrier()
+        {
+            int count = 0; 
+            foreach (var item in DTableList)
+            {
+                count += item.IsChecked ? 1 : 0;
+            }
+
+            return count;
+        }
 
     }
 
