@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="EMC.TitleBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             x:Name="root">
+    <Grid>
+        <Border>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- 왼쪽 포인트 바 -->
+                <Rectangle Width="4" Height="24" Fill="#4F9CF9" RadiusX="2" RadiusY="2" Margin="12,0,8,0"/>
+                <TextBlock Text="{Binding Title, ElementName=root}"
+                           FontSize="24" FontWeight="SemiBold"
+                           Foreground="White" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

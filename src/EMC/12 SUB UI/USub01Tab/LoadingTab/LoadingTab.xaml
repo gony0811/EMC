@@ -1,0 +1,111 @@
+﻿<UserControl x:Class="EMC.LoadingTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EMC"
+             xmlns:uc="clr-namespace:EMC"
+             xmlns:vm="clr-namespace:EMC"
+             x:Name="root"
+             mc:Ignorable="d" >
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/01 SYSTEM/Common/Styles/DefaultResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="D-Table" Margin="4" Style="{StaticResource GroupBox.CenterHeader}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Content="LOADING POSITION" Grid.Row="0"></Button>
+                    <Button Content="WORKING POSITION" Grid.Row="1"></Button>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding DTableList}" Grid.Column="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" Margin="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <!-- 📌 각 셀의 디자인 -->
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:SensorIoItemViewModel}">
+                            <Border BorderBrush="#16233B"
+                                    BorderThickness="1"
+                                    CornerRadius="6">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"
+                                               Margin="10"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Foreground="White"
+                                                FontWeight="SemiBold"
+                                                FontSize="16"/>
+                                    <!-- 토글 -->
+                                    <uc:IoPillToggle
+                                            Grid.Column="1"
+                                            IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                            IsReadOnly="{Binding IsReadOnly}"
+                                            Command="{Binding ToggleCommand}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                                    <!-- 센서 이름 -->
+                                    
+                                
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <Button Content="ALL ON" Height="60" Width="100"></Button>
+                    <Button Content="ALL OFF" Height="60"  Width="100"></Button>
+                </StackPanel>
+            </Grid>
+
+        </GroupBox>
+        <GroupBox Header="W-Table" Grid.Row="1" Margin="4" Style="{StaticResource GroupBox.CenterHeader}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Content="LOADING POSITION" Grid.Row="0"></Button>
+                    <Button Content="WORKING POSITION" Grid.Row="1"></Button>
+                </Grid>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Content="Die" Width="120" Height="80"></Button>
+                    <Button Content="4" Width="120" Height="80"></Button>
+                    <Button Content="6" Width="120" Height="80"></Button>
+                    <Button Content="8" Width="120" Height="80"></Button>
+                    <Button Content="12" Width="120" Height="80"></Button>
+                </StackPanel>
+                <Button Content="All Off" Grid.Column="2" Width="120" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>
