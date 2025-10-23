@@ -40,11 +40,6 @@
     <Folder Include="12 SUB UI\USub01Tab\StepTab\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EMC.DB\EMC.DB\EMC.DB.csproj" />
-    <ProjectReference Include="..\EPFramework\EPFramework\EPFramework.csproj" />
-  </ItemGroup>
-
   <!-- 선택: 생성된 코드 확인용 -->
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
