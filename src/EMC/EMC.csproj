@@ -40,6 +40,12 @@
     <Folder Include="12 SUB UI\USub01Tab\StepTab\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EMC.DB\EMC.DB\EMC.DB.csproj" />
+    <ProjectReference Include="..\EMC.IO\EMC.IO.csproj" />
+    <ProjectReference Include="..\EPFramework\EPFramework\EPFramework.csproj" />
+  </ItemGroup>
+
   <!-- 선택: 생성된 코드 확인용 -->
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -51,7 +57,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <BaseOutputPath>..\run</BaseOutputPath>
+    <BaseOutputPath>..\..\run</BaseOutputPath>
   </PropertyGroup>
   <!-- 선택: FodyWeavers.xml을 ‘None’로 명시(안 써도 자동 감지됩니다) -->
 </Project>
