@@ -57,7 +57,6 @@
                             <uc:StateCell
                                         Margin="2"
                                         State="{Binding State}"
-                                        StatusName="{Binding StatusName}"
                                         DotSize="14"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -8,7 +8,7 @@
     
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="12"/>
     </Style>
 
     <Style x:Key="GroupBox.CenterHeader" TargetType="GroupBox">
@@ -62,8 +62,18 @@
     <Style TargetType="Button">
         <Setter Property="Background"   Value="{StaticResource Btn.Bg}"/>
         <Setter Property="Foreground"   Value="{StaticResource Btn.Fg}"/>
-        <Setter Property="BorderBrush"  Value="Transparent"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource Btn.Fg}"/>
+        <Setter Property="BorderThickness" Value="0.3"/>
         <Setter Property="FontWeight"   Value="Bold"/>
+        <Setter Property="FontSize"     Value="14"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="6"
+                              Direction="270"
+                              ShadowDepth="2"
+                              Color="#22000000"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -81,7 +91,7 @@
                               RecognizesAccessKey="True"
                               TextElement.Foreground="{TemplateBinding Foreground}"
                               TextElement.FontWeight="{TemplateBinding FontWeight}"
-                              TextElement.FontSize="14"/>
+                              TextElement.FontSize="{TemplateBinding FontSize}"/>
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -538,7 +548,7 @@
 
     <!-- ✅ TabControl 전체 스타일 -->
     <Style TargetType="TabControl">
-        <Setter Property="Background" Value="{StaticResource Btn.Bg}"/>
+        <Setter Property="Background" Value="{StaticResource Brush.Panel}"/>
         
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Template">
@@ -576,7 +586,7 @@
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Padding" Value="16,6"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Background" Value="#223149"/>
+        <Setter Property="Background" Value="{StaticResource Brush.Panel}"/>
         <Setter Property="BorderBrush" Value="#2E4466"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Template">
@@ -599,13 +609,13 @@
 
                         <!-- Hover -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#385379"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Input.Border.Hover}"/>
                         </Trigger>
 
                         <!-- 선택됨 -->
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#3A7AFE"/>
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="#3A7AFE"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Input.Border.Focus}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Brush.Input.Border.Focus}"/>
                             <Setter Property="Foreground" Value="White"/>
                             <Setter Property="Panel.ZIndex" Value="100"/>
                         </Trigger>

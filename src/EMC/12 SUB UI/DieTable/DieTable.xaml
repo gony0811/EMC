@@ -1,0 +1,130 @@
+﻿<UserControl x:Class="EMC.DieTable"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:EMC"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/01 SYSTEM/Common/Styles/DefaultResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid local:GridHelper.Columns="Auto, Auto, 1*" local:GridHelper.Rows="Auto, Auto">
+        <GroupBox Header="D-Table"  Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+            <ItemsControl ItemsSource="{Binding DieList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="{Binding GridRows}"
+                                     Columns="{Binding GridColumns}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Margin="10"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="60" Height="60" 
+                                Margin="4" CornerRadius="6"
+                                Background="#34495E"
+                                BorderBrush="White" BorderThickness="1">
+                            <TextBlock Text="{Binding DieName}" 
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Foreground="White"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl> 
+        </GroupBox>
+        <GroupBox Header="Die Loading" Grid.Column="1"  Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+            <ItemsControl ItemsSource="{Binding DieList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="{Binding GridRows}"
+                         Columns="{Binding GridColumns}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Margin="10"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Cell}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding DieName}" Margin="0 0 4 0" VerticalAlignment="Center" TextAlignment="Center" Width="40"></TextBlock>
+                                <Border Style="{StaticResource HeaderCell}">
+                                    <TextBlock Text="X" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                </Border>
+                                <TextBox Text="{Binding X}" VerticalContentAlignment="Center" Width="40" Margin="0 0 10 0"></TextBox>
+                                
+                                <Border Style="{StaticResource HeaderCell}">
+                                    <TextBlock Text="Y" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                </Border>
+                                <TextBox Text="{Binding Y}" VerticalContentAlignment="Center" Width="40" Margin="0 0 10 0"></TextBox>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+        
+        <GroupBox Header="ON / OFF" Grid.Column="2" Style="{StaticResource GroupBox.CenterHeader}" Margin="4" Padding="4">
+            <ItemsControl ItemsSource="{Binding DieList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource HeaderCell}">
+                                <StackPanel Orientation="Horizontal" Width="60">
+                                    <TextBlock Text="Vac."></TextBlock>
+                                    <TextBlock Text="{Binding DieName}"></TextBlock>
+                                </StackPanel>
+                            </Border>
+                            <local:IoPillToggle Grid.Column="1"
+                                                 Margin="8,0,10,0"
+                                                 IsChecked="{Binding VacOnOff}"
+                                                 IsReadOnly="False"
+                                                 Command="{Binding ToggleCommand}"
+                                                 CommandParameter="Vac."/>
+
+                            <Border Style="{StaticResource HeaderCell}" Margin="10 0 0 0">
+                                <StackPanel Orientation="Horizontal" Width="60">
+                                    <TextBlock Text="Air."></TextBlock>
+                                    <TextBlock Text="{Binding DieName}"></TextBlock>
+                                </StackPanel>
+                            </Border>
+                            <local:IoPillToggle Grid.Column="1"
+                                                 Margin="8,0,0,0"
+                                                 IsChecked="{Binding AirOnOff}"
+                                                 IsReadOnly="False"
+                                                 Command="{Binding ToggleCommand}"
+                                                 CommandParameter="Vac."/>
+                        </StackPanel>
+                        
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+
+        <StackPanel Grid.ColumnSpan="3"  Grid.Row="1" Orientation="Horizontal">
+            <ItemsControl ItemsSource="{Binding StepSequenceList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:StepSequence Width="400" Margin="4"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

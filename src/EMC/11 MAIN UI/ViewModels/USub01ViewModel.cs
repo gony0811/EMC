@@ -26,8 +26,7 @@ namespace EMC
                 case "LOADING": CurrentTab = App.Container.Resolve<LoadingTab>(); break;
                 case "AUTO": CurrentTab = App.Container.Resolve<AutoTab>(); break;     
                 case "MANUAL": CurrentTab = App.Container.Resolve<ManualTab>(); break;
-                // todo : 아래 탭 뷰 생성 필요
-                case "STEP": CurrentTab = App.Container.Resolve<LoadingTab>(); break;     
+                case "STEP": CurrentTab = App.Container.Resolve<StepTab>(); break;     
                 case "VISION": CurrentTab = App.Container.Resolve<LoadingTab>(); break;     
                 case "CALIBRATION": CurrentTab = App.Container.Resolve<LoadingTab>(); break;     
             }

@@ -12,7 +12,7 @@
         <Style x:Key="DotStyle" TargetType="Ellipse">
             <Setter Property="Width"  Value="{Binding DotSize, ElementName=root}"/>
             <Setter Property="Height" Value="{Binding DotSize, ElementName=root}"/>
-            <Setter Property="Fill"   Value="#7F8C8D"/> <!-- Unknown 기본 -->
+            <Setter Property="Fill"   Value="#7F8C8D"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
 
             <Style.Triggers>
@@ -28,54 +28,15 @@
                 <DataTrigger Binding="{Binding State, ElementName=root}" Value="Offline">
                     <Setter Property="Fill" Value="#95A5A6"/>
                 </DataTrigger>
-
-                <!-- 경고/오류 시 점 깜빡임 -->
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding BlinkOnAlert, ElementName=root}" Value="True"/>
-                        <Condition Binding="{Binding State, ElementName=root}" Value="Warning"/>
-                    </MultiDataTrigger.Conditions>
-                    <MultiDataTrigger.EnterActions>
-                        <BeginStoryboard x:Name="BlinkWarning">
-                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                 From="1" To="0.3" Duration="0:0:0.7"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </MultiDataTrigger.EnterActions>
-                    <MultiDataTrigger.ExitActions>
-                        <StopStoryboard BeginStoryboardName="BlinkWarning"/>
-                    </MultiDataTrigger.ExitActions>
-                </MultiDataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding BlinkOnAlert, ElementName=root}" Value="True"/>
-                        <Condition Binding="{Binding State, ElementName=root}" Value="Error"/>
-                    </MultiDataTrigger.Conditions>
-                    <MultiDataTrigger.EnterActions>
-                        <BeginStoryboard x:Name="BlinkError">
-                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                 From="1" To="0.2" Duration="0:0:0.5"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </MultiDataTrigger.EnterActions>
-                    <MultiDataTrigger.ExitActions>
-                        <StopStoryboard BeginStoryboardName="BlinkError"/>
-                    </MultiDataTrigger.ExitActions>
-                </MultiDataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- 상단: 색점 + 상태 텍스트 -->
-            <RowDefinition Height="Auto"/> <!-- 하단: 상태명 -->
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 상단 라인 -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -83,55 +44,17 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- ● 점 -->
             <Ellipse Grid.Column="0" Style="{StaticResource DotStyle}"/>
 
+            <!-- ● 라벨 -->
             <TextBlock Grid.Column="2"
                        VerticalAlignment="Center"
+                       FontSize="{Binding FontSize, ElementName=root}"  
                        FontWeight="SemiBold"
                        Foreground="{Binding TextBrush, ElementName=root}"
-                       TextTrimming="CharacterEllipsis">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <!-- 기본: Label 표시 -->
-                        <Setter Property="Text" Value="{Binding Label, ElementName=root}"/>
-                        <!-- Label이 없거나 빈 문자열이면 DefaultLabel -->
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Label, ElementName=root}" Value="{x:Null}">
-                                <Setter Property="Text" Value="{Binding DefaultLabel, ElementName=root}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Label, ElementName=root}" Value="">
-                                <Setter Property="Text" Value="{Binding DefaultLabel, ElementName=root}"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding Label, ElementName=root}" />
         </Grid>
-
-        <!-- 하단: 상태명(보조 라벨) -->
-        <TextBlock Grid.Row="1"
-                   Margin="0"
-                   FontSize="{Binding SubFontSize, ElementName=root}"
-                   Foreground="{Binding SubTextBrush, ElementName=root}"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Stretch"
-                   TextAlignment="Left"
-                   TextTrimming="CharacterEllipsis">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <!-- 기본: StatusName 사용 -->
-                    <Setter Property="Text" Value="{Binding StatusName, ElementName=root}"/>
-                    <!-- StatusName이 비거나 null이면 DefaultLabel 표시 -->
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding StatusName, ElementName=root}" Value="{x:Null}">
-                            <Setter Property="Text" Value="{Binding DefaultLabel, ElementName=root}"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding StatusName, ElementName=root}" Value="">
-                            <Setter Property="Text" Value="{Binding DefaultLabel, ElementName=root}"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
     </Grid>
 </UserControl>

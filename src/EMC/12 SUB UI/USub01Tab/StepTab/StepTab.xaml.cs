@@ -4,11 +4,10 @@ using System.Windows.Controls;
 
 namespace EMC
 {
-
     [View(Lifetime.Scoped)]
-    public partial class ManualTab : UserControl
+    public partial class StepTab : UserControl
     {
-        public ManualTab(ManualTabViewModel vm)
+        public StepTab(StepTabViewModel vm)
         {
             DataContext = vm;
             InitializeComponent();
