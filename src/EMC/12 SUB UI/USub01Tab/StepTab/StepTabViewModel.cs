@@ -1,9 +1,11 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EPFramework.IoC;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace EMC
 {
@@ -28,6 +30,8 @@ namespace EMC
 
         public ObservableCollection<ParameterCellViewModel> BondingParameterList { get; } = new ObservableCollection<ParameterCellViewModel>();
         public ObservableCollection<ParameterCellViewModel> BondHeadParameterList { get; } = new ObservableCollection<ParameterCellViewModel>();
+
+        [ObservableProperty] private ActualBondingForceViewModel actualBondingForce;
 
         public StepTabViewModel()
         {
@@ -105,11 +109,41 @@ namespace EMC
             BondHeadParameterList.Add(new ParameterCellViewModel(7, "Self alignment calibration", 0, true, "", ValueType.Integer, "Frequency 입력"));
             BondHeadParameterList.Add(new ParameterCellViewModel(7, "Collet life time", 0, true, "", ValueType.Integer, "Bonding 횟수 입력"));
             BondHeadParameterList.Add(new ParameterCellViewModel(7, "Piezo Actuator z축 이동 값", 0, true, "", ValueType.Integer, "z축 이동값 입력 [nm]"));
+            ActualBondingForce = new ActualBondingForceViewModel(
+                title: "Actual Bonding Force"     // 차트 제목
+            );
+
         }
 
+
+
+        [RelayCommand]
+        public async Task Test()
+        {
+            // 그래프 초기화
+            ActualBondingForce.ForceValues.Clear();
+            ActualBondingForce.AxisMin = 0;
+            ActualBondingForce.AxisMax = ActualBondingForce.WindowSize;
+
+            double time = 0;
+            double duration = 10_000; // 10초 (ms)
+            double step = 10;          // 10ms 간격
+
+            var rand = new Random();
+
+            // 10초 동안 데이터 추가
+            while (time < duration)
+            {
+                // Force = 난수 or sin파형 테스트
+                double force = rand.NextDouble() * 12;
+
+                ActualBondingForce.AddDataPoint(time, force);
+
+                await Task.Delay((int)step);
+                time += step;
+            }
+        }
     }
-
-
     public partial class TableOffset : ObservableObject
     {
         public string Name { get; set; }
@@ -156,4 +190,8 @@ namespace EMC
             Maximum = maximum;
         }
     }
+
 }
+
+
+

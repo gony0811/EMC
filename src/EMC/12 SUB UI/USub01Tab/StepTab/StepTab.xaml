@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
              xmlns:local="clr-namespace:EMC"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -242,7 +242,13 @@
             </Grid>
         </TabItem>
         <TabItem Header="BONDING CONTROL">
-
+            <Grid local:GridHelper.Columns="1*, Auto">
+                <local:ActualBondingForce DataContext="{Binding ActualBondingForce}"></local:ActualBondingForce>
+                
+                <StackPanel Grid.Column="1">
+                    <Button Content="Test" Width="120" Command="{Binding TestCommand}"></Button>
+                </StackPanel>
+            </Grid>
         </TabItem>
         <TabItem Header="SEARCH SPEED CONTROL">
 
