@@ -77,10 +77,16 @@ namespace EPFramework.DB
                 : _set.CountAsync(predicate, ct);
         }
 
-        public Task AddAsync(TEntity entity, CancellationToken ct = default)
+        public async Task<TEntity> AddAsync(TEntity entity, CancellationToken ct = default)
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
             _set.Add(entity);
-            return SaveAsync(ct);
+            await SaveAsync(ct);
+
+            // EF Core가 SaveChanges 후 PK 자동 채움
+            return entity;
         }
 
         public Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken ct = default)
@@ -89,23 +95,23 @@ namespace EPFramework.DB
             return SaveAsync(ct);
         }
 
-        public async Task Update(TEntity entity, CancellationToken ct = default)
+        public async Task<TEntity> Update(TEntity entity, CancellationToken ct = default)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            // 엔티티 메타데이터에서 PK 정보 얻기
+            // === 1. 엔티티 메타데이터에서 PK 정보 얻기 ===
             var et = _context.Model.FindEntityType(typeof(TEntity))
                 ?? throw new InvalidOperationException($"EntityType metadata not found for {typeof(TEntity).Name}");
             var pk = et.FindPrimaryKey()
                 ?? throw new InvalidOperationException($"Primary key not found for {typeof(TEntity).Name}");
             var keyName = pk.Properties[0].Name;
 
-            // 현재 PK 값 추출
+            // === 2. 현재 PK 값 추출 ===
             var entry = _context.Entry(entity);
             var keyValue = entry.Property(keyName).CurrentValue;
 
-            // Local 캐시에 동일 PK 엔티티가 있으면 Detach
+            // === 3. Local 캐시에 동일 PK 엔티티가 있으면 Detach ===
             var local = _set.Local.FirstOrDefault(e =>
             {
                 var localEntry = _context.Entry(e);
@@ -115,12 +121,19 @@ namespace EPFramework.DB
             if (local != null)
                 _context.Entry(local).State = EntityState.Detached;
 
-            // 새 엔티티를 Attach + Modified 처리
+            // === 4. 새 엔티티를 Attach + Modified 처리 ===
             _set.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
 
+            // === 5. 저장 ===
             await SaveAsync(ct);
+
+            // === 6. 저장 후 최신 상태 재조회 및 반환 ===
+            // (DB의 실제 값과 동기화 — 트리거, 디폴트 값, 계산 컬럼 등 반영)
+            var updatedEntity = await _set.FindAsync(new object[] { keyValue }, ct);
+            return updatedEntity ?? entity; // 못 찾으면 원본 반환
         }
+
 
 
         public async Task UpdateRange(IEnumerable<TEntity> entities, CancellationToken ct = default)

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -39,12 +38,6 @@
     </Reference>
     <Reference Include="CommunityToolkit.Mvvm, Version=8.4.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
       <HintPath>..\packages\CommunityToolkit.Mvvm.8.4.0\lib\netstandard2.0\CommunityToolkit.Mvvm.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -174,6 +167,8 @@
     <Compile Include="DB\Domain\Motion.cs" />
     <Compile Include="DB\Domain\MotionAxis.cs" />
     <Compile Include="DB\Domain\MotionPosition.cs" />
+    <Compile Include="DB\Domain\PowerPMac.cs" />
+    <Compile Include="DB\Domain\PowerPMacMotion.cs" />
     <Compile Include="DB\Domain\Recipe.cs" />
     <Compile Include="DB\Domain\RecipeParam.cs" />
     <Compile Include="DB\Domain\Role.cs" />
@@ -187,14 +182,16 @@
     <Compile Include="DB\Repository\AlarmRepository.cs" />
     <Compile Include="DB\Repository\MotionRepository.cs" />
     <Compile Include="DB\Repository\ParameterRepository.cs" />
+    <Compile Include="DB\Repository\PowerPMacMotionRepository.cs" />
+    <Compile Include="DB\Repository\PowerPMacRepository.cs" />
     <Compile Include="DB\Repository\RecipeRepository.cs" />
     <Compile Include="DB\Repository\RoleRepository.cs" />
     <Compile Include="DB\Repository\ScreenRepository.cs" />
     <Compile Include="DB\Repository\UnitRepository.cs" />
     <Compile Include="DB\Repository\ValueTypeRepository.cs" />
-    <Compile Include="Migrations\20251022035035_Init.cs" />
-    <Compile Include="Migrations\20251022035035_Init.Designer.cs">
-      <DependentUpon>20251022035035_Init.cs</DependentUpon>
+    <Compile Include="Migrations\20251104014742_MigrationFileName.cs" />
+    <Compile Include="Migrations\20251104014742_MigrationFileName.Designer.cs">
+      <DependentUpon>20251104014742_MigrationFileName.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AppDbModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -211,6 +208,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  
-  
 </Project>

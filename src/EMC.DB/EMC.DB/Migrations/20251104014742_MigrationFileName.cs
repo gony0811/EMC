@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EMC.DB.Migrations
 {
-    public partial class Init : Migration
+    public partial class MigrationFileName : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,6 +39,20 @@ namespace EMC.DB.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Motions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PowerPMac",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 64, nullable: true),
+                    Ip = table.Column<string>(maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PowerPMac", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,6 +177,63 @@ namespace EMC.DB.Migrations
                         name: "FK_MotionPositions_Motions_MotionId",
                         column: x => x.MotionId,
                         principalTable: "Motions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PowerPMacMotion",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 64, nullable: false),
+                    IsEnabled = table.Column<bool>(nullable: false, defaultValue: true),
+                    PowerPMacId = table.Column<int>(nullable: false),
+                    Maker = table.Column<string>(maxLength: 32, nullable: true),
+                    MotorNo = table.Column<int>(nullable: false),
+                    Type = table.Column<string>(maxLength: 32, nullable: true),
+                    EmergencyEnable = table.Column<bool>(nullable: false, defaultValue: false),
+                    SoftLimitEnable = table.Column<bool>(nullable: false, defaultValue: false),
+                    InPositionEnable = table.Column<bool>(nullable: false, defaultValue: false),
+                    ServoOffOnEmergencyEnable = table.Column<bool>(nullable: false, defaultValue: false),
+                    ServoLevel = table.Column<bool>(nullable: false),
+                    AlarmLevel = table.Column<bool>(nullable: false),
+                    OriginLevel = table.Column<bool>(nullable: false),
+                    EmergencyLevel = table.Column<bool>(nullable: false),
+                    InPositionLevel = table.Column<bool>(nullable: false),
+                    PositiveLimitLevel = table.Column<bool>(nullable: false),
+                    NegativeLimitLevel = table.Column<bool>(nullable: false),
+                    HomeMode1 = table.Column<int>(nullable: false),
+                    HomeMode2 = table.Column<int>(nullable: false),
+                    SpeedMode = table.Column<int>(nullable: false),
+                    PositiveLimitMode = table.Column<int>(nullable: false),
+                    NegativeLimitMode = table.Column<int>(nullable: false),
+                    EncoderReverse = table.Column<bool>(nullable: false),
+                    PulseOutputMethod = table.Column<int>(nullable: false),
+                    EncoderInputMethod = table.Column<int>(nullable: false),
+                    Ratio = table.Column<double>(nullable: false),
+                    MaxVelocity = table.Column<double>(nullable: false),
+                    PositionError = table.Column<double>(nullable: false),
+                    InPositionWidth = table.Column<double>(nullable: false),
+                    SoftPositiveLimit = table.Column<double>(nullable: false),
+                    SoftNegativeLimit = table.Column<double>(nullable: false),
+                    HomeOffset = table.Column<double>(nullable: false),
+                    HomeVelocity1 = table.Column<double>(nullable: false),
+                    HomeVelocity2 = table.Column<double>(nullable: false),
+                    HomeVelocity3 = table.Column<double>(nullable: false),
+                    HomeAccelerate1 = table.Column<double>(nullable: false),
+                    HomeAccelerate2 = table.Column<double>(nullable: false),
+                    HomeDecelerate1 = table.Column<double>(nullable: false),
+                    HomeDecelerate2 = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PowerPMacMotion", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PowerPMacMotion_PowerPMac_PowerPMacId",
+                        column: x => x.PowerPMacId,
+                        principalTable: "PowerPMac",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -294,6 +365,11 @@ namespace EMC.DB.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PowerPMacMotion_PowerPMacId",
+                table: "PowerPMacMotion",
+                column: "PowerPMacId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeParam_RecipeId",
                 table: "RecipeParam",
                 column: "RecipeId");
@@ -370,6 +446,9 @@ namespace EMC.DB.Migrations
                 name: "MotionPositions");
 
             migrationBuilder.DropTable(
+                name: "PowerPMacMotion");
+
+            migrationBuilder.DropTable(
                 name: "RecipeParam");
 
             migrationBuilder.DropTable(
@@ -383,6 +462,9 @@ namespace EMC.DB.Migrations
 
             migrationBuilder.DropTable(
                 name: "Motions");
+
+            migrationBuilder.DropTable(
+                name: "PowerPMac");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

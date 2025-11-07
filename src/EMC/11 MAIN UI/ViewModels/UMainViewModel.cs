@@ -59,6 +59,9 @@ namespace EMC
                 case "IO":
                     CurrentPage = App.Container.Resolve<USub07>();
                     break;
+                case "DEVICE":
+                    CurrentPage = App.Container.Resolve<USub08>();
+                    break;
                 default:
                     CurrentPage = App.Container.Resolve<USub01>();
                     break;

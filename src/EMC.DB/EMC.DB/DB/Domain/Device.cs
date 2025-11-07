@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EMC.DB
 {
@@ -11,7 +9,6 @@ namespace EMC.DB
         public int Id { get; private set; }
 
         [Required]
-        [Index(nameof(Name), IsUnique = true)]
         public string Name { get; set; }
 
         public string Module { get; set; }

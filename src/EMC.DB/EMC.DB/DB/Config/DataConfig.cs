@@ -309,4 +309,68 @@ namespace EMC.DB
         }
     }
 
+    public class PowerPMacConfiguration : IEntityTypeConfiguration<PowerPMac>
+    {
+        public void Configure(EntityTypeBuilder<PowerPMac> builder)
+        {
+            builder.ToTable("PowerPMac");
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
+
+            builder.Property(x => x.Name)
+                   .HasMaxLength(64);
+
+            builder.Property(x => x.Ip)
+                   .HasMaxLength(64);
+
+            builder.HasMany(x => x.MotionList)
+                   .WithOne(x => x.PowerPMac)
+                   .HasForeignKey(x => x.PowerPMacId)
+                   .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+
+    public class PowerPMacMotionConfiguration : IEntityTypeConfiguration<PowerPMacMotion>
+    {
+        public void Configure(EntityTypeBuilder<PowerPMacMotion> builder)
+        {
+            builder.ToTable("PowerPMacMotion");
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
+
+            builder.Property(x => x.Name)
+                   .IsRequired()
+                   .HasMaxLength(64);
+
+            builder.Property(x => x.MotorNo)
+                   .IsRequired();
+
+            builder.Property(x => x.Maker)
+                   .HasMaxLength(32);
+
+            builder.Property(x => x.Type)
+                   .HasMaxLength(32);
+
+            // 관계 설정
+            builder.HasOne(x => x.PowerPMac)
+                   .WithMany(x => x.MotionList)
+                   .HasForeignKey(x => x.PowerPMacId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            // === 기본값 ===
+            builder.Property(x => x.IsEnabled).HasDefaultValue(true);
+            builder.Property(x => x.EmergencyEnable).HasDefaultValue(false);
+            builder.Property(x => x.SoftLimitEnable).HasDefaultValue(false);
+            builder.Property(x => x.InPositionEnable).HasDefaultValue(false);
+            builder.Property(x => x.ServoOffOnEmergencyEnable).HasDefaultValue(false);
+        }
+    }
+
 }

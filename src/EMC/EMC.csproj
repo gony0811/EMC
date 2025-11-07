@@ -45,6 +45,15 @@
     <ProjectReference Include="..\EPFramework\EPFramework\EPFramework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="lib\PowerPmac32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lib\PowerPmac64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <!-- 선택: 생성된 코드 확인용 -->
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>

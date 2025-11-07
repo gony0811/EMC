@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMC.DB.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20251022035035_Init")]
-    partial class Init
+    [Migration("20251104014742_MigrationFileName")]
+    partial class MigrationFileName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,6 +161,169 @@ namespace EMC.DB.Migrations
                         .IsUnique();
 
                     b.ToTable("MotionPositions");
+                });
+
+            modelBuilder.Entity("EMC.DB.PowerPMac", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(64);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PowerPMac");
+                });
+
+            modelBuilder.Entity("EMC.DB.PowerPMacMotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AlarmLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EmergencyEnable")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("EmergencyLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EncoderInputMethod")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EncoderReverse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("HomeAccelerate1")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeAccelerate2")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeDecelerate1")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeDecelerate2")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("HomeMode1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HomeMode2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("HomeOffset")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeVelocity1")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeVelocity2")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeVelocity3")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("InPositionEnable")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("InPositionLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("InPositionWidth")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("IsEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Maker")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(32);
+
+                    b.Property<double>("MaxVelocity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("MotorNo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(64);
+
+                    b.Property<bool>("NegativeLimitLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NegativeLimitMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("OriginLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("PositionError")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("PositiveLimitLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PositiveLimitMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PowerPMacId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PulseOutputMethod")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Ratio")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("ServoLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ServoOffOnEmergencyEnable")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("SoftLimitEnable")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<double>("SoftNegativeLimit")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("SoftPositiveLimit")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("SpeedMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(32);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PowerPMacId");
+
+                    b.ToTable("PowerPMacMotion");
                 });
 
             modelBuilder.Entity("EMC.DB.Recipe", b =>
@@ -420,6 +583,15 @@ namespace EMC.DB.Migrations
                     b.HasOne("EMC.DB.Motion", "Motion")
                         .WithMany("Positions")
                         .HasForeignKey("MotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMC.DB.PowerPMacMotion", b =>
+                {
+                    b.HasOne("EMC.DB.PowerPMac", "PowerPMac")
+                        .WithMany("MotionList")
+                        .HasForeignKey("PowerPMacId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
