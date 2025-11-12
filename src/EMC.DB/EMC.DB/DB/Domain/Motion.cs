@@ -1,18 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using EPFramework.DB;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EMC.DB
 {
-    public class Motion
+    public class Motion : IEntity
     {
-        [Key]
-        public int Id { get; private set; }
 
         [Required]
-        [MaxLength(100)]
         public string Name { get; set; } = "";
 
-        public MotionAxis Axis { get; set; }
-        public ICollection<MotionPosition> Positions { get; set; } = new List<MotionPosition>();
+        public string ControlType { get; set; }
+
+        public int DeviceId { get; set; }
+
+        public bool IsEnabled { get; set; } = true;
+
+         public Device ParentDevice { get; set; }
+
+        public ICollection<MotionPosition> PositionList { get; set; } = new List<MotionPosition>();
+        public ICollection<MotionParameter> ParameterList { get; set; } = new List<MotionParameter>();
     }
 }

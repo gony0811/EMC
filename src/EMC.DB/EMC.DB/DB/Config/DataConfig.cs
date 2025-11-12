@@ -181,54 +181,99 @@ namespace EMC.DB
         }
     }
 
-    public sealed class MotionConfig : IEntityTypeConfiguration<Motion>
+    public class DeviceConfig : IEntityTypeConfiguration<Device>
     {
-        public void Configure(EntityTypeBuilder<Motion> e)
+        public void Configure(EntityTypeBuilder<Device> builder)
         {
-            e.ToTable("Motions");
-            e.HasKey(x => x.Id);
+            builder.ToTable("Device");
 
-            e.Property(x => x.Name)
-             .IsRequired()
-             .HasMaxLength(100);
+            builder.HasKey(d => d.Id);
 
-            e.HasIndex(x => x.Name).IsUnique();
+            builder.Property(d => d.Name)
+                .IsRequired()
+                .HasMaxLength(100);
 
-            e.Property(x => x.Axis)
-             .HasConversion<string>()
-             .HasMaxLength(16);
+            builder.Property(d => d.Ip)
+                .HasMaxLength(50);
 
+            builder.Property(d => d.DeviceType)
+                .HasMaxLength(50);
 
-            e.HasMany(x => x.Positions)
-             .WithOne(p => p.Motion)
-             .HasForeignKey(p => p.MotionId)
-             .OnDelete(DeleteBehavior.Cascade);
+            // 1:N 관계 (Device → Motion)
+            builder.HasMany(d => d.MotionList)
+                .WithOne(m => m.ParentDevice)
+                .HasForeignKey(m => m.DeviceId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public sealed class MotionPositionConfig : IEntityTypeConfiguration<MotionPosition>
-    {
-        public void Configure(EntityTypeBuilder<MotionPosition> e)
+    public class MotionConfiguration : IEntityTypeConfiguration<Motion>
         {
-            e.ToTable("MotionPositions");
+            public void Configure(EntityTypeBuilder<Motion> builder)
+            {
+                builder.ToTable("Motion");
 
-            e.HasKey(x => x.Id);
+                builder.HasKey(m => m.Id);
 
-            e.Property(x => x.Name)
-             .IsRequired()
-             .HasMaxLength(100);
+                builder.Property(m => m.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
-            e.HasIndex(x => new { x.MotionId, x.Name })
-             .IsUnique();
+                builder.Property(m => m.ControlType)
+                    .HasMaxLength(50);
 
-            e.Property(x => x.CurrentLocation).HasColumnType("REAL");
-            e.Property(x => x.MinimumLocation).HasColumnType("REAL");
-            e.Property(x => x.MaximumLocation).HasColumnType("REAL");
-            e.Property(x => x.CurrentSpeed).HasColumnType("REAL");
-            e.Property(x => x.MinimumSpeed).HasColumnType("INTEGER");
-            e.Property(x => x.MaximumSpeed).HasColumnType("INTEGER");
+                // 관계: Motion → MotionPosition (1:N)
+                builder.HasMany(m => m.PositionList)
+                    .WithOne(p => p.Motion)
+                    .HasForeignKey(p => p.MotionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // 관계: Motion → MotionParameter (1:N)
+                builder.HasMany(m => m.ParameterList)
+                    .WithOne()
+                    .HasForeignKey("MotionId")
+                    .OnDelete(DeleteBehavior.Restrict);
+            }
+        }
+
+    public class MotionPositionConfiguration : IEntityTypeConfiguration<MotionPosition>
+    {
+        public void Configure(EntityTypeBuilder<MotionPosition> builder)
+        {
+            builder.ToTable("MotionPosition");
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(p => p.Speed)
+                .HasDefaultValue(0.0);
+
+            builder.Property(p => p.MinimumSpeed)
+                .HasDefaultValue(1.0);
+
+            builder.Property(p => p.MaximumSpeed)
+                .HasDefaultValue(100.0);
+
+            builder.Property(p => p.Location)
+                .HasDefaultValue(0.0);
+
+            builder.Property(p => p.MinimumLocation)
+                .HasDefaultValue(0.0);
+
+            builder.Property(p => p.MaximumLocation)
+                .HasDefaultValue(0.0);
+
+            // 관계: MotionPosition → Motion (N:1)
+            builder.HasOne(p => p.Motion)
+                .WithMany(m => m.PositionList)
+                .HasForeignKey(p => p.MotionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
+
     public sealed class AlarmConfig : IEntityTypeConfiguration<Alarm>
     {
         public void Configure(EntityTypeBuilder<Alarm> e)
@@ -238,14 +283,14 @@ namespace EMC.DB
 
 
             e.Property(x => x.Id)
-             .ValueGeneratedOnAdd()
-             .HasAnnotation("Sqlite:Autoincrement", true);
+                .ValueGeneratedOnAdd()
+                .HasAnnotation("Sqlite:Autoincrement", true);
 
             e.Property(x => x.Code)
-            .IsRequired();                
+            .IsRequired();
 
             e.HasIndex(x => x.Code)
-                .IsUnique();                   
+                .IsUnique();
 
             e.Property(x => x.Name).IsRequired().HasMaxLength(128);
             e.HasIndex(x => x.Name);
@@ -255,23 +300,23 @@ namespace EMC.DB
 
             // enum -> int 저장
             e.Property(x => x.Level)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmLevel.Light);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmLevel.Light);
 
             e.Property(x => x.Status)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmStatus.RESET);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmStatus.RESET);
 
             e.Property(x => x.Enable)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmEnable.ENABLED);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmEnable.ENABLED);
 
             // 날짜/시간 (SQLite TEXT/ISO8601)
             e.Property(x => x.LastRaisedAt)
-             .HasColumnType("TEXT");
+                .HasColumnType("TEXT");
 
             e.HasIndex(x => x.LastRaisedAt);
         }
@@ -288,88 +333,24 @@ namespace EMC.DB
 
             // enum -> int 저장
             e.Property(x => x.Level)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER");
+                .HasConversion<int>()
+                .HasColumnType("INTEGER");
 
             e.Property(x => x.Status)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER");
+                .HasConversion<int>()
+                .HasColumnType("INTEGER");
 
             e.Property(x => x.UpdateTime)
-             .HasColumnType("TEXT")
-             .IsRequired();
+                .HasColumnType("TEXT")
+                .IsRequired();
 
             e.HasIndex(x => x.UpdateTime);
             e.HasIndex(x => new { x.AlarmId, x.UpdateTime });
 
             e.HasOne<Alarm>()
-             .WithMany()
-             .HasForeignKey(x => x.AlarmId)
-             .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-
-    public class PowerPMacConfiguration : IEntityTypeConfiguration<PowerPMac>
-    {
-        public void Configure(EntityTypeBuilder<PowerPMac> builder)
-        {
-            builder.ToTable("PowerPMac");
-
-            builder.HasKey(x => x.Id);
-
-            builder.Property(x => x.Id)
-                   .ValueGeneratedOnAdd();
-
-            builder.Property(x => x.Name)
-                   .HasMaxLength(64);
-
-            builder.Property(x => x.Ip)
-                   .HasMaxLength(64);
-
-            builder.HasMany(x => x.MotionList)
-                   .WithOne(x => x.PowerPMac)
-                   .HasForeignKey(x => x.PowerPMacId)
-                   .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-
-
-    public class PowerPMacMotionConfiguration : IEntityTypeConfiguration<PowerPMacMotion>
-    {
-        public void Configure(EntityTypeBuilder<PowerPMacMotion> builder)
-        {
-            builder.ToTable("PowerPMacMotion");
-
-            builder.HasKey(x => x.Id);
-
-            builder.Property(x => x.Id)
-                   .ValueGeneratedOnAdd();
-
-            builder.Property(x => x.Name)
-                   .IsRequired()
-                   .HasMaxLength(64);
-
-            builder.Property(x => x.MotorNo)
-                   .IsRequired();
-
-            builder.Property(x => x.Maker)
-                   .HasMaxLength(32);
-
-            builder.Property(x => x.Type)
-                   .HasMaxLength(32);
-
-            // 관계 설정
-            builder.HasOne(x => x.PowerPMac)
-                   .WithMany(x => x.MotionList)
-                   .HasForeignKey(x => x.PowerPMacId)
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            // === 기본값 ===
-            builder.Property(x => x.IsEnabled).HasDefaultValue(true);
-            builder.Property(x => x.EmergencyEnable).HasDefaultValue(false);
-            builder.Property(x => x.SoftLimitEnable).HasDefaultValue(false);
-            builder.Property(x => x.InPositionEnable).HasDefaultValue(false);
-            builder.Property(x => x.ServoOffOnEmergencyEnable).HasDefaultValue(false);
+                .WithMany()
+                .HasForeignKey(x => x.AlarmId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

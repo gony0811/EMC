@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace EPFramework.DB
 {
     public abstract class DbRepository<TEntity, TContext> : IDbRepository<TEntity> 
-        where TEntity : class
+        where TEntity : IEntity
         where TContext : DbContext
     {
         protected readonly TContext _context;
@@ -175,8 +175,7 @@ namespace EPFramework.DB
 
         public async Task<bool> Remove(int id, CancellationToken ct = default)
         {
-            var local = _set.Local.FirstOrDefault(e =>
-                EF.Property<int>(e, "Id") == id);
+            var local = _set.Local.FirstOrDefault(e => e.Id == id);
             if (local != null)
             {
                 _set.Remove(local);

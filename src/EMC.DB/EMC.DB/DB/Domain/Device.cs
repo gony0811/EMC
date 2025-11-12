@@ -1,21 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EPFramework.DB;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EMC.DB
 {
 
-    public class Device
+    public class Device : IEntity
     {
-        [Key]
-        public int Id { get; private set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public string Module { get; set; }
+        public string Ip { get; set; }
 
-        public DataType Type { get; set; }
-        public string TypeString { get; set; }
+        public string DeviceType { get; set; }
 
+        public bool IsEnabled { get; set; } = true;
+
+        public ICollection<Motion> MotionList { get; set; } = new List<Motion>();
 
     }
 }

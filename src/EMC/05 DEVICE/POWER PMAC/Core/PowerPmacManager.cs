@@ -4,6 +4,7 @@ using EPFramework.IoC;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,77 +13,105 @@ using System.Windows;
 namespace EMC
 {
     [Service(Lifetime.Singleton)]
-    public partial class PowerPmacManager : ObservableObject
+    public partial class PowerPmacManager : DeviceManager<PowerPmacDevice, PowerPmacMotion>
     {
-        private readonly PowerPMacRepository powerPMacRepository;
-        private readonly PowerPMacMotionRepository powerPMacMotionRepository;
-        public ObservableCollection<DPowerPmac> PowerPMacList { get; } = new ObservableCollection<DPowerPmac>();
 
-        public PowerPmacManager(PowerPMacRepository repository, PowerPMacMotionRepository ppmRepository)
+        private readonly MotionParameterRepository _motionParameterRepository;
+        private readonly MotionPositionRepository _motionPositionRepository;
+
+        public PowerPmacManager(DeviceRepository deviceRepository, MotionRepository motionRepository, MotionParameterRepository motionParameterRepository, MotionPositionRepository motionPositionRepository) 
+            : base(DeviceType.PowerPmac, deviceRepository, motionRepository, motionParameterRepository, motionPositionRepository)
         {
-            powerPMacRepository = repository;
-            powerPMacMotionRepository = ppmRepository;
+            _motionParameterRepository = motionParameterRepository;
+            _motionPositionRepository = motionPositionRepository;
             _ = LoadAsync();
         }
-
-        private async Task LoadAsync()
+        public PowerPmacDevice FindDevice(int id = 1)
         {
-            var lst = await powerPMacRepository.ListAsync(include: q => q.Include(x => x.MotionList));
-            foreach (var item in lst)
-            {
-                PowerPMacList.Add(item.ToDto());
-            }
+            if (DeviceList == null || DeviceList.Count == 0)
+                return null;
+
+            return DeviceList.FirstOrDefault(d => d.Id == id);
         }
 
-        public async Task Create(DPowerPmac pmac)
+        public PowerPmacMotion FindMotion(int motionId, int deviceId = 1)
         {
-            PowerPMac powerPMac = pmac.ToEntity();
+            var device = FindDevice(deviceId);
+            if (device == null || device.MotionList == null || device.MotionList.Count == 0)
+                return null;
+
+            return device.MotionList.FirstOrDefault(m => m.Id == motionId);
+        }
+
+        public PowerPmacMotion FindMotion(string motionName, int deviceId = 1)
+        {
+            var device = FindDevice(deviceId);
+            if (device == null || device.MotionList == null || device.MotionList.Count == 0)
+                return null;
+
+            return device.MotionList.FirstOrDefault(m => m.Name == motionName);
+        }
+
+        public async Task<DMotionPosition> CreatePosition(DMotionPosition position)
+        {
+            MotionPosition mp = new MotionPosition
+            {
+                Name = position.Name,
+                Location = position.Location,
+                MaximumLocation = position.MaximumLocation,
+                MinimumLocation = position.MinimumLocation,
+                Speed = position.Speed,
+                MaximumSpeed = position.MaximumSpeed,
+                MinimumSpeed = position.MinimumSpeed,
+                MotionId = position.ParentMotionId,
+            };
+            
+            var Result = await _motionPositionRepository.AddAsync(mp);
+
+            return new DMotionPosition
+            {
+                Id = Result.Id,
+                Name = Result.Name,
+                Location = Result.Location,
+                MaximumLocation = Result.MaximumLocation,
+                MinimumLocation = Result.MinimumLocation,
+
+                Speed = Result.Speed,
+                MaximumSpeed = Result.MaximumSpeed,
+                MinimumSpeed = Result.MinimumSpeed
+            };
+        }
+
+        public async Task<DMotionPosition> UpdatePosition(DMotionPosition pos)
+        {
+            var entity = await _motionPositionRepository.FindAsync(keyValues: pos.Id);
+            if (entity == null)
+                return null;
+
+            entity.Name = pos.Name;
+            entity.Location = pos.Location;
+            entity.MinimumLocation = pos.MinimumLocation;
+            entity.MaximumLocation = pos.MaximumLocation;
+            entity.Speed = pos.Speed;
+            entity.MinimumSpeed = pos.MinimumSpeed;
+            entity.MaximumSpeed = pos.MaximumSpeed;
+
+            await _motionPositionRepository.Update(entity);
+
+            return pos;
+        }
+
+        public async Task<bool> DeletePosition(DMotionPosition pos)
+        {
             try
             {
-                var entity = await powerPMacRepository.AddAsync(powerPMac);
-                PowerPMacList.Add(entity.ToDto());
+                await _motionPositionRepository.Remove(pos.Id);
+                return true;
             }
-            catch (Exception e)
+            catch
             {
-                MessageBox.Show("저장 오류");
+                return false;
             }
-        }
-
-        public async Task MotionSave(DPowerPmacMotion motion, CancellationToken ct = default)
-        {
-            try
-            {
-                PowerPMacMotion savedEntity;
-                var entity = motion.ToEntity();
-
-                if (motion.Id == 0)
-                {
-                    savedEntity = await powerPMacMotionRepository.AddAsync(entity, ct);
-
-                }
-                else
-                {
-                    savedEntity = await powerPMacMotionRepository.Update(entity, ct);
-                }
-
-                if (savedEntity != null)
-                {
-                    motion.CopyFrom(savedEntity);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("저장실패");
-            }
-        }
-
-        public bool FindMotion(string motorName, out DPowerPmacMotion motion, int deviceId = 1)
-        {
-            motion = PowerPMacList
-                .FirstOrDefault(x => x.Id == deviceId)?
-                .MotionList.FirstOrDefault(x => x.Name == motorName);
-
-            return motion != null;
         }
     }
 

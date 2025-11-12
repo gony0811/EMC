@@ -28,31 +28,19 @@ namespace EMC.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Motions",
+                name: "Device",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    Axis = table.Column<string>(maxLength: 16, nullable: false)
+                    Ip = table.Column<string>(maxLength: 50, nullable: true),
+                    DeviceType = table.Column<string>(maxLength: 50, nullable: true),
+                    IsEnabled = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Motions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PowerPMac",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 64, nullable: true),
-                    Ip = table.Column<string>(maxLength: 64, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PowerPMac", x => x.Id);
+                    table.PrimaryKey("PK_Device", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,86 +144,25 @@ namespace EMC.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MotionPositions",
+                name: "Motion",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    MotionId = table.Column<int>(nullable: false),
-                    CurrentLocation = table.Column<double>(type: "REAL", nullable: false),
-                    MinimumLocation = table.Column<double>(type: "REAL", nullable: false),
-                    MaximumLocation = table.Column<double>(type: "REAL", nullable: false),
-                    CurrentSpeed = table.Column<int>(type: "REAL", nullable: false),
-                    MinimumSpeed = table.Column<int>(type: "INTEGER", nullable: false),
-                    MaximumSpeed = table.Column<int>(type: "INTEGER", nullable: false)
+                    ControlType = table.Column<string>(maxLength: 50, nullable: true),
+                    DeviceId = table.Column<int>(nullable: false),
+                    IsEnabled = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MotionPositions", x => x.Id);
+                    table.PrimaryKey("PK_Motion", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MotionPositions_Motions_MotionId",
-                        column: x => x.MotionId,
-                        principalTable: "Motions",
+                        name: "FK_Motion_Device_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Device",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PowerPMacMotion",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 64, nullable: false),
-                    IsEnabled = table.Column<bool>(nullable: false, defaultValue: true),
-                    PowerPMacId = table.Column<int>(nullable: false),
-                    Maker = table.Column<string>(maxLength: 32, nullable: true),
-                    MotorNo = table.Column<int>(nullable: false),
-                    Type = table.Column<string>(maxLength: 32, nullable: true),
-                    EmergencyEnable = table.Column<bool>(nullable: false, defaultValue: false),
-                    SoftLimitEnable = table.Column<bool>(nullable: false, defaultValue: false),
-                    InPositionEnable = table.Column<bool>(nullable: false, defaultValue: false),
-                    ServoOffOnEmergencyEnable = table.Column<bool>(nullable: false, defaultValue: false),
-                    ServoLevel = table.Column<bool>(nullable: false),
-                    AlarmLevel = table.Column<bool>(nullable: false),
-                    OriginLevel = table.Column<bool>(nullable: false),
-                    EmergencyLevel = table.Column<bool>(nullable: false),
-                    InPositionLevel = table.Column<bool>(nullable: false),
-                    PositiveLimitLevel = table.Column<bool>(nullable: false),
-                    NegativeLimitLevel = table.Column<bool>(nullable: false),
-                    HomeMode1 = table.Column<int>(nullable: false),
-                    HomeMode2 = table.Column<int>(nullable: false),
-                    SpeedMode = table.Column<int>(nullable: false),
-                    PositiveLimitMode = table.Column<int>(nullable: false),
-                    NegativeLimitMode = table.Column<int>(nullable: false),
-                    EncoderReverse = table.Column<bool>(nullable: false),
-                    PulseOutputMethod = table.Column<int>(nullable: false),
-                    EncoderInputMethod = table.Column<int>(nullable: false),
-                    Ratio = table.Column<double>(nullable: false),
-                    MaxVelocity = table.Column<double>(nullable: false),
-                    PositionError = table.Column<double>(nullable: false),
-                    InPositionWidth = table.Column<double>(nullable: false),
-                    SoftPositiveLimit = table.Column<double>(nullable: false),
-                    SoftNegativeLimit = table.Column<double>(nullable: false),
-                    HomeOffset = table.Column<double>(nullable: false),
-                    HomeVelocity1 = table.Column<double>(nullable: false),
-                    HomeVelocity2 = table.Column<double>(nullable: false),
-                    HomeVelocity3 = table.Column<double>(nullable: false),
-                    HomeAccelerate1 = table.Column<double>(nullable: false),
-                    HomeAccelerate2 = table.Column<double>(nullable: false),
-                    HomeDecelerate1 = table.Column<double>(nullable: false),
-                    HomeDecelerate2 = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PowerPMacMotion", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PowerPMacMotion_PowerPMac_PowerPMacId",
-                        column: x => x.PowerPMacId,
-                        principalTable: "PowerPMac",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -326,6 +253,65 @@ namespace EMC.DB.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MotionParameter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: false),
+                    ValueType = table.Column<string>(nullable: false),
+                    IntValue = table.Column<int>(nullable: false),
+                    DoubleValue = table.Column<double>(nullable: false),
+                    BoolValue = table.Column<bool>(nullable: false),
+                    StringValue = table.Column<string>(nullable: true),
+                    Unit = table.Column<string>(nullable: true),
+                    MotionId1 = table.Column<int>(nullable: true),
+                    MotionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MotionParameter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MotionParameter_Motion_MotionId",
+                        column: x => x.MotionId,
+                        principalTable: "Motion",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MotionParameter_Motion_MotionId1",
+                        column: x => x.MotionId1,
+                        principalTable: "Motion",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MotionPosition",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Speed = table.Column<double>(nullable: false, defaultValue: 0.0),
+                    MinimumSpeed = table.Column<double>(nullable: false, defaultValue: 1.0),
+                    MaximumSpeed = table.Column<double>(nullable: false, defaultValue: 100.0),
+                    Location = table.Column<double>(nullable: false, defaultValue: 0.0),
+                    MinimumLocation = table.Column<double>(nullable: false, defaultValue: 0.0),
+                    MaximumLocation = table.Column<double>(nullable: false, defaultValue: 0.0),
+                    MotionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MotionPosition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MotionPosition_Motion_MotionId",
+                        column: x => x.MotionId,
+                        principalTable: "Motion",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AlarmHistories_UpdateTime",
                 table: "AlarmHistories",
@@ -353,21 +339,24 @@ namespace EMC.DB.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MotionPositions_MotionId_Name",
-                table: "MotionPositions",
-                columns: new[] { "MotionId", "Name" },
-                unique: true);
+                name: "IX_Motion_DeviceId",
+                table: "Motion",
+                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Motions_Name",
-                table: "Motions",
-                column: "Name",
-                unique: true);
+                name: "IX_MotionParameter_MotionId",
+                table: "MotionParameter",
+                column: "MotionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PowerPMacMotion_PowerPMacId",
-                table: "PowerPMacMotion",
-                column: "PowerPMacId");
+                name: "IX_MotionParameter_MotionId1",
+                table: "MotionParameter",
+                column: "MotionId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MotionPosition_MotionId",
+                table: "MotionPosition",
+                column: "MotionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeParam_RecipeId",
@@ -443,10 +432,10 @@ namespace EMC.DB.Migrations
                 name: "AlarmHistories");
 
             migrationBuilder.DropTable(
-                name: "MotionPositions");
+                name: "MotionParameter");
 
             migrationBuilder.DropTable(
-                name: "PowerPMacMotion");
+                name: "MotionPosition");
 
             migrationBuilder.DropTable(
                 name: "RecipeParam");
@@ -461,10 +450,7 @@ namespace EMC.DB.Migrations
                 name: "Alarms");
 
             migrationBuilder.DropTable(
-                name: "Motions");
-
-            migrationBuilder.DropTable(
-                name: "PowerPMac");
+                name: "Motion");
 
             migrationBuilder.DropTable(
                 name: "Recipes");
@@ -480,6 +466,9 @@ namespace EMC.DB.Migrations
 
             migrationBuilder.DropTable(
                 name: "Screens");
+
+            migrationBuilder.DropTable(
+                name: "Device");
         }
     }
 }

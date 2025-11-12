@@ -162,13 +162,10 @@
     <Compile Include="DB\Domain\Alarm.cs" />
     <Compile Include="DB\Domain\AlarmHistory.cs" />
     <Compile Include="DB\Domain\AlarmType.cs" />
-    <Compile Include="DB\Domain\Buzzer.cs" />
     <Compile Include="DB\Domain\Device.cs" />
     <Compile Include="DB\Domain\Motion.cs" />
-    <Compile Include="DB\Domain\MotionAxis.cs" />
+    <Compile Include="DB\Domain\MotionParameter.cs" />
     <Compile Include="DB\Domain\MotionPosition.cs" />
-    <Compile Include="DB\Domain\PowerPMac.cs" />
-    <Compile Include="DB\Domain\PowerPMacMotion.cs" />
     <Compile Include="DB\Domain\Recipe.cs" />
     <Compile Include="DB\Domain\RecipeParam.cs" />
     <Compile Include="DB\Domain\Role.cs" />
@@ -180,18 +177,19 @@
     <Compile Include="DB\Domain\ValueTypeDef.cs" />
     <Compile Include="DB\Repository\AlarmHistoryRepository.cs" />
     <Compile Include="DB\Repository\AlarmRepository.cs" />
+    <Compile Include="DB\Repository\DeviceRepository.cs" />
+    <Compile Include="DB\Repository\MotionParameterRepository.cs" />
+    <Compile Include="DB\Repository\MotionPositionRepository.cs" />
     <Compile Include="DB\Repository\MotionRepository.cs" />
     <Compile Include="DB\Repository\ParameterRepository.cs" />
-    <Compile Include="DB\Repository\PowerPMacMotionRepository.cs" />
-    <Compile Include="DB\Repository\PowerPMacRepository.cs" />
     <Compile Include="DB\Repository\RecipeRepository.cs" />
     <Compile Include="DB\Repository\RoleRepository.cs" />
     <Compile Include="DB\Repository\ScreenRepository.cs" />
     <Compile Include="DB\Repository\UnitRepository.cs" />
     <Compile Include="DB\Repository\ValueTypeRepository.cs" />
-    <Compile Include="Migrations\20251104014742_MigrationFileName.cs" />
-    <Compile Include="Migrations\20251104014742_MigrationFileName.Designer.cs">
-      <DependentUpon>20251104014742_MigrationFileName.cs</DependentUpon>
+    <Compile Include="Migrations\20251111074321_MigrationFileName.cs" />
+    <Compile Include="Migrations\20251111074321_MigrationFileName.Designer.cs">
+      <DependentUpon>20251111074321_MigrationFileName.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AppDbModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

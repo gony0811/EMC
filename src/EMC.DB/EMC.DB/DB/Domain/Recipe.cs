@@ -1,4 +1,5 @@
 ﻿
+using EPFramework.DB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,10 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EMC.DB
 {
     [Table("Recipes")]
-    public class Recipe
+    public class Recipe : IEntity
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         public string Name { get; set; } = "";

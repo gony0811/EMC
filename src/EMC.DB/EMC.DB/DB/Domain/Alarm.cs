@@ -1,13 +1,12 @@
-﻿using System;
+﻿using EPFramework.DB;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EMC.DB
 {
-    public class Alarm
+    public class Alarm : IEntity
     {
-        [Key]
-        public int Id { get; set; } // 식별자
         [Required]
         public string Code { get; set; } // 알람 코드 
         public string Name { get; set; } // 알람 이름

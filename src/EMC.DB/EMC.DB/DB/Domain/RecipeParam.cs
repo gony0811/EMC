@@ -1,4 +1,5 @@
 ﻿
+using EPFramework.DB;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,10 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EMC.DB
 {
     [Table("RecipeParam")]
-    public class RecipeParam
+    public class RecipeParam : IEntity
     {
-        [Key]
-        public int Id { get; set; } // 스키마상 단일 PK
 
         public int RecipeId { get; set; }
 

@@ -178,6 +178,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DB\Data\IEntity.cs" />
     <Compile Include="DB\repository\DbRepository.cs" />
     <Compile Include="DB\repository\IDbRepository.cs" />
     <Compile Include="IoC\Attribute.cs" />

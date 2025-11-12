@@ -9,7 +9,7 @@ namespace EMC
         [ObservableProperty] private string name;
         [ObservableProperty] private string ip;
 
-        public DPowerPmac? Result { get; private set; }
+        public PowerPmacDevice? Result { get; private set; }
 
         [RelayCommand]
         public void Confirm(Window window)
@@ -28,9 +28,10 @@ namespace EMC
             }
 
             // ✅ DTO 생성
-            Result = new DPowerPmac
+            Result = new PowerPmacDevice
             {
                 Ip = Ip.Trim(),
+                DeviceType = DeviceType.PowerPmac.ToString(),
                 Name = Name,
                 IsConnected = false,
             };

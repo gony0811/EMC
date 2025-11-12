@@ -1,10 +1,10 @@
-﻿using System;
+﻿using EPFramework.DB;
+using System;
 
 namespace EMC.DB
 {
-    public class AlarmHistory
+    public class AlarmHistory : IEntity
     {
-        public int Id { get; set; } // 식별자
         public int AlarmId { get; set; } // 알람 식별자
         public AlarmLevel Level { get; set; } // 알람 레벨
         public AlarmStatus Status { get; set; } // 알람 상태
