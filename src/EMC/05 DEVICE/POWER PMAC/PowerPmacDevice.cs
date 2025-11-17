@@ -1,23 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using EMC.DB;
 
-namespace EMC.DB
+namespace EMC
 {
-
-    public class Device : IDevice
+    public partial class PowerPmacDevice : ObservableObject, IDevice
     {
-        [Key]
-        public int Id { get; private set; }
-
-        [Required]
-        [Index(nameof(Name), IsUnique = true)]
-        public string Name { get; set; }
-        public DeviceType Type { get; set; }
-        public string InstanceName { get; set; }
-        public string FileName { get; set; }
-        public string IsUse { get; set; }
-        public string Args { get; set; }
-        public string Description { get; set; }
+        public int Id { get; set; }
+        [ObservableProperty] public string name;
+        [ObservableProperty] public DeviceType type;
+        [ObservableProperty] public string instanceName;
+        [ObservableProperty] public string fileName;
+        [ObservableProperty] public string isUse;
+        [ObservableProperty] public string args;
+        [ObservableProperty] public string description;
 
         public bool GetBool(string name, out bool result)
         {

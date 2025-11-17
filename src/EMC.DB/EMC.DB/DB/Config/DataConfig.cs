@@ -308,5 +308,47 @@ namespace EMC.DB
              .OnDelete(DeleteBehavior.Cascade);
         }
     }
+    public class DeviceConfig : IEntityTypeConfiguration<Device>
+    {
+        public void Configure(EntityTypeBuilder<Device> e)
+        {
+            e.ToTable("Device");
 
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Id)
+                .ValueGeneratedOnAdd();
+
+            e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            e.HasIndex(x => x.Name)
+                .IsUnique();
+
+            e.Property(x => x.Type)
+                .HasConversion<string>()          // Enum을 string으로 저장
+                .IsRequired();
+
+            e.Property(x => x.InstanceName)
+                .HasMaxLength(200)
+                .IsRequired(false);
+
+            e.Property(x => x.FileName)
+                .HasMaxLength(200)
+                .IsRequired(false);
+
+            e.Property(x => x.IsUse)
+                .HasMaxLength(20)
+                .IsRequired(false);
+
+            e.Property(x => x.Args)
+                .HasMaxLength(1000)
+                .IsRequired(false);
+
+            e.Property(x => x.Description)
+                .HasMaxLength(1000)
+                .IsRequired(false);
+        }
+    }
 }
