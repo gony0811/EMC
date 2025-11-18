@@ -18,6 +18,7 @@ namespace EMC
         public DeviceManager(DeviceRepository deviceRepository)
         {
             this.deviceRepository = deviceRepository;
+            _ = DeviceAttacth();
         }
 
         public async Task DeviceAttacth()

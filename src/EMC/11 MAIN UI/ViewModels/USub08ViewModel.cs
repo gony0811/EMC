@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EMC.DB;
 using EPFramework.IoC;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,8 +42,8 @@ namespace EMC
                 {
                     Name = vm.Name,
                     Type = vm.Type,
-                    InstanceName = vm.InstanceName,
-                    FileName = vm.FileName,
+                    InstanceName = vm.File,
+                    FileName = Path.GetFileName(vm.File),
                     IsUse = vm.IsUse,
                     Description = vm.Description,
                     Args = vm.SerializeArgs()

@@ -1,19 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EMC.DB;
 using Newtonsoft.Json;
-using System.ComponentModel;
+using PropertyTools.DataAnnotations;
 
 namespace EMC
 {
     public partial class DeviceCreateViewModel : ObservableObject
     {
-        [Browsable(false)]
-        public int Id { get; }
+
+        [Browsable(false)] public int Id { get; }
 
         [ObservableProperty] private string name;
         [ObservableProperty] private DeviceType type;
-        [ObservableProperty] private string instanceName;
-        [ObservableProperty] private string fileName;
+
+        [property: InputFilePath]
+        [ObservableProperty] private string file;
+
         [ObservableProperty] private bool isUse;
         [ObservableProperty] private string description;
 
