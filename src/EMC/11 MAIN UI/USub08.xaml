@@ -9,7 +9,28 @@
       xmlns:vm="clr-namespace:EMC"
       mc:Ignorable="d" 
       Title="USub08">
-    <Grid local:GridHelper.Rows="1*, Auto">
-        <Button Content="디바이스 생성" Command="{Binding DeviceCreateCommand}"/>
+    <Grid local:GridHelper.Rows="1*, Auto" Margin="10">
+        <Border Grid.Row="0">
+            <DataGrid  x:Name="RecipeGrid"
+                      ItemsSource="{Binding DeviceList}"
+                      SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      FontSize="16"
+                      Margin="0,8,0,0"
+                      ColumnWidth="*"               
+                      HorizontalAlignment="Stretch">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="이름" Binding="{Binding Name}" IsReadOnly="True" Width="1*" MinWidth="80" />
+                    <DataGridTextColumn Header="종류" Binding="{Binding Type}" IsReadOnly="True" Width="1*" MinWidth="80" />
+                    <DataGridTextColumn Header="파일 위치" Binding="{Binding InstanceName}" IsReadOnly="True" Width="1*" MinWidth="80" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="디바이스 생성" Command="{Binding DeviceCreateCommand}" Grid.Row="1" Width="100" Height="40"/>    
+        </StackPanel>
+        
     </Grid>
 </Page>

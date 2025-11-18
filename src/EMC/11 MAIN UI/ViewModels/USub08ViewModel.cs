@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EMC.DB;
 using EPFramework.IoC;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EMC
@@ -11,10 +13,14 @@ namespace EMC
     public partial class USub08ViewModel : ObservableObject
     {
         private readonly DeviceManager deviceManager;
+        [ObservableProperty] private ObservableCollection<IDevice> deviceList;
+        [ObservableProperty] private IDevice selectedDevice;
 
         public USub08ViewModel(DeviceManager deviceManager)
         {
             this.deviceManager = deviceManager;
+            this.deviceList = deviceManager.DeviceList;
+            this.SelectedDevice = deviceList.FirstOrDefault();
         }
 
         [RelayCommand]
