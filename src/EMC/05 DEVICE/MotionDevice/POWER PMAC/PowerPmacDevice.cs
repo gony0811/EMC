@@ -5,12 +5,13 @@ namespace EMC
 {
     public partial class PowerPmacDevice : ObservableObject, IDevice
     {
+
         public int Id { get; set; }
         [ObservableProperty] public string name;
         [ObservableProperty] public DeviceType type;
         [ObservableProperty] public string instanceName;
         [ObservableProperty] public string fileName;
-        [ObservableProperty] public string isUse;
+        [ObservableProperty] public bool isUse;
         [ObservableProperty] public string args;
         [ObservableProperty] public string description;
 

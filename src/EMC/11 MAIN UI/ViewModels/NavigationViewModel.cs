@@ -12,7 +12,6 @@ namespace EMC
     public partial class NavigationViewModel : ObservableObject
     {
 
-
         // 화면 활성화 여부 뷰 모델 
         [ObservableProperty] private bool mainEnabled = true;
 
@@ -24,12 +23,11 @@ namespace EMC
 
         [ObservableProperty] private bool alarmEnabled = true;
 
-
         [ObservableProperty] private bool motionEnabled = true;
 
         [ObservableProperty] private bool iOEnabled = true;
 
-        [ObservableProperty] private bool lampEnabled = true;
+        [ObservableProperty] private bool deviceEnabled = true;
 
         private readonly Dictionary<string, Action<bool>> _permSetters;
 
@@ -45,6 +43,7 @@ namespace EMC
                 ["AlARM"] = v => AlarmEnabled = v,
                 ["MOTION"] = v => MotionEnabled = v,
                 ["IO"] = v => IOEnabled = v,
+                ["DEVICE"] = v => DeviceEnabled = v,
             };
         }
 
@@ -73,6 +72,7 @@ namespace EMC
             AlarmEnabled = onOff;
             MotionEnabled = onOff;
             IOEnabled = onOff;
+            DeviceEnabled = onOff;
         }
     }
 }

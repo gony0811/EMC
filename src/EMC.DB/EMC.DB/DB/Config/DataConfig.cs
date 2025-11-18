@@ -338,10 +338,6 @@ namespace EMC.DB
                 .HasMaxLength(200)
                 .IsRequired(false);
 
-            e.Property(x => x.IsUse)
-                .HasMaxLength(20)
-                .IsRequired(false);
-
             e.Property(x => x.Args)
                 .HasMaxLength(1000)
                 .IsRequired(false);

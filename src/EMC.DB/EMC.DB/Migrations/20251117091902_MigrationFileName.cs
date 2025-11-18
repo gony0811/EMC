@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EMC.DB.Migrations
 {
-    public partial class Init : Migration
+    public partial class MigrationFileName : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,6 +25,25 @@ namespace EMC.DB.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Alarms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Device",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Type = table.Column<string>(nullable: false),
+                    InstanceName = table.Column<string>(maxLength: 200, nullable: true),
+                    FileName = table.Column<string>(maxLength: 200, nullable: true),
+                    IsUse = table.Column<bool>(nullable: false),
+                    Args = table.Column<string>(maxLength: 1000, nullable: true),
+                    Description = table.Column<string>(maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Device", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -282,6 +301,12 @@ namespace EMC.DB.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Device_Name",
+                table: "Device",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MotionPositions_MotionId_Name",
                 table: "MotionPositions",
                 columns: new[] { "MotionId", "Name" },
@@ -365,6 +390,9 @@ namespace EMC.DB.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AlarmHistories");
+
+            migrationBuilder.DropTable(
+                name: "Device");
 
             migrationBuilder.DropTable(
                 name: "MotionPositions");

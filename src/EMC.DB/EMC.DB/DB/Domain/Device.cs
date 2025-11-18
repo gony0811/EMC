@@ -15,7 +15,7 @@ namespace EMC.DB
         public DeviceType Type { get; set; }
         public string InstanceName { get; set; }
         public string FileName { get; set; }
-        public string IsUse { get; set; }
+        public bool IsUse { get; set; }
         public string Args { get; set; }
         public string Description { get; set; }
 

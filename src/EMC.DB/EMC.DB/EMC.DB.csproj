@@ -193,9 +193,9 @@
     <Compile Include="DB\Repository\ScreenRepository.cs" />
     <Compile Include="DB\Repository\UnitRepository.cs" />
     <Compile Include="DB\Repository\ValueTypeRepository.cs" />
-    <Compile Include="Migrations\20251022035035_Init.cs" />
-    <Compile Include="Migrations\20251022035035_Init.Designer.cs">
-      <DependentUpon>20251022035035_Init.cs</DependentUpon>
+    <Compile Include="Migrations\20251117091902_MigrationFileName.cs" />
+    <Compile Include="Migrations\20251117091902_MigrationFileName.Designer.cs">
+      <DependentUpon>20251117091902_MigrationFileName.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AppDbModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

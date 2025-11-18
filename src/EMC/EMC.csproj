@@ -32,6 +32,7 @@
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <!-- ⚠ Autofac는 .NET Framework에선 5.x만 지원 -->
     <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="PropertyTools.Wpf" Version="3.1.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.11" />
   </ItemGroup>
 

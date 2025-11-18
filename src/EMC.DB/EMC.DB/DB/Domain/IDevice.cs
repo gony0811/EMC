@@ -7,7 +7,7 @@
         DeviceType Type { get; set; }
         string InstanceName { get; set; }
         string FileName { get; set; }
-        string IsUse { get; set; }
+        bool IsUse { get; set; }
         string Args { get; set; }
         string Description { get; set; }
 

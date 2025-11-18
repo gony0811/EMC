@@ -97,6 +97,48 @@ namespace EMC.DB.Migrations
                     b.ToTable("AlarmHistories");
                 });
 
+            modelBuilder.Entity("EMC.DB.Device", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Args")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("InstanceName")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(200);
+
+                    b.Property<bool>("IsUse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Device");
+                });
+
             modelBuilder.Entity("EMC.DB.Motion", b =>
                 {
                     b.Property<int>("Id")

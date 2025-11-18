@@ -1,0 +1,51 @@
+﻿<Window x:Class="EMC.DeviceCreateModal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EMC"
+        xmlns:pt="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf">
+    <Window.Resources>
+        <local:DeviceArgsTemplateSelector x:Key="DeviceArgsTemplateSelector">
+            <local:DeviceArgsTemplateSelector.MotionTemplate>
+                <DataTemplate>
+                    <local:MotionArgsView />
+                </DataTemplate>
+            </local:DeviceArgsTemplateSelector.MotionTemplate>
+        </local:DeviceArgsTemplateSelector>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 공통 정보 -->
+        <GroupBox Header="Device 기본정보" Grid.Row="0" Margin="0 0 0 10">
+            <pt:PropertyGrid SelectedObject="{Binding}">
+                <pt:PropertyGrid.TabHeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="기본 정보"/>
+                    </DataTemplate>
+                </pt:PropertyGrid.TabHeaderTemplate>
+            </pt:PropertyGrid>
+        </GroupBox>
+
+        <!-- 구분선 -->
+        <Border Grid.Row="1" Height="1" Background="#DDD" Margin="0 5"/>
+
+        <!-- 타입별 Args UI -->
+        <GroupBox Header="타입별 상세설정" Grid.Row="2">
+            <ContentControl 
+                Content="{Binding ArgsModel}"
+                ContentTemplateSelector="{StaticResource DeviceArgsTemplateSelector}" />
+        </GroupBox>
+
+        <!-- 버튼 -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="저장" Width="80" Margin="4" Click="Save_Click"/>
+            <Button Content="취소" Width="80" Margin="4" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
