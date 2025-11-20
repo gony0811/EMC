@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="EMC.PlaceholderTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="root">
+    <Grid>
+        <TextBox x:Name="InputBox"
+                 Text="{Binding Text, ElementName=root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 VerticalContentAlignment="Center"
+                 Padding="4,0"/>
+
+        <TextBlock x:Name="PlaceholderBlock"
+                   Text="{Binding Placeholder, ElementName=root}"
+                   Foreground="Gray"
+                   Margin="6,0,0,0"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   Opacity="0.6"/>
+    </Grid>
+</UserControl>

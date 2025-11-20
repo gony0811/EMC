@@ -1,4 +1,5 @@
 ﻿
+using EPFramework.DB;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,13 +7,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EMC.DB
 {
     [Table("RecipeParam")]
-    public class RecipeParam
+    public class RecipeParam : IEntity
     {
-        [Key]
-        public int Id { get; set; } // 스키마상 단일 PK
 
         public int RecipeId { get; set; }
-
 
         [Required(ErrorMessage = "파라미터 이름은 필수입니다.")]
         [MaxLength(100)]
@@ -23,16 +21,13 @@ namespace EMC.DB
 
         public string Maximum { get; set; }
         public string Minimum { get; set; }
-
-        public int ValueTypeId { get; set; }
-        public int UnitId { get; set; }
+        public ValueType ValueType { get; set; }
+        public UnitType UnitType { get; set; }
 
         [MaxLength(500)]
         public string Description { get; set; }
 
         public Recipe Recipe { get; set; }
-        public ValueTypeDef ValueType { get; set; }
-        public Unit Unit { get; set; }
 
         
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

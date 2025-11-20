@@ -1,0 +1,258 @@
+﻿<UserControl x:Class="EMC.StepTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
+             xmlns:local="clr-namespace:EMC"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/01 SYSTEM/Common/Styles/DefaultResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <TabControl>
+        <TabItem Header="PRE-STEP">
+            <Grid  local:GridHelper.Rows="Auto, 1*">
+                <GroupBox Grid.Row="0" Grid.Column="0" Header="Off-set" Margin="8" Style="{StaticResource GroupBox.CenterHeader}">
+                    <StackPanel>
+                        <local:TableAlignControl DataContext="{Binding WTableOffset}"></local:TableAlignControl>
+                        <local:TableAlignControl DataContext="{Binding DTableOffset}"></local:TableAlignControl>
+                        <local:TableAlignControl DataContext="{Binding PTableOffset}"></local:TableAlignControl>
+                        <local:TableAlignControl DataContext="{Binding BHeadOffset}"></local:TableAlignControl>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Auto Calibration" Margin="8" Style="{StaticResource GroupBox.CenterHeader}" HorizontalAlignment="Left" VerticalAlignment="Top">
+
+                </GroupBox>
+
+                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
+                    <Button Content="START" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="STOP" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="RESET" Width="120" Height="80" Margin="4"></Button>
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="W-STEP">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <local:StepSequence DataContext="{Binding Step1}" Width="400" Margin="4"></local:StepSequence>
+                    <local:StepSequence DataContext="{Binding Step4}" Width="400" Margin="4"></local:StepSequence>
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="START" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="STOP" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="RESET" Width="120" Height="80" Margin="4"></Button>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="D-STEP">
+            <Grid>
+                <local:DieTable DataContext="{Binding DieTable}"/>
+                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="START" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="STOP" Width="120" Height="80" Margin="4"></Button>
+                    <Button Content="RESET" Width="120" Height="80" Margin="4"></Button>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="MATERIAL">
+            <Grid local:GridHelper.Rows="Auto, 1*">
+                <GroupBox Header="RunInformation" Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource HeaderCell}">
+                                <TextBlock Text="Wafer Size"></TextBlock>
+                            </Border>
+
+                            <Button Content='12"' Width="80" Margin="2"/>
+                            <Button Content='8"' Width="80" Margin="2"/>
+                            <Button Content='6"' Width="80" Margin="2"/>
+                            <Button Content='4"' Width="80" Margin="2"/>
+                            <Button Content='Die(13x13)' Width="80" Margin="2"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource HeaderCell}">
+                                <TextBlock Text="Die Size"></TextBlock>
+                            </Border>
+                            <Button Content='TOP: 12x12mm"' Width="120" Margin="2"/>
+                            <Button Content='Bottom: 13x13mm' Width="120" Margin="2"/>
+                            <Button Content="THK': 250um" Width="120" Margin="2"/>
+
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource HeaderCell}">
+                                <TextBlock Text="Die Carrier"></TextBlock>
+                            </Border>
+                            <Button Content='외곽 Size: 2"x2"' Width="180" Margin="2"></Button>
+                            <Button Content='Die 수: 9 chips/carrier' Width="180" Margin="2"></Button>
+                            
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <GroupBox Header="Bonding" Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+                        <ItemsControl ItemsSource="{Binding BondingParameterList}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:ParameterCellViewModel}">
+                                    <local:ParameterCell/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </GroupBox>
+
+                    <GroupBox Header="Bond Head" Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+
+                        <ItemsControl ItemsSource="{Binding BondHeadParameterList}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:ParameterCellViewModel}">
+                                    <local:ParameterCell/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </GroupBox>
+
+                </StackPanel>
+            </Grid>
+            
+            
+        </TabItem>
+        <TabItem Header="RUN INFO">
+            <Grid local:GridHelper.Columns="1*, 1*" local:GridHelper.Rows="Auto, Auto">
+                <GroupBox Header="W-Table &amp; D-Table" Style="{StaticResource GroupBox.CenterHeader}" Margin="4">
+                    <Grid local:GridHelper.Columns="1*, 1*, 1*" local:GridHelper.Rows="Auto, Auto, Auto, Auto">
+                        <Border Style="{StaticResource HeaderCell}" Margin="2">
+                            <TextBlock Text="Pitch Moving (X)"></TextBlock>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Column="1" Margin="2"></local:PlaceholderTextBox>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Column="2" Margin="2"></local:PlaceholderTextBox>
+
+                        <Border Style="{StaticResource HeaderCell}" Margin="2" Grid.Row="1">
+                            <TextBlock Text="Pitch Moving (Y)"/>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="1" Grid.Column="1" Margin="2"/>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="1" Grid.Column="2" Margin="2"/>
+
+                        <Border Style="{StaticResource HeaderCell}" Margin="2" Grid.Row="2">
+                            <TextBlock Text="Pitch Moving (θ)"/>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="2" Grid.Column="1" Margin="2"/>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="2" Grid.Column="2" Margin="2"/>
+
+                        <Border Style="{StaticResource HeaderCell}" Margin="2" Grid.Row="3">
+                            <TextBlock Text="Tilt (Z1, Z2, Z3)"/>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="3" Grid.Column="1" Margin="2"/>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="3" Grid.Column="2" Margin="2"/>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Original Point" Style="{StaticResource GroupBox.CenterHeader}"  Grid.Column="0" Grid.Row="1" Margin="4">
+                    <Grid local:GridHelper.Columns="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" local:GridHelper.Rows="Auto, Auto, Auto, Auto">
+                        <Border Style="{StaticResource HeaderCell}">
+                            <TextBlock Text="W-Table"></TextBlock>
+                        </Border>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="1">
+                            <TextBlock Text="Y"/>
+                        </Border>
+                        <TextBox Grid.Column="2" Width="100"/>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="3">
+                            <TextBlock Text="θ"/>
+                        </Border>
+                        <TextBox Grid.Column="4" Width="100"/>
+
+
+                        <Border Style="{StaticResource HeaderCell}" Grid.Row="1">
+                            <TextBlock Text="P-Table"></TextBlock>
+                        </Border>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="1" Grid.Row="1">
+                            <TextBlock Text="Y"/>
+                        </Border>
+                        <TextBox Grid.Column="2" Grid.Row="1" Width="100"/>
+                        
+                        <Border Style="{StaticResource HeaderCell}" Grid.Row="2">
+                            <TextBlock Text="D-Table"></TextBlock>
+                        </Border>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="1" Grid.Row="2">
+                            <TextBlock Text="Y"/>
+                        </Border>
+                        <TextBox Grid.Column="2" Grid.Row="2" Width="100"/>
+                        
+                        <Border Style="{StaticResource HeaderCell}" Grid.Row="3">
+                            <TextBlock Text="Bond Head"></TextBlock>
+                        </Border>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="1" Grid.Row="3">
+                            <TextBlock Text="X"/>
+                        </Border>
+                        <TextBox Grid.Column="2" Grid.Row="3" Width="100"/>
+                        
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="3" Grid.Row="3">
+                            <TextBlock Text="Z"/>
+                        </Border>
+                        <TextBox Grid.Column="4" Grid.Row="3" Width="100"/>
+                        <Border Style="{StaticResource HeaderCell}" Grid.Column="5" Grid.Row="3">
+                            <TextBlock Text="θ"/>
+                        </Border>
+                        <TextBox Grid.Column="6" Grid.Row="3" Width="100"/>
+
+                        <Button Grid.Column="7" Grid.Row="2" Content="RESET" Width="100" Margin="2"></Button>
+                        <Button Grid.Column="7" Grid.Row="3" Content="APPLY" Width="100" Margin="2"></Button>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="동작 프로파일 설정" Style="{StaticResource GroupBox.CenterHeader}"  Grid.Column="1" Grid.Row="1" Margin="4">
+                    <Grid local:GridHelper.Columns="1*, 1*, 1*" local:GridHelper.Rows="1*, 1*, 1*">
+                        <Border Style="{StaticResource HeaderCell}" Margin="2">
+                            <TextBlock Text="속도"></TextBlock>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Column="1" Margin="2"/>
+
+                        <Border Style="{StaticResource HeaderCell}" Margin="2" Grid.Row="1">
+                            <TextBlock Text="가속도"/>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="1" Grid.Column="1" Margin="2"/>
+
+                        <Border Style="{StaticResource HeaderCell}" Margin="2" Grid.Row="2">
+                            <TextBlock Text="응답 시간"/>
+                        </Border>
+                        <local:PlaceholderTextBox Text="" Placeholder="사용자입력값" Grid.Row="2" Grid.Column="1" Margin="2"/>
+
+                        <Button Content="RESET" Width="100" Grid.Column="2" Grid.Row="1" Margin="2"></Button>
+                        <Button Content="APPLY" Width="100" Grid.Column="2" Grid.Row="2" Margin="2"></Button>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="BONDING CONTROL">
+            <Grid local:GridHelper.Columns="1*, Auto">
+                <local:ActualBondingForce DataContext="{Binding ActualBondingForce}"></local:ActualBondingForce>
+                
+                <StackPanel Grid.Column="1">
+                    <Button Content="Test" Width="120" Command="{Binding TestCommand}"></Button>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="SEARCH SPEED CONTROL">
+
+        </TabItem>
+
+    </TabControl>
+</UserControl>

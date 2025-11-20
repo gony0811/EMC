@@ -1,13 +1,12 @@
 ﻿
+using EPFramework.DB;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EMC.DB
 {
-    public class Screen
+    public class Screen : IEntity
     {
-        [Key]
-        public int Id { get; private set; }
         public string Code { get; set; } = "";
         public string Name { get; set; } = "";
         public string Path { get; set; }

@@ -21,7 +21,7 @@ namespace EMC.DB
             return await _set
                 .Where(p => p.RecipeId == recipeId)
                 .Include(p => p.ValueType)
-                .Include(p => p.Unit)
+                .Include(p => p.UnitType)
                 .AsNoTracking()
                 .OrderBy(p => p.Name)
                 .ToListAsync(ct)

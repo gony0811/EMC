@@ -87,8 +87,8 @@ namespace EMC.DB
                         Value = p.Value,
                         Minimum = p.Minimum,
                         Maximum = p.Maximum,
-                        ValueTypeId = p.ValueTypeId,
-                        UnitId = p.UnitId,
+                        ValueType = p.ValueType,
+                        UnitType = p.UnitType,
                         Description = p.Description
                     })
                     .ToListAsync(ct)

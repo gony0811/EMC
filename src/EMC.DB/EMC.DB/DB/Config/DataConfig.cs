@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace EMC.DB
 {
@@ -118,117 +119,207 @@ namespace EMC.DB
         }
     }
 
-    public class ValueTypeDefConfig : IEntityTypeConfiguration<ValueTypeDef>
-    {
-        public void Configure(EntityTypeBuilder<ValueTypeDef> b)
-        {
-            b.ToTable("ValueType");
-            b.HasKey(x => x.Id);
-
-            b.Property(x => x.Id)
-             .ValueGeneratedOnAdd()
-             .HasAnnotation("Sqlite:Autoincrement", true);
-
-            b.Property(x => x.Name).IsRequired();
-            b.HasIndex(x => x.Name).IsUnique();
-        }
-    }
-
-    public class UnitConfig : IEntityTypeConfiguration<Unit>
-    {
-        public void Configure(EntityTypeBuilder<Unit> b)
-        {
-            b.ToTable("Unit");
-            b.HasKey(x => x.Id);
-
-            b.Property(x => x.Id)
-             .ValueGeneratedOnAdd()
-             .HasAnnotation("Sqlite:Autoincrement", true);
-
-            b.Property(x => x.Name).IsRequired();
-            b.HasIndex(x => x.Name).IsUnique();
-        }
-    }
 
     public class RecipeParamConfig : IEntityTypeConfiguration<RecipeParam>
     {
-        public void Configure(EntityTypeBuilder<RecipeParam> b)
+        public void Configure(EntityTypeBuilder<RecipeParam> e)
         {
-            b.ToTable("RecipeParam");
-            b.HasKey(x => x.Id);
-
-            b.Property(x => x.Id)
-             .ValueGeneratedOnAdd()
-             .HasAnnotation("Sqlite:Autoincrement", true);
-
-            b.Property(x => x.Name).IsRequired();
-            b.Property(x => x.Value).IsRequired();
-
-            b.HasOne(x => x.Recipe)
-             .WithMany(r => r.Params)
-             .HasForeignKey(x => x.RecipeId)
-             .OnDelete(DeleteBehavior.Cascade);
-
-            b.HasOne(x => x.ValueType)
-             .WithMany()
-             .HasForeignKey(x => x.ValueTypeId)
-             .OnDelete(DeleteBehavior.Restrict);
-
-            b.HasOne(x => x.Unit)
-             .WithMany()
-             .HasForeignKey(x => x.UnitId)
-             .OnDelete(DeleteBehavior.SetNull);
-        }
-    }
-
-    public sealed class MotionConfig : IEntityTypeConfiguration<Motion>
-    {
-        public void Configure(EntityTypeBuilder<Motion> e)
-        {
-            e.ToTable("Motions");
-            e.HasKey(x => x.Id);
-
-            e.Property(x => x.Name)
-             .IsRequired()
-             .HasMaxLength(100);
-
-            e.HasIndex(x => x.Name).IsUnique();
-
-            e.Property(x => x.Axis)
-             .HasConversion<string>()
-             .HasMaxLength(16);
-
-
-            e.HasMany(x => x.Positions)
-             .WithOne(p => p.Motion)
-             .HasForeignKey(p => p.MotionId)
-             .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-
-    public sealed class MotionPositionConfig : IEntityTypeConfiguration<MotionPosition>
-    {
-        public void Configure(EntityTypeBuilder<MotionPosition> e)
-        {
-            e.ToTable("MotionPositions");
+            e.ToTable("RecipeParam");
 
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Name)
-             .IsRequired()
-             .HasMaxLength(100);
+                .IsRequired()
+                .HasMaxLength(100);
 
-            e.HasIndex(x => new { x.MotionId, x.Name })
-             .IsUnique();
+            e.Property(x => x.Value)
+                .IsRequired();
 
-            e.Property(x => x.CurrentLocation).HasColumnType("REAL");
-            e.Property(x => x.MinimumLocation).HasColumnType("REAL");
-            e.Property(x => x.MaximumLocation).HasColumnType("REAL");
-            e.Property(x => x.CurrentSpeed).HasColumnType("REAL");
-            e.Property(x => x.MinimumSpeed).HasColumnType("INTEGER");
-            e.Property(x => x.MaximumSpeed).HasColumnType("INTEGER");
+            e.Property(x => x.Minimum)
+                .HasMaxLength(100)
+                .IsRequired(false);
+
+            e.Property(x => x.Maximum)
+                .HasMaxLength(100)
+                .IsRequired(false);
+
+            e.Property(x => x.Description)
+                .HasMaxLength(500)
+                .IsRequired(false);
+
+            e.Property(x => x.ValueType)
+                .HasConversion<string>()   // Enum → string
+                .IsRequired();
+
+            e.Property(x => x.UnitType)
+                .HasConversion<string>()   // Enum → string
+                .IsRequired();
+
+            e.Property(x => x.RecipeId)
+                .IsRequired();
+
+            e.HasOne(x => x.Recipe)
+                .WithMany(r => r.ParamList)
+                .HasForeignKey(x => x.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);   // Recipe 삭제 시 Param 삭제
         }
     }
+    public class DeviceConfig : IEntityTypeConfiguration<Device>
+    {
+        public void Configure(EntityTypeBuilder<Device> builder)
+        {
+            builder.ToTable("Device");
+            builder.HasKey(d => d.Id);
+
+            builder.Property(d => d.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(d => d.FileName).HasMaxLength(100);
+            builder.Property(d => d.InstanceName).HasMaxLength(100);
+            builder.Property(d => d.Description).HasMaxLength(200);
+
+            builder.Property(d => d.DeviceType)
+                .HasConversion<string>()
+                .HasMaxLength(50);
+
+            // ✅ 1:1 관계 설정 (Composition)
+            builder.HasOne(d => d.MotionDeviceDetail)
+                   .WithOne(m => m.Device)
+                   .HasForeignKey<MotionDeviceDetail>(m => m.DeviceId)
+                   .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    public class MotionDeviceDetailConfig : IEntityTypeConfiguration<MotionDeviceDetail>
+    {
+        public void Configure(EntityTypeBuilder<MotionDeviceDetail> e)
+        {
+            // PK
+            e.HasKey(x => x.DeviceId);
+
+            // 1:1 관계 - Device ↔ MotionDeviceDetail
+            e.HasOne(x => x.Device)
+                .WithOne(x => x.MotionDeviceDetail)
+                .HasForeignKey<MotionDeviceDetail>(x => x.DeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // SET NULL or RESTRICT로 변경 가능
+
+            // 속성 설정
+            e.Property(x => x.Ip)
+                .HasMaxLength(50)
+                .IsRequired(false);
+
+            e.Property(x => x.Port)
+                .IsRequired();
+
+            e.Property(x => x.MotionDeviceType)
+                .HasConversion<string>()   // Enum → int 저장
+                .IsRequired();
+
+            // MotionList: 1 : N 관계
+            e.HasMany(x => x.MotionList)
+                .WithOne(x => x.ParentDeviceEntity)
+                .HasForeignKey(x => x.ParentDeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+    public class MotionConfig : IEntityTypeConfiguration<MotionEntity>
+    {
+        public void Configure(EntityTypeBuilder<MotionEntity> builder)
+        {
+            builder.ToTable("Motion");
+
+            builder.HasKey(m => m.Id);
+
+            builder.Property(m => m.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(x => x.Unit)
+                .HasConversion<string>()   
+                .IsRequired();
+
+            builder.HasMany(m => m.PositionList)
+                .WithOne(p => p.Motion)
+                .HasForeignKey(p => p.MotionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(m => m.ParameterList)
+                .WithOne(p => p.Motion)
+                .HasForeignKey(p => p.MotionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    public class MotionPositionConfiguration : IEntityTypeConfiguration<MotionPosition>
+    {
+        public void Configure(EntityTypeBuilder<MotionPosition> builder)
+        {
+            builder.ToTable("MotionPosition");
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(p => p.Speed)
+                .HasDefaultValue(0.0);
+
+
+            builder.Property(p => p.Location)
+                .HasDefaultValue(0.0);
+
+
+            // 관계: MotionPosition → Motion (N:1)
+            builder.HasOne(p => p.Motion)
+                .WithMany(m => m.PositionList)
+                .HasForeignKey(p => p.MotionId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+
+    public class MotionParameterConfig : IEntityTypeConfiguration<MotionParameter>
+    {
+        public void Configure(EntityTypeBuilder<MotionParameter> e)
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+
+            e.Property(x => x.IntValue)
+                .IsRequired(false);
+
+            e.Property(x => x.DoubleValue)
+                .IsRequired(false);
+
+            e.Property(x => x.BoolValue)
+                .IsRequired(false);
+
+            e.Property(x => x.StringValue)
+                .HasMaxLength(500)
+                .IsRequired(false);
+
+
+            e.Property(x => x.ValueType)
+                .IsRequired()
+                .HasConversion<string>();
+
+            e.Property(x => x.UnitType)
+                .IsRequired()
+                .HasConversion<string>();
+
+            e.HasOne(x => x.Motion)
+                .WithMany(x => x.ParameterList)
+                .HasForeignKey(x => x.MotionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
     public sealed class AlarmConfig : IEntityTypeConfiguration<Alarm>
     {
         public void Configure(EntityTypeBuilder<Alarm> e)
@@ -238,14 +329,14 @@ namespace EMC.DB
 
 
             e.Property(x => x.Id)
-             .ValueGeneratedOnAdd()
-             .HasAnnotation("Sqlite:Autoincrement", true);
+                .ValueGeneratedOnAdd()
+                .HasAnnotation("Sqlite:Autoincrement", true);
 
             e.Property(x => x.Code)
-            .IsRequired();                
+            .IsRequired();
 
             e.HasIndex(x => x.Code)
-                .IsUnique();                   
+                .IsUnique();
 
             e.Property(x => x.Name).IsRequired().HasMaxLength(128);
             e.HasIndex(x => x.Name);
@@ -255,23 +346,23 @@ namespace EMC.DB
 
             // enum -> int 저장
             e.Property(x => x.Level)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmLevel.Light);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmLevel.Light);
 
             e.Property(x => x.Status)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmStatus.RESET);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmStatus.RESET);
 
             e.Property(x => x.Enable)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER")
-             .HasDefaultValue(AlarmEnable.ENABLED);
+                .HasConversion<int>()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(AlarmEnable.ENABLED);
 
             // 날짜/시간 (SQLite TEXT/ISO8601)
             e.Property(x => x.LastRaisedAt)
-             .HasColumnType("TEXT");
+                .HasColumnType("TEXT");
 
             e.HasIndex(x => x.LastRaisedAt);
         }
@@ -288,24 +379,24 @@ namespace EMC.DB
 
             // enum -> int 저장
             e.Property(x => x.Level)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER");
+                .HasConversion<int>()
+                .HasColumnType("INTEGER");
 
             e.Property(x => x.Status)
-             .HasConversion<int>()
-             .HasColumnType("INTEGER");
+                .HasConversion<int>()
+                .HasColumnType("INTEGER");
 
             e.Property(x => x.UpdateTime)
-             .HasColumnType("TEXT")
-             .IsRequired();
+                .HasColumnType("TEXT")
+                .IsRequired();
 
             e.HasIndex(x => x.UpdateTime);
             e.HasIndex(x => new { x.AlarmId, x.UpdateTime });
 
             e.HasOne<Alarm>()
-             .WithMany()
-             .HasForeignKey(x => x.AlarmId)
-             .OnDelete(DeleteBehavior.Cascade);
+                .WithMany()
+                .HasForeignKey(x => x.AlarmId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

@@ -155,6 +155,19 @@
                         <TextBlock Text="I/O" TextAlignment="Center"/>
                     </StackPanel>
                 </ToggleButton>
+
+                <ToggleButton Tag="DEVICE"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"
+                            IsChecked="{Binding SelectedPageKey, Converter={StaticResource KeyEquals}, ConverterParameter=DEVICE}"
+                            IsEnabled="{Binding NavVM.DeviceEnabled}"
+                            Visibility="Visible"
+                            Style="{StaticResource MenuBtn}">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <iconPacks:PackIconMaterial Kind="Wifi" Width="24" Height="24" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                        <TextBlock Text="디바이스" TextAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
             </StackPanel>
 
             <StackPanel Grid.Column="1" HorizontalAlignment="Right">

@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using EPFramework.DB;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EMC.DB
 {
     [Table("Roles")]
-    public class Role
+    public class Role : IEntity
     {
-        [Key]
-        public int Id { get; private set; }
 
         [Required, MaxLength(100)]
         public string Name { get; set; } = "";

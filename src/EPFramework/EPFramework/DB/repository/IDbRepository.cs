@@ -29,9 +29,9 @@ namespace EPFramework.DB
             CancellationToken ct = default(CancellationToken));
 
         // 쓰기
-        Task AddAsync(T entity, CancellationToken ct = default(CancellationToken));
+        Task<T> AddAsync(T entity, CancellationToken ct = default(CancellationToken));
         Task AddRangeAsync(IEnumerable<T> entities, CancellationToken ct = default(CancellationToken));
-        Task Update(T entity, CancellationToken ct = default(CancellationToken));
+        Task<T> Update(T entity, CancellationToken ct = default(CancellationToken));
 
         // id 기반 삭제(정수 PK일 때만 사용)
         Task<bool> Remove(int id, CancellationToken ct = default(CancellationToken));

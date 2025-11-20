@@ -97,16 +97,31 @@ namespace EMC.DB.Migrations
                     b.ToTable("AlarmHistories");
                 });
 
-            modelBuilder.Entity("EMC.DB.Motion", b =>
+            modelBuilder.Entity("EMC.DB.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Axis")
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("DeviceType")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(16);
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("InstanceName")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -115,34 +130,86 @@ namespace EMC.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Motions");
+                    b.ToTable("Device");
                 });
 
-            modelBuilder.Entity("EMC.DB.MotionPosition", b =>
+            modelBuilder.Entity("EMC.DB.MotionDeviceDetail", b =>
+                {
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MotionDeviceType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Port")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DeviceId");
+
+                    b.ToTable("MotionDeviceDetail");
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("CurrentLocation")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("CurrentSpeed")
-                        .HasColumnType("REAL");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("MaximumLocation")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("MaximumSpeed")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("MaximumSpeed")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("MinimumLocation")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("MinimumSpeed")
+                    b.Property<double>("MinimumSpeed")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("MotorNo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("ParentDeviceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentDeviceId");
+
+                    b.ToTable("Motion");
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionParameter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("BoolValue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("DoubleValue")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("IntValue")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MotionId")
@@ -153,12 +220,54 @@ namespace EMC.DB.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(100);
 
+                    b.Property<string>("StringValue")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("UnitType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValueType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("MotionId", "Name")
-                        .IsUnique();
+                    b.HasIndex("MotionId");
 
-                    b.ToTable("MotionPositions");
+                    b.ToTable("MotionParameter");
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Location")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("REAL")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<int>("MotionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
+
+                    b.Property<double>("Speed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("REAL")
+                        .HasDefaultValue(0.0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MotionId");
+
+                    b.ToTable("MotionPosition");
                 });
 
             modelBuilder.Entity("EMC.DB.Recipe", b =>
@@ -202,18 +311,19 @@ namespace EMC.DB.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Sqlite:Autoincrement", true);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT")
                         .HasMaxLength(500);
 
                     b.Property<string>("Maximum")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Minimum")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -223,23 +333,21 @@ namespace EMC.DB.Migrations
                     b.Property<int>("RecipeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("UnitType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ValueTypeId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ValueType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RecipeId");
-
-                    b.HasIndex("UnitId");
-
-                    b.HasIndex("ValueTypeId");
 
                     b.ToTable("RecipeParam");
                 });
@@ -363,47 +471,6 @@ namespace EMC.DB.Migrations
                     b.ToTable("Screens");
                 });
 
-            modelBuilder.Entity("EMC.DB.Unit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Sqlite:Autoincrement", true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Symbol")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Unit");
-                });
-
-            modelBuilder.Entity("EMC.DB.ValueTypeDef", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Sqlite:Autoincrement", true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("ValueType");
-                });
-
             modelBuilder.Entity("EMC.DB.AlarmHistory", b =>
                 {
                     b.HasOne("EMC.DB.Alarm", null)
@@ -413,33 +480,48 @@ namespace EMC.DB.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EMC.DB.MotionPosition", b =>
+            modelBuilder.Entity("EMC.DB.MotionDeviceDetail", b =>
                 {
-                    b.HasOne("EMC.DB.Motion", "Motion")
-                        .WithMany("Positions")
+                    b.HasOne("EMC.DB.Device", "Device")
+                        .WithOne("MotionDeviceDetail")
+                        .HasForeignKey("EMC.DB.MotionDeviceDetail", "DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionEntity", b =>
+                {
+                    b.HasOne("EMC.DB.MotionDeviceDetail", "ParentDeviceEntity")
+                        .WithMany("MotionList")
+                        .HasForeignKey("ParentDeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionParameter", b =>
+                {
+                    b.HasOne("EMC.DB.MotionEntity", "Motion")
+                        .WithMany("ParameterList")
                         .HasForeignKey("MotionId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMC.DB.MotionPosition", b =>
+                {
+                    b.HasOne("EMC.DB.MotionEntity", "Motion")
+                        .WithMany("PositionList")
+                        .HasForeignKey("MotionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("EMC.DB.RecipeParam", b =>
                 {
                     b.HasOne("EMC.DB.Recipe", "Recipe")
-                        .WithMany("Params")
+                        .WithMany("ParamList")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EMC.DB.Unit", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
-
-                    b.HasOne("EMC.DB.ValueTypeDef", "ValueType")
-                        .WithMany()
-                        .HasForeignKey("ValueTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

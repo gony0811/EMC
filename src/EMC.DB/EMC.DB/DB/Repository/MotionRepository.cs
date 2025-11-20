@@ -1,14 +1,15 @@
-﻿using EPFramework.DB;
+﻿
+using EMC.DB;
+using EPFramework.DB;
 using EPFramework.IoC;
 
-namespace EMC.DB
+namespace EMC
 {
-    [Service(Lifetime.Scoped)]
-    public class MotionRepository : DbRepository<Motion, AppDb>
+    [Service(Lifetime.Singleton)]
+    public class MotionRepository : DbRepository<MotionEntity, AppDb>
     {
-        public MotionRepository(AppDb db) : base(db)
+        public MotionRepository(AppDb context) : base(context)
         {
         }
-    
     }
 }

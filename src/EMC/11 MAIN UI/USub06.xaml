@@ -36,7 +36,7 @@
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                       Margin="10" Width="250">
                 <ListBox
-                    ItemsSource="{Binding Motions}"
+                    ItemsSource="{Binding PowerPmacMotionList}"
                     SelectedItem="{Binding SelectedMotion, Mode=TwoWay}"
                     Background="{x:Null}"
                     BorderThickness="0"
@@ -65,7 +65,7 @@
 
                     <!-- 버튼처럼 보이는 템플릿 -->
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type local:MotionDto}">
+                        <DataTemplate >
                             <ToggleButton              
                                     Height="40"
                                     FocusVisualStyle="{x:Null}"
@@ -93,43 +93,75 @@
                               Grid.Column="0" 
                               Style="{StaticResource TitledBox}" 
                               Margin="0,10,0,10">
-                        
-                        <DataGrid
-                            Style="{StaticResource DataGrid.Transparent}"
-                            ItemsSource="{Binding SelectedMotion.MotionPositions}"
-                            SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
-                            FontSize="16"
-                            AutoGenerateColumns="False"
-                            IsReadOnly="True"
-                            CanUserAddRows="False"
-                            CanUserDeleteRows="False"
-                            HeadersVisibility="Column"
-                            SelectionMode="Single"
-                            EnableRowVirtualization="True"
-                            EnableColumnVirtualization="True"
-                            RowHeaderWidth="0"
-                            GridLinesVisibility="None">
+                        <Grid local:GridHelper.Rows="1*, Auto">
 
-                            <DataGrid.Columns>
-                                <!-- 위치 이름 -->
-                                <DataGridTextColumn Header="이름"
-                                    Binding="{Binding Name}"
-                                    Width="*"
-                                    SortMemberPath="Name"/>
+                            <DataGrid
+                                x:Name="PositionDataGrid"
+                                Style="{StaticResource DataGrid.Transparent}"
+                                ItemsSource="{Binding SelectedMotion.PositionList}"
+                                SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
+                                FontSize="16"
+                                AutoGenerateColumns="False"
+                                IsReadOnly="True"
+                                CanUserAddRows="False"
+                                CanUserDeleteRows="False"
+                                HeadersVisibility="Column"
+                                SelectionMode="Single"
+                                EnableRowVirtualization="True"
+                                EnableColumnVirtualization="True"
+                                RowHeaderWidth="0"
+                                GridLinesVisibility="None">
 
-                                <!-- 현재 위치 -->
-                                <DataGridTextColumn Header="위치"
-                                    Binding="{Binding Location.CurrentValue, StringFormat=F3}"
-                                    Width="140"
-                                    SortMemberPath="CurrentLocation"/>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <!-- 우클릭 시 행 선택(이미 쓰시는 핸들러 유지) -->
+                                        <EventSetter Event="MouseRightButtonDown" Handler="DataGridRow_MouseRightButtonDown"/>
 
-                                <!-- 현재 속도 -->
-                                <DataGridTextColumn Header="속도"
-                                    Binding="{Binding Speed.CurrentValue, StringFormat=F2}"
-                                    Width="120"
-                                    SortMemberPath="CurrentSpeed"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                        <!-- ✅ Row.Tag = DataGrid의 ViewModel -->
+                                        <Setter Property="Tag"
+                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu>
+                                                    <!-- 수정 -->
+                                                    <MenuItem Header="수정"
+                                  Command="{Binding PlacementTarget.Tag.PositionUpdateCommand,
+                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext,
+                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <!-- 삭제 -->
+                                                    <MenuItem Header="삭제"
+                                  Command="{Binding PlacementTarget.Tag.PositionDeleteCommand,
+                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext,
+                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="이름"
+                                        Binding="{Binding Name}"
+                                        Width="*"
+                                        SortMemberPath="Name"/>
+                                    <DataGridTextColumn Header="위치"
+                                        Binding="{Binding Location, StringFormat=F3}"
+                                        Width="140"
+                                        SortMemberPath="Location"/>
+                                    <DataGridTextColumn Header="속도"
+                                        Binding="{Binding Speed, StringFormat=F2}"
+                                        Width="120"
+                                        SortMemberPath="Speed"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <Button Content="생성" Command="{Binding PositionCreateCommand}" Grid.Row="1"></Button>
+                        </Grid>
+
                     </GroupBox>
 
                     <Grid Grid.Column="1">

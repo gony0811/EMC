@@ -1,24 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EPFramework.DB;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EMC.DB
 {
 
-    public class Device
+    public class Device : IEntity
     {
-        [Key]
-        public int Id { get; private set; }
 
         [Required]
-        [Index(nameof(Name), IsUnique = true)]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public string Module { get; set; }
+        public DeviceType DeviceType { get; set; }
 
-        public DataType Type { get; set; }
-        public string TypeString { get; set; }
+        public string FileName { get; set; }
 
+        public string InstanceName { get; set; } 
 
+        public bool IsEnabled { get; set; } = true;
+
+        public string Description { get; set; }
+
+        public MotionDeviceDetail MotionDeviceDetail { get; set; }
     }
 }

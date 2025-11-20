@@ -5,11 +5,12 @@ using System.Windows.Controls;
 namespace EMC
 {
 
-    [View(Lifetime.Singleton)]
+    [View(Lifetime.Scoped)]
     public partial class ManualTab : UserControl
     {
-        public ManualTab()
+        public ManualTab(ManualTabViewModel vm)
         {
+            DataContext = vm;
             InitializeComponent();
         }
     }

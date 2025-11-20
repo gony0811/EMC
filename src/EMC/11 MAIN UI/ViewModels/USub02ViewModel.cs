@@ -13,14 +13,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
+using ValueType = EMC.DB.ValueType;
 
 namespace EMC
 {
     [ViewModel(Lifetime.Singleton)]
     public partial class USub02ViewModel : ObservableObject
     {
-        private readonly UnitRepository _unitRepo;
-        private readonly ValueTypeRepository _valueTypeRepo;
         private readonly RecipeRepository _recipeRepo;
         private readonly ParameterRepository _parameterRepo;
 
@@ -41,40 +40,55 @@ namespace EMC
         [ObservableProperty] private ObservableCollection<ParameterModel> items = new ObservableCollection<ParameterModel>();
 
         // 룩업(다이얼로그에 전달 용)
-        public List<Unit> Units { get; } = new List<Unit>();
-        public List<ValueTypeDef> ValueTypes { get; } = new List<ValueTypeDef>();
+        public UnitType UnitType { get; set; }
+        public ValueType ValueType { get; set; }
 
         public USub02ViewModel(
-              UnitRepository unitRepository,
-              ValueTypeRepository valueTypeRepository,
                RecipeRepository recipeRepository,
                ParameterRepository parameterRepository)
         {
-            _unitRepo = unitRepository;
-            _valueTypeRepo = valueTypeRepository;
             _recipeRepo = recipeRepository;
             _parameterRepo = parameterRepository;
-            _ = InitializeAsync();
+            //_ = InitializeAsync();
         }
-        private async Task InitializeAsync(CancellationToken ct = default(CancellationToken))
-        {
-            try
-            {
-                IsBusy = true;
+        //private async Task InitializeAsync(CancellationToken ct = default(CancellationToken))
+        //{
+        //    try
+        //    {
+        //        IsBusy = true;
 
-                // 룩업/레시피 병렬 로딩
-                await Task.WhenAll(GetUnits(ct), GetValueTypes(ct), GetAllRecipe(ct)).ConfigureAwait(false);
+        //        // 룩업/레시피 병렬 로딩
+        //        await Task.WhenAll(GetUnits(ct), GetValueTypes(ct), GetAllRecipe(ct)).ConfigureAwait(false);
 
-                // 초기 선택 레시피의 파라미터 로드
-                if (SelectedRecipe != null)
-                    await LoadRecipeParamsAsync(SelectedRecipe, ct).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.GetBaseException().Message, "초기화 오류");
-            }
-            finally { IsBusy = false; }
-        }
+        //        // 초기 선택 레시피의 파라미터 로드
+        //        if (SelectedRecipe != null)
+        //            await LoadRecipeParamsAsync(SelectedRecipe, ct).ConfigureAwait(false);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.GetBaseException().Message, "초기화 오류");
+        //    }
+        //    finally { IsBusy = false; }
+        //}
+        //private async Task InitializeAsync(CancellationToken ct = default(CancellationToken))
+        //{
+        //    try
+        //    {
+        //        IsBusy = true;
+
+        //        // 룩업/레시피 병렬 로딩
+        //        await Task.WhenAll(GetUnits(ct), GetValueTypes(ct), GetAllRecipe(ct)).ConfigureAwait(false);
+
+        //        // 초기 선택 레시피의 파라미터 로드
+        //        if (SelectedRecipe != null)
+        //            await LoadRecipeParamsAsync(SelectedRecipe, ct).ConfigureAwait(false);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.GetBaseException().Message, "초기화 오류");
+        //    }
+        //    finally { IsBusy = false; }
+        //}
 
         // SelectedRecipe 바뀌면 자동 로딩
         partial void OnSelectedRecipeChanged(Recipe value)
@@ -126,7 +140,7 @@ namespace EMC
                 IsBusy = true;
                 RecipeParam.Clear();
                 var ps = await _recipeRepo.FindAsync(ct, recipe.Id).ConfigureAwait(false);
-                foreach (var p in ps.Params) RecipeParam.Add(p);
+                foreach (var p in ps.ParamList) RecipeParam.Add(p);
             }
             catch (Exception e)
             {
@@ -239,67 +253,65 @@ namespace EMC
 
         private bool CanDeleteRecipe(Recipe recipe) => !IsBusy && recipe != null;
 
-        [RelayCommand]
-        public async Task CreateParameter(Recipe recipe)
-        {
-            if (recipe == null) return;
+        //[RelayCommand]
+        //public async Task CreateParameter(Recipe recipe)
+        //{
+        //    if (recipe == null) return;
 
-            var initial = new RecipeParam();
-            var result = await ShowParameterDialogAsync(initial, "파라미터 생성").ConfigureAwait(false);
-            if (result == null) return;
+        //    var initial = new RecipeParam();
+        //    var result = await ShowParameterDialogAsync(initial, "파라미터 생성").ConfigureAwait(false);
+        //    if (result == null) return;
 
-            try
-            {
-                NormalizeFK(result, recipeId: recipe.Id);
-                await _parameterRepo.AddAsync(result).ConfigureAwait(false);
-                await _parameterRepo.SaveAsync().ConfigureAwait(false);
-                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
-                await LoadRecipeParamsAsync(recipe).ConfigureAwait(false);
-            }
-            catch (DbUpdateException)
-            {
-                MessageBox.Show("저장 중 오류가 발생했습니다.", "저장 오류");
-            }
-        }
+        //    try
+        //    {
+        //        NormalizeFK(result, recipeId: recipe.Id);
+        //        await _parameterRepo.AddAsync(result).ConfigureAwait(false);
+        //        await _parameterRepo.SaveAsync().ConfigureAwait(false);
+        //        AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+        //        await LoadRecipeParamsAsync(recipe).ConfigureAwait(false);
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        MessageBox.Show("저장 중 오류가 발생했습니다.", "저장 오류");
+        //    }
+        //}
 
-        [RelayCommand]
-        public async Task UpdateParameter(RecipeParam param)
-        {
-            if (param == null) return;
+        //[RelayCommand]
+        //public async Task UpdateParameter(RecipeParam param)
+        //{
+        //    if (param == null) return;
 
-            var copy = new RecipeParam
-            {
-                Id = param.Id,
-                RecipeId = param.RecipeId,
-                Name = param.Name,
-                Value = param.Value,
-                Maximum = param.Maximum,
-                Minimum = param.Minimum,
-                ValueTypeId = param.ValueTypeId,
-                UnitId = param.UnitId,
-                Description = param.Description,
-                ValueType = param.ValueType,
-                Unit = param.Unit
-            };
+        //    var copy = new RecipeParam
+        //    {
+        //        Id = param.Id,
+        //        RecipeId = param.RecipeId,
+        //        Name = param.Name,
+        //        Value = param.Value,
+        //        Maximum = param.Maximum,
+        //        Minimum = param.Minimum,
+        //        ValueType = param.ValueType,
+        //        UnitType = param.UnitType,
+        //        Description = param.Description,
+        //    };
 
-            var result = await ShowParameterDialogAsync(copy, "파라미터 수정").ConfigureAwait(false);
-            if (result == null) return;
+        //    //var result = await ShowParameterDialogAsync(copy, "파라미터 수정").ConfigureAwait(false);
+        //    if (result == null) return;
 
-            try
-            {
-                NormalizeFK(result, recipeId: param.RecipeId);
-                _parameterRepo.Update(result);
-                await _parameterRepo.SaveAsync().ConfigureAwait(false);
-                AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
+        //    try
+        //    {
+        //        //NormalizeFK(result, recipeId: param.RecipeId);
+        //        _parameterRepo.Update(result);
+        //        await _parameterRepo.SaveAsync().ConfigureAwait(false);
+        //        AlertModal.Ask(GetOwnerWindow(), "저장", "저장되었습니다.");
 
-                if (SelectedRecipe != null)
-                    await LoadRecipeParamsAsync(SelectedRecipe).ConfigureAwait(false);
-            }
-            catch (DbUpdateException)
-            {
-                MessageBox.Show("저장 중 오류가 발생했습니다.", "저장 오류");
-            }
-        }
+        //        if (SelectedRecipe != null)
+        //            await LoadRecipeParamsAsync(SelectedRecipe).ConfigureAwait(false);
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        MessageBox.Show("저장 중 오류가 발생했습니다.", "저장 오류");
+        //    }
+        //}
 
         // ── 활성 레시피 변경 ─────────────────────────────────────────────────────
 
@@ -336,41 +348,27 @@ namespace EMC
         private bool CanChangeUseRecipe(Recipe recipe)
             => !IsBusy && recipe != null && !recipe.IsActive;
 
-        // ── 룩업 로딩 ───────────────────────────────────────────────────────────
-
-        private async Task GetUnits(CancellationToken ct = default(CancellationToken))
-        {
-            var units = await _unitRepo.ListAsync(ct: ct).ConfigureAwait(false);
-            Units.Clear();
-            Units.AddRange(units);
-        }
-
-        private async Task GetValueTypes(CancellationToken ct = default(CancellationToken))
-        {
-            var vts = await _valueTypeRepo.ListAsync(ct: ct).ConfigureAwait(false);
-            ValueTypes.Clear();
-            ValueTypes.AddRange(vts);
-        }
+        
 
         // ── 다이얼로그 헬퍼 ─────────────────────────────────────────────────────
 
-        private async Task<RecipeParam> ShowParameterDialogAsync(RecipeParam initial, string title)
-        {
-            var vm = new ParameterCreateVM(
-                title: title,
-                initial: initial,
-                units: Units,
-                valueTypes: ValueTypes);
+        //private async Task<RecipeParam> ShowParameterDialogAsync(RecipeParam initial, string title)
+        //{
+        //    var vm = new ParameterCreateVM(
+        //        title: title,
+        //        initial: initial,
+        //        units: Units,
+        //        valueTypes: ValueTypes);
 
-            var win = new ParameterCreateWindow
-            {
-                Owner = GetOwnerWindow(),
-                DataContext = vm
-            };
+        //    var win = new ParameterCreateWindow
+        //    {
+        //        Owner = GetOwnerWindow(),
+        //        DataContext = vm
+        //    };
 
-            var ok = win.ShowDialog() == true;
-            return ok ? vm.Value : null;
-        }
+        //    var ok = win.ShowDialog() == true;
+        //    return ok ? vm.Value : null;
+        //}
 
         private async Task<Recipe> ShowRecipeDialogAsync(Recipe initial, string title)
         {
@@ -388,27 +386,27 @@ namespace EMC
             return ok ? vm.Value : null;
         }
 
-        /// FK만 확정하고 네비게이션은 비움(트래킹 문제 방지)
-        private static void NormalizeFK(RecipeParam p, int? recipeId = null)
-        {
-            if (recipeId.HasValue) p.RecipeId = recipeId.Value;
+        ///// FK만 확정하고 네비게이션은 비움(트래킹 문제 방지)
+        //private static void NormalizeFK(RecipeParam p, int? recipeId = null)
+        //{
+        //    if (recipeId.HasValue) p.RecipeId = recipeId.Value;
 
-            if (p.ValueTypeId <= 0 && p.ValueType != null)
-                p.ValueTypeId = p.ValueType.Id;
-            if (p.UnitId == null && p.Unit != null)
-                p.UnitId = p.Unit.Id;
+        //    if (p.ValueTypeId <= 0 && p.ValueType != null)
+        //        p.ValueTypeId = p.ValueType.Id;
+        //    if (p.UnitId == null && p.Unit != null)
+        //        p.UnitId = p.Unit.Id;
 
-            p.Recipe = null;
-            p.ValueType = null;
-            p.Unit = null;
+        //    p.Recipe = null;
+        //    p.ValueType = null;
+        //    p.Unit = null;
 
-            if (string.IsNullOrWhiteSpace(p.Name))
-                throw new ValidationException("이름을 입력하세요.");
-            if (string.IsNullOrWhiteSpace(p.Value))
-                throw new ValidationException("값을 입력하세요.");
-            if (p.ValueTypeId <= 0)
-                throw new ValidationException("값 타입을 선택하세요.");
-        }
+        //    if (string.IsNullOrWhiteSpace(p.Name))
+        //        throw new ValidationException("이름을 입력하세요.");
+        //    if (string.IsNullOrWhiteSpace(p.Value))
+        //        throw new ValidationException("값을 입력하세요.");
+        //    if (p.ValueTypeId <= 0)
+        //        throw new ValidationException("값 타입을 선택하세요.");
+        //}
 
         private static Window GetOwnerWindow()
         {

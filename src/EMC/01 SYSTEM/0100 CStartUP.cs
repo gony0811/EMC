@@ -12,6 +12,8 @@ namespace EMC
     {
         public static IContainer Build()
         {
+            DllConfig.AddLibPath("lib");
+
             var cb = new ContainerBuilder();
             var scans = new[] { 
                 Assembly.GetExecutingAssembly(),

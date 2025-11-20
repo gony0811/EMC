@@ -9,11 +9,13 @@
 
   <ItemGroup>
     <!-- NuGet -->
+    <PackageReference Include="AutoMapper" Version="15.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Fody" Version="6.9.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32">
@@ -31,19 +33,27 @@
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <!-- ⚠ Autofac는 .NET Framework에선 5.x만 지원 -->
     <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="PropertyTools.Wpf" Version="3.1.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.11" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="12 SUB UI\USub01Tab\CalibrationTab\" />
     <Folder Include="12 SUB UI\USub01Tab\VisionTab\" />
-    <Folder Include="12 SUB UI\USub01Tab\StepTab\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EMC.DB\EMC.DB\EMC.DB.csproj" />
-    <ProjectReference Include="..\EMC.IO\EMC.IO.csproj" />
     <ProjectReference Include="..\EPFramework\EPFramework\EPFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lib\PowerPmac32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lib\PowerPmac64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- 선택: 생성된 코드 확인용 -->
@@ -57,7 +67,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <BaseOutputPath>..\..\run</BaseOutputPath>
+    <BaseOutputPath>..\run</BaseOutputPath>
   </PropertyGroup>
   <!-- 선택: FodyWeavers.xml을 ‘None’로 명시(안 써도 자동 감지됩니다) -->
 </Project>

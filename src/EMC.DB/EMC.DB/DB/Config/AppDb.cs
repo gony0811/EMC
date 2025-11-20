@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace EMC.DB
 {
@@ -12,6 +13,8 @@ namespace EMC.DB
         protected override void OnModelCreating(ModelBuilder b)
         {
             base.OnModelCreating(b);
+
+
             b.ApplyConfigurationsFromAssembly(typeof(AppDb).Assembly);
         }
     }

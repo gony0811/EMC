@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMC.DB", "EMC.DB\EMC.DB\EMC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPFramework", "EPFramework\EPFramework\EPFramework.csproj", "{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EMC.IO", "EMC.IO\EMC.IO.csproj", "{3F0AC9FA-0B89-44AB-A992-01D01E7B35F9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D7CE0CD-6EBC-4CF5-BD73-4A2ACB404073}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F0AC9FA-0B89-44AB-A992-01D01E7B35F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F0AC9FA-0B89-44AB-A992-01D01E7B35F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F0AC9FA-0B89-44AB-A992-01D01E7B35F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F0AC9FA-0B89-44AB-A992-01D01E7B35F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
