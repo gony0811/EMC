@@ -8,7 +8,7 @@ namespace EMC
 {
     public interface IDevice 
     {
-        uint Id { get; set; }
+        int Id { get; set; }
         string Name { get; set; }
         DeviceType DeviceType { get; set; }
         string FileName { get; set; }  // 드라이버 파일명 또는 어셈블리 경로
@@ -22,6 +22,9 @@ namespace EMC
         Task Connect();
         Task Disconnect();
         Task RefreshStatus();  // 상태 갱신
+        Task SendCommand(string command);
+
+        Task<TResult> SendCommand<TResult>(string command);
         Task<bool> TestConnection(); // 연결 테스트 (Ping 등)
 
     }

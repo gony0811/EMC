@@ -34,7 +34,6 @@ namespace EMC
 
             return device;
         }
-
     }
 
 }

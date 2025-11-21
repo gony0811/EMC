@@ -152,7 +152,6 @@ namespace EMC
                 Name = m.Name,
                 MotorNo = m.MotorNo,
                 Unit = m.Unit,
-                IsEnabled = m.IsEnabled ? 1 : 0,
                 LimitMinSpeed = m.MinimumSpeed,
                 LimitMaxSpeed = m.MaximumSpeed,
                 LimitMinPosition = m.MinimumLocation,

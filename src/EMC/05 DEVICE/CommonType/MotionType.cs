@@ -17,6 +17,12 @@
         Minus,
         Stop
     }
+
+    public enum MoveType
+    {
+        Absolute,
+        Relative
+    }
     #endregion
 }
 

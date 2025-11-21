@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <OutputType>WinExe</OutputType>
     <LangVersion>8.0</LangVersion>         <!-- or latest -->
@@ -32,7 +31,7 @@
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <!-- ⚠ Autofac는 .NET Framework에선 5.x만 지원 -->
-    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="Autofac" Version="9.0.0" />
     <PackageReference Include="PropertyTools.Wpf" Version="3.1.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.11" />
   </ItemGroup>
@@ -67,7 +66,10 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <BaseOutputPath>..\run</BaseOutputPath>
+    <BaseOutputPath>..\..\run</BaseOutputPath>
+    <TargetFramework>net472</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
   <!-- 선택: FodyWeavers.xml을 ‘None’로 명시(안 써도 자동 감지됩니다) -->
 </Project>

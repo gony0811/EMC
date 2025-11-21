@@ -17,9 +17,6 @@ namespace EMC
                 MotorNo = e.MotorNo,
                 Unit = e.Unit,
 
-                // DB에서는 bool, 런타임은 double
-                IsEnabled = e.IsEnabled ? 1 : 0,
-
                 LimitMinSpeed = e.MinimumSpeed,
                 LimitMaxSpeed = e.MaximumSpeed,
 
@@ -47,7 +44,7 @@ namespace EMC
         // =============================================================
         // MotionPositionEntity → DMotionPosition
         // =============================================================
-        public static DMotionPosition ToRuntime(MotionPosition e, DMotion parent)
+        public static DMotionPosition ToRuntime(MotionPosition e, IMotion parent)
         {
             return new DMotionPosition
             {
@@ -90,7 +87,7 @@ namespace EMC
                 MotorNo = r.MotorNo,
                 Unit = r.Unit,
 
-                IsEnabled = r.IsEnabled > 0, // 런타임 double → DB bool
+                IsEnabled = r.IsEnabled, // 런타임 double → DB bool
 
                 MinimumSpeed = r.LimitMinSpeed,
                 MaximumSpeed = r.LimitMaxSpeed,
